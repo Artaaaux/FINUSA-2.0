@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Mail, Lock, Eye, EyeOff, Loader2, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLogin } from "@/lib/auth/hooks";
+import logoImg from "../../../../../public/Assets/Logo.png";
 
 export function LoginForm() {
   const router = useRouter();
@@ -96,7 +97,7 @@ export function LoginForm() {
       {/* Header */}
       <div className="flex flex-col items-center mb-8">
         <img
-          src="/FINUSA-2.0/Assets/Logo.png"
+          src={logoImg.src}
           alt="FINUSA Logo"
           className="h-10 w-auto object-contain mb-3 select-none pointer-events-none"
         />

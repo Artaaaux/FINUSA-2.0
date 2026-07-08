@@ -1,9 +1,9 @@
 import { Footer } from "@/shared/components/layout/footer";
 import { Navbar } from "@/shared/components/layout/navbar";
-import { HeroSection } from "@/pages/landing/components/hero-section";
-import { FeaturesSection } from "@/pages/landing/components/features-section";
-import { AboutSection } from "@/pages/landing/components/about-section";
-import { TrustSection } from "@/pages/landing/components/trust-section";
+import { HeroSection } from "@/views/landing/components/hero-section";
+import { FeaturesSection } from "@/views/landing/components/features-section";
+import { AboutSection } from "@/views/landing/components/about-section";
+import { TrustSection } from "@/views/landing/components/trust-section";
 
 export default function Home() {
   return (

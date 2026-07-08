@@ -5,6 +5,7 @@ import { Menu, X, Home, Blocks , Info, LogIn  } from "lucide-react";
 
 import { GlassButton } from "@/shared/components/ui/glass-button";
 import { MenuBar } from "@/shared/components/ui/glow-menu";
+import logoImg from "../../../../public/Assets/Logo.png";
 
 const menuItems = [
   {
@@ -121,7 +122,7 @@ export function Navbar() {
               aria-label="FINUSA beranda"
             >
               <img 
-                src="/FINUSA-2.0/Assets/Logo.png" 
+                src={logoImg.src} 
                 alt="FINUSA Logo"
                 className="h-9 w-auto object-contain ml-1 sm:ml-2"
               />
