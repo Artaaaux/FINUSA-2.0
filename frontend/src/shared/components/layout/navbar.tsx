@@ -121,7 +121,7 @@ export function Navbar() {
               aria-label="FINUSA beranda"
             >
               <img 
-                src="/Assets/Logo.png" 
+                src="/FINUSA-2.0/Assets/Logo.png" 
                 alt="FINUSA Logo"
                 className="h-9 w-auto object-contain ml-1 sm:ml-2"
               />

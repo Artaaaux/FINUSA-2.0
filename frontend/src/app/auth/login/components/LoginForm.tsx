@@ -96,7 +96,7 @@ export function LoginForm() {
       {/* Header */}
       <div className="flex flex-col items-center mb-8">
         <img
-          src="/Assets/Logo.png"
+          src="/FINUSA-2.0/Assets/Logo.png"
           alt="FINUSA Logo"
           className="h-10 w-auto object-contain mb-3 select-none pointer-events-none"
         />
