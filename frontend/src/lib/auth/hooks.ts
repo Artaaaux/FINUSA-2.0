@@ -103,7 +103,7 @@ export function useSignup() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const signup = async (email: string, password: string) => {
+  const signup = async (email: string, password: string, captchaToken?: string) => {
     setLoading(true);
     setError(null);
     setSuccess(false);
@@ -114,6 +114,7 @@ export function useSignup() {
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
+          captchaToken: captchaToken || undefined,
         },
       });
 

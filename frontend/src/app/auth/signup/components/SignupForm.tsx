@@ -7,11 +7,13 @@ import { Mail, Lock, Eye, EyeOff, Loader2, AlertCircle, Check } from "lucide-rea
 import { motion, AnimatePresence } from "framer-motion";
 import { useSignup } from "@/lib/auth/hooks";
 import { GoogleAuthButton } from "@/shared/components/auth/GoogleAuthButton";
+import { TurnstileWidget } from "@/shared/components/auth/TurnstileWidget";
 import logoImg from "../../../../../public/Assets/Logo.png";
 
 export function SignupForm() {
   const router = useRouter();
   const { signup, loading, error, success } = useSignup();
+  const [captchaToken, setCaptchaToken] = useState<string>("");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -138,7 +140,7 @@ export function SignupForm() {
     }
 
     try {
-      await signup(email, password);
+      await signup(email, password, captchaToken);
       // Wait a moment for UX, then redirect
       setTimeout(() => {
         router.push("/home");
@@ -363,6 +365,9 @@ export function SignupForm() {
             )}
           </AnimatePresence>
         </div>
+
+        {/* Anti-Bot Cloudflare Turnstile CAPTCHA */}
+        <TurnstileWidget onVerify={(token) => setCaptchaToken(token)} />
 
         {/* Submit Button */}
         <button
