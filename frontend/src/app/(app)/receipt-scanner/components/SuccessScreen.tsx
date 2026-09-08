@@ -162,11 +162,11 @@ export default function SuccessScreen({
         </button>
 
         <Link
-          href="/pembukuan"
+          href="/catat"
           className="px-6 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white text-sm font-semibold flex items-center justify-center gap-2 border border-slate-700 transition-all"
         >
           <FolderKanban className="w-4 h-4" />
-          Buka Pembukuan
+          Buka Catat Transaksi
         </Link>
       </div>
     </div>

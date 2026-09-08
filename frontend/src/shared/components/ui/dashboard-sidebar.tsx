@@ -31,7 +31,7 @@ const finusaNavItems: NavItemData[] = [
   { id: 'receipt-scanner', title: 'Scan', icon: ScanLine, href: "/receipt-scanner", badge: 'AI' },
   { id: 'monitor', title: 'Monitor', icon: Activity, href: "/monitor" },
   { id: 'nabung', title: 'Nabung', icon: CreditCard, href: "/nabung" },
-  { id: 'pembukuan', title: 'Catat', icon: FolderKanban, href: "/pembukuan" },
+  { id: 'catat', title: 'Catat', icon: FolderKanban, href: "/catat" },
   { id: 'sheets', title: 'Sheets', icon: Blocks, href: "/sheets" },
 ];
 
@@ -180,7 +180,13 @@ export function SidebarNav({
           <NavItem 
             key={item.id} 
             item={item} 
-            activeId={pathname.includes('/receipt-scanner') ? 'receipt-scanner' : pathname.split('/')[1] || 'home'}
+            activeId={
+              pathname.includes('/receipt-scanner')
+                ? 'receipt-scanner'
+                : pathname.startsWith('/catat') || pathname.startsWith('/pembukuan')
+                ? 'catat'
+                : pathname.split('/')[1] || 'home'
+            }
             onSelect={(id) => handleSelect(id)} 
             isCollapsed={isCollapsed}
           />

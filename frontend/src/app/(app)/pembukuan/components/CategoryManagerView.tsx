@@ -24,6 +24,9 @@ import {
   Tag,
   ShoppingBag,
   Home,
+  Car,
+  CreditCard,
+  Sparkles,
   X,
   Check,
 } from "lucide-react";
@@ -34,13 +37,16 @@ import { cn } from "@/shared/lib/utils";
 const AVAILABLE_ICONS: { name: string; icon: React.ElementType }[] = [
   { name: "Wallet", icon: Wallet },
   { name: "Briefcase", icon: Briefcase },
-  { name: "ShoppingBag", icon: ShoppingBag },
   { name: "Utensils", icon: Utensils },
+  { name: "Car", icon: Car },
+  { name: "CreditCard", icon: CreditCard },
+  { name: "Package", icon: Package },
+  { name: "Sparkles", icon: Sparkles },
+  { name: "ShoppingBag", icon: ShoppingBag },
   { name: "Home", icon: Home },
   { name: "Store", icon: Store },
   { name: "TrendingUp", icon: TrendingUp },
   { name: "RotateCcw", icon: RotateCcw },
-  { name: "Package", icon: Package },
   { name: "Building2", icon: Building2 },
   { name: "Users", icon: Users },
   { name: "Zap", icon: Zap },
@@ -89,10 +95,16 @@ export default function CategoryManagerView({
   const [formColor, setFormColor] = useState(COLOR_PRESETS[0].value);
   const [formDesc, setFormDesc] = useState("");
 
-  const filteredCategories = categories.filter((c) => {
-    if (activeType !== "all" && c.type !== activeType) return false;
-    return true;
-  });
+  const filteredCategories = React.useMemo(() => {
+    const seen = new Set<string>();
+    return categories.filter((c) => {
+      if (activeType !== "all" && c.type !== activeType) return false;
+      const key = `${c.type}_${c.name.trim().toLowerCase()}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [categories, activeType]);
 
   const openCreateModal = () => {
     setEditingCategory(null);

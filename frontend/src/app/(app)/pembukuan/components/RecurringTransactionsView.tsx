@@ -56,7 +56,16 @@ export default function RecurringTransactionsView({
   const [formNextDate, setFormNextDate] = useState("");
   const [formNotes, setFormNotes] = useState("");
 
-  const availableCategories = categories.filter((c) => c.type === (formType === "income" ? "income" : "expense"));
+  const availableCategories = React.useMemo(() => {
+    const filtered = categories.filter((c) => c.type === (formType === "income" ? "income" : "expense"));
+    const seen = new Set<string>();
+    return filtered.filter((c) => {
+      const lower = c.name.trim().toLowerCase();
+      if (seen.has(lower)) return false;
+      seen.add(lower);
+      return true;
+    });
+  }, [categories, formType]);
 
   const openCreateModal = () => {
     setEditingItem(null);

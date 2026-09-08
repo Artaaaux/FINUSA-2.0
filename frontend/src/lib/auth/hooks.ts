@@ -134,3 +134,44 @@ export function useSignup() {
 
   return { signup, loading, error, success, setError };
 }
+
+export function useGoogleAuth() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const signInWithGoogle = async (nextPath = "/home") => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const redirectUrl = `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`;
+      const { data, error: oauthError } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: redirectUrl,
+          queryParams: {
+            access_type: "offline",
+            prompt: "consent",
+          },
+        },
+      });
+
+      if (oauthError) {
+        throw oauthError;
+      }
+
+      return data;
+    } catch (err: unknown) {
+      const errMsg =
+        err instanceof Error
+          ? err.message
+          : "Gagal menghubungkan ke Google. Silakan coba lagi.";
+      setError(errMsg);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { signInWithGoogle, loading, error, setError };
+}

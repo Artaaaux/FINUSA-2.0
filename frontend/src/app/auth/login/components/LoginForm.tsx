@@ -1,16 +1,32 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Mail, Lock, Eye, EyeOff, Loader2, AlertCircle } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, Loader2, CheckCircle2, XCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLogin } from "@/lib/auth/hooks";
+import { GoogleAuthButton } from "@/shared/components/auth/GoogleAuthButton";
 import logoImg from "../../../../../public/Assets/Logo.png";
 
 export function LoginForm() {
   const router = useRouter();
   const { login, loading, error, success } = useLogin();
+  const [urlErrorMsg, setUrlErrorMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const errParam = params.get("error");
+      if (errParam) {
+        if (errParam === "auth_callback_failed" || errParam === "Auth failed") {
+          setUrlErrorMsg("Autentikasi Google gagal atau dibatalkan. Silakan coba lagi.");
+        } else {
+          setUrlErrorMsg(errParam);
+        }
+      }
+    }
+  }, []);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -73,6 +89,8 @@ export function LoginForm() {
       return;
     }
 
+    setUrlErrorMsg(null);
+
     try {
       await login(email, password);
       // Wait a brief moment to show success state, then redirect
@@ -107,28 +125,40 @@ export function LoginForm() {
         </p>
       </div>
 
-      {/* General error message */}
+      {/* Login Popup Feedback (Success & Fail) */}
       <AnimatePresence mode="wait">
-        {error && (
+        {(error || urlErrorMsg) && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="mb-6 p-3 rounded-lg bg-red-950/50 border border-red-900/50 flex items-start gap-2 text-red-400 text-xs"
+            initial={{ opacity: 0, y: -8, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.98 }}
+            transition={{ duration: 0.2 }}
+            className="mb-6 p-3 rounded-xl bg-rose-500/10 border border-rose-500/25 flex items-center gap-3 text-xs text-rose-300 shadow-sm"
           >
-            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-            <span>{error}</span>
+            <div className="w-8 h-8 rounded-lg bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-400 shrink-0">
+              <XCircle className="w-4 h-4" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="font-bold text-xs text-rose-400 uppercase tracking-wider">Fail</p>
+              <p className="text-slate-300 text-xs mt-0.5 truncate">{error || urlErrorMsg}</p>
+            </div>
           </motion.div>
         )}
         {success && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="mb-6 p-3 rounded-lg bg-green-950/50 border border-green-900/50 flex items-start gap-2 text-accent-green text-xs"
+            initial={{ opacity: 0, y: -8, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.98 }}
+            transition={{ duration: 0.2 }}
+            className="mb-6 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/25 flex items-center gap-3 text-xs text-emerald-300 shadow-sm"
           >
-            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-accent-green" />
-            <span>Masuk berhasil! Mengalihkan ke dashboard...</span>
+            <div className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+              <CheckCircle2 className="w-4 h-4" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="font-bold text-xs text-emerald-400 uppercase tracking-wider">Success</p>
+              <p className="text-slate-300 text-xs mt-0.5">Masuk berhasil! Mengalihkan ke dashboard...</p>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -239,6 +269,26 @@ export function LoginForm() {
           )}
         </button>
       </form>
+
+      {/* Divider */}
+      <div className="relative my-5">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-slate-800" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-[#1a1f3a] px-3 text-slate-500 font-medium tracking-wider">
+            atau
+          </span>
+        </div>
+      </div>
+
+      {/* Google OAuth Button */}
+      <GoogleAuthButton
+        label="Lanjutkan dengan Google"
+        nextPath="/home"
+        disabled={loading || success}
+        onError={(err) => setUrlErrorMsg(err)}
+      />
 
       {/* Footer Link */}
       <div className="mt-6 text-center text-sm text-slate-400">

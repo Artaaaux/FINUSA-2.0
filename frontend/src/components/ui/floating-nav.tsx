@@ -26,7 +26,7 @@ export interface NavItemType {
 
 const defaultNavItems: NavItemType[] = [
   { id: 0, key: "home", label: "Home", href: "/home", icon: <LayoutDashboard size={16} /> },
-  { id: 1, key: "pembukuan", label: "Catat", href: "/pembukuan", icon: <FolderKanban size={16} /> },
+  { id: 1, key: "catat", label: "Catat", href: "/catat", icon: <FolderKanban size={16} /> },
   { id: 2, key: "sheets", label: "Sheets", href: "/sheets", icon: <Blocks size={16} /> },
   { id: 3, key: "scan", label: "Scan", href: "/receipt-scanner", icon: <ScanLine size={19} />, isCenter: true },
   { id: 4, key: "nabung", label: "Nabung", href: "/nabung", icon: <CreditCard size={16} /> },
@@ -46,7 +46,7 @@ export const FloatingNav = ({
 
   const getInitialActive = useCallback(() => {
     if (pathname.includes("/receipt-scanner") || pathname.includes("/ai")) return 3;
-    if (pathname.startsWith("/pembukuan")) return 1;
+    if (pathname.startsWith("/catat") || pathname.startsWith("/pembukuan")) return 1;
     if (pathname.startsWith("/sheets")) return 2;
     if (pathname.startsWith("/nabung")) return 4;
     if (pathname.startsWith("/monitor")) return 5;

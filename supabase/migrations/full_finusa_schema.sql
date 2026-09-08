@@ -439,14 +439,18 @@ DECLARE
     default_acc_id UUID;
 BEGIN
     -- 1. Create Profile
-    INSERT INTO public.profiles (id, email, first_name, role)
+    INSERT INTO public.profiles (id, email, first_name, avatar_url, role)
     VALUES (
         NEW.id,
         NEW.email,
-        COALESCE(NEW.raw_user_meta_data->>'first_name', split_part(NEW.email, '@', 1)),
+        COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'name', NEW.raw_user_meta_data->>'first_name', split_part(NEW.email, '@', 1)),
+        COALESCE(NEW.raw_user_meta_data->>'avatar_url', NEW.raw_user_meta_data->>'picture', ''),
         'Pemilik Akun'
     )
-    ON CONFLICT (id) DO NOTHING;
+    ON CONFLICT (id) DO UPDATE SET
+        email = EXCLUDED.email,
+        first_name = CASE WHEN public.profiles.first_name IS NULL OR public.profiles.first_name = '' THEN EXCLUDED.first_name ELSE public.profiles.first_name END,
+        avatar_url = CASE WHEN public.profiles.avatar_url IS NULL OR public.profiles.avatar_url = '' THEN EXCLUDED.avatar_url ELSE public.profiles.avatar_url END;
 
     -- 2. Create Default Accounts for User
     INSERT INTO public.accounts (user_id, name, type, balance, color, is_default)
@@ -464,10 +468,13 @@ BEGIN
         -- Incomes
         (NEW.id, 'Gaji Pokok', 'income', 'Wallet', '#10B981', 0, true),
         (NEW.id, 'Honor', 'income', 'Briefcase', '#3B82F6', 0, true),
+        (NEW.id, 'Profit jualan', 'income', 'TrendingUp', '#06B6D4', 0, true),
         -- Expenses
-        (NEW.id, 'Sandang', 'expense', 'ShoppingBag', '#A855F7', 0, true),
-        (NEW.id, 'Papan', 'expense', 'Home', '#F59E0B', 0, true),
-        (NEW.id, 'Pangan', 'expense', 'Utensils', '#EF4444', 0, true);
+        (NEW.id, 'Makan', 'expense', 'Utensils', '#F59E0B', 0, true),
+        (NEW.id, 'Transportasi', 'expense', 'Car', '#0EA5E9', 0, true),
+        (NEW.id, 'Cicilan', 'expense', 'CreditCard', '#8B5CF6', 0, true),
+        (NEW.id, 'Kebutuhan', 'expense', 'Package', '#10B981', 0, true),
+        (NEW.id, 'Keinginan', 'expense', 'Sparkles', '#EC4899', 0, true);
 
 
 
@@ -496,15 +503,18 @@ DECLARE
 BEGIN
     FOR r IN SELECT id, email, raw_user_meta_data FROM auth.users LOOP
         -- Profile
-        INSERT INTO public.profiles (id, email, first_name, role)
+        INSERT INTO public.profiles (id, email, first_name, avatar_url, role)
         VALUES (
             r.id,
             r.email,
-            COALESCE(r.raw_user_meta_data->>'first_name', split_part(r.email, '@', 1)),
+            COALESCE(r.raw_user_meta_data->>'full_name', r.raw_user_meta_data->>'name', r.raw_user_meta_data->>'first_name', split_part(r.email, '@', 1)),
+            COALESCE(r.raw_user_meta_data->>'avatar_url', r.raw_user_meta_data->>'picture', ''),
             'Pemilik Akun'
         )
         ON CONFLICT (id) DO UPDATE SET
-            email = EXCLUDED.email;
+            email = EXCLUDED.email,
+            first_name = CASE WHEN public.profiles.first_name IS NULL OR public.profiles.first_name = '' THEN EXCLUDED.first_name ELSE public.profiles.first_name END,
+            avatar_url = CASE WHEN public.profiles.avatar_url IS NULL OR public.profiles.avatar_url = '' THEN EXCLUDED.avatar_url ELSE public.profiles.avatar_url END;
 
         -- Accounts (if user has 0 accounts)
         IF NOT EXISTS (SELECT 1 FROM public.accounts WHERE user_id = r.id) THEN
@@ -524,9 +534,12 @@ BEGIN
             VALUES
                 (r.id, 'Gaji Pokok', 'income', 'Wallet', '#10B981', 0, true),
                 (r.id, 'Honor', 'income', 'Briefcase', '#3B82F6', 0, true),
-                (r.id, 'Sandang', 'expense', 'ShoppingBag', '#A855F7', 0, true),
-                (r.id, 'Papan', 'expense', 'Home', '#F59E0B', 0, true),
-                (r.id, 'Pangan', 'expense', 'Utensils', '#EF4444', 0, true);
+                (r.id, 'Profit jualan', 'income', 'TrendingUp', '#06B6D4', 0, true),
+                (r.id, 'Makan', 'expense', 'Utensils', '#F59E0B', 0, true),
+                (r.id, 'Transportasi', 'expense', 'Car', '#0EA5E9', 0, true),
+                (r.id, 'Cicilan', 'expense', 'CreditCard', '#8B5CF6', 0, true),
+                (r.id, 'Kebutuhan', 'expense', 'Package', '#10B981', 0, true),
+                (r.id, 'Keinginan', 'expense', 'Sparkles', '#EC4899', 0, true);
         END IF;
 
 

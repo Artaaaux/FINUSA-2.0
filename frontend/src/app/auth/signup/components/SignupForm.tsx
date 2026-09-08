@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Mail, Lock, Eye, EyeOff, Loader2, AlertCircle, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSignup } from "@/lib/auth/hooks";
+import { GoogleAuthButton } from "@/shared/components/auth/GoogleAuthButton";
 import logoImg from "../../../../../public/Assets/Logo.png";
 
 export function SignupForm() {
@@ -194,7 +195,7 @@ export function SignupForm() {
             <div>
               <p className="font-semibold">Pendaftaran Berhasil!</p>
               <p className="text-[11px] text-slate-300 mt-0.5">
-                Mengalihkan ke dashboard. Silakan cek email Anda untuk verifikasi.
+                Mengalihkan ke dashboard...
               </p>
             </div>
           </motion.div>
@@ -376,6 +377,25 @@ export function SignupForm() {
           )}
         </button>
       </form>
+
+      {/* Divider */}
+      <div className="relative my-5">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-slate-800" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-[#1a1f3a] px-3 text-slate-500 font-medium tracking-wider">
+            atau
+          </span>
+        </div>
+      </div>
+
+      {/* Google OAuth Button */}
+      <GoogleAuthButton
+        label="Daftar dengan Google"
+        nextPath="/home"
+        disabled={loading || success}
+      />
 
       {/* Footer Link */}
       <div className="mt-6 text-center text-sm text-slate-400">

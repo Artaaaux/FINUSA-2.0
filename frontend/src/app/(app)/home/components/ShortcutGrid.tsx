@@ -6,7 +6,7 @@ const shortcuts = [
   { label: "Monitor", icon: BarChart3, href: "/monitor" },
   { label: "Scan", icon: ScanLine, href: "/receipt-scanner" },
   { label: "Nabung", icon: PiggyBank, href: "/nabung" },
-  { label: "Catat", icon: BookOpen, href: "/pembukuan" },
+  { label: "Catat", icon: BookOpen, href: "/catat" },
   { label: "Sheets", icon: Table2, href: "/sheets" },
   { label: "Pengaturan", icon: Wrench, href: "/settings" },
 ];

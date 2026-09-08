@@ -27,6 +27,15 @@ const nextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      {
+        source: "/pembukuan",
+        destination: "/catat",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

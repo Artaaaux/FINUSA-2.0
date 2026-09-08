@@ -41,6 +41,7 @@ const routeMeta: Record<
   "/ai": { label: "Scan Struk", subtitle: "Smart OCR Scanner", icon: ScanLine },
   "/monitor": { label: "Monitor", subtitle: "Analisis Likuiditas & Kas", icon: Activity },
   "/nabung": { label: "Nabung", subtitle: "Target & Tabungan Impian", icon: CreditCard },
+  "/catat": { label: "Catat", subtitle: "Pemasukan & Pengeluaran", icon: FolderKanban },
   "/pembukuan": { label: "Catat", subtitle: "Pemasukan & Pengeluaran", icon: FolderKanban },
   "/sheets": { label: "Google Sheets", subtitle: "Sinkronisasi Data Kas", icon: Blocks },
   "/settings": { label: "Pengaturan", subtitle: "Preferensi Akun & Sistem", icon: Settings },
@@ -186,7 +187,7 @@ export default function AppNavbar({ isCollapsed }: { isCollapsed: boolean }) {
 
   // Quick command searchable items
   const commandItems = [
-    { title: "Catat Transaksi Baru", category: "Aksi Cepat", href: "/pembukuan", icon: FolderKanban },
+    { title: "Catat Transaksi Baru", category: "Aksi Cepat", href: "/catat", icon: FolderKanban },
     { title: "Monitor Likuiditas & Kas", category: "Menu Utama", href: "/monitor", icon: Activity },
     { title: "Nabung & Alokasi Target", category: "Menu Utama", href: "/nabung", icon: CreditCard },
     { title: "Scan Struk Belanja (OCR)", category: "Alat AI", href: "/receipt-scanner", icon: ScanLine },

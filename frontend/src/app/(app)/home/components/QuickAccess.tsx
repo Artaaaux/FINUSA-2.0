@@ -48,7 +48,7 @@ const finusaFeatures = [
     href: "/nabung",
   },
   {
-    id: "pembukuan",
+    id: "catat",
     title: "Catat",
     tag: "Kas Masuk & Keluar",
     action: "Catat Transaksi",
@@ -56,7 +56,7 @@ const finusaFeatures = [
     icon: <FolderKanban className="w-5 h-5 text-amber-400" aria-hidden="true" />,
     badgeClass: "text-amber-400 bg-amber-500/10 border-amber-500/25",
     iconBg: "bg-amber-500/15 border-amber-500/30",
-    href: "/pembukuan",
+    href: "/catat",
   },
   {
     id: "sheets",

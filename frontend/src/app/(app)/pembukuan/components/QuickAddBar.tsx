@@ -39,8 +39,17 @@ export default function QuickAddBar({
   const [selectedAccountId, setSelectedAccountId] = useState<string>(accounts[0]?.id || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Filter categories by selected type
-  const availableCategories = categories.filter((c) => c.type === type);
+  // Filter categories by selected type and deduplicate by name
+  const availableCategories = React.useMemo(() => {
+    const filtered = categories.filter((c) => c.type === type);
+    const seen = new Set<string>();
+    return filtered.filter((c) => {
+      const lower = c.name.trim().toLowerCase();
+      if (seen.has(lower)) return false;
+      seen.add(lower);
+      return true;
+    });
+  }, [categories, type]);
   const activeCategory = availableCategories.find((c) => c.id === selectedCategoryId) || availableCategories[0];
 
   const handleSubmit = (e: React.FormEvent) => {

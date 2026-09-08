@@ -94,6 +94,9 @@ export const PembukuanService = {
       const activeCategories = data || [];
 
       const OLD_DEFAULT_CATEGORY_NAMES = [
+        "Sandang",
+        "Papan",
+        "Pangan",
         "Omzet Penjualan & Bisnis",
         "Gaji & Honor Pokok",
         "Jasa Konsultasi & Proyek",
@@ -124,12 +127,28 @@ export const PembukuanService = {
       const hasOldDefaults = activeCategories.some((c) =>
         OLD_DEFAULT_CATEGORY_NAMES.includes(c.name)
       );
-      const hasSimplifiedDefaults = activeCategories.some(
-        (c) => c.name === "Sandang" || c.name === "Pangan" || c.name === "Papan"
+
+      const targetDefaults = [
+        { name: "Gaji Pokok", type: "income", icon: "Wallet", color: "#10B981" },
+        { name: "Honor", type: "income", icon: "Briefcase", color: "#3B82F6" },
+        { name: "Profit jualan", type: "income", icon: "TrendingUp", color: "#06B6D4" },
+        { name: "Makan", type: "expense", icon: "Utensils", color: "#F59E0B" },
+        { name: "Transportasi", type: "expense", icon: "Car", color: "#0EA5E9" },
+        { name: "Cicilan", type: "expense", icon: "CreditCard", color: "#8B5CF6" },
+        { name: "Kebutuhan", type: "expense", icon: "Package", color: "#10B981" },
+        { name: "Keinginan", type: "expense", icon: "Sparkles", color: "#EC4899" },
+      ];
+
+      // Check if any required target category is missing
+      const missingDefaults = targetDefaults.filter(
+        (target) =>
+          !activeCategories.some(
+            (c) => c.name.toLowerCase() === target.name.toLowerCase() && c.type === target.type
+          )
       );
 
-      // Auto-migrate to simplified defaults (Sandang, Papan, Pangan, Gaji Pokok, Honor)
-      if (user && (hasOldDefaults || !hasSimplifiedDefaults || activeCategories.length === 0)) {
+      // Auto-migrate if old defaults exist or ANY target default is missing
+      if (user && (hasOldDefaults || missingDefaults.length > 0 || activeCategories.length === 0)) {
         try {
           if (hasOldDefaults) {
             await supabase
@@ -138,14 +157,6 @@ export const PembukuanService = {
               .eq("user_id", user.id)
               .in("name", OLD_DEFAULT_CATEGORY_NAMES);
           }
-
-          const targetDefaults = [
-            { name: "Gaji Pokok", type: "income", icon: "Wallet", color: "#10B981" },
-            { name: "Honor", type: "income", icon: "Briefcase", color: "#3B82F6" },
-            { name: "Sandang", type: "expense", icon: "ShoppingBag", color: "#A855F7" },
-            { name: "Papan", type: "expense", icon: "Home", color: "#F59E0B" },
-            { name: "Pangan", type: "expense", icon: "Utensils", color: "#EF4444" },
-          ];
 
           for (const item of targetDefaults) {
             const existing = activeCategories.find(
@@ -174,10 +185,21 @@ export const PembukuanService = {
             .order("created_at", { ascending: true });
 
           if (refreshed && refreshed.length > 0) {
-            return refreshed.map((c) => ({
+            // Deduplicate categories by type and lowercased name
+            const uniqueCats: typeof refreshed = [];
+            const seen = new Set<string>();
+            for (const c of refreshed) {
+              const key = `${c.type}_${c.name.trim().toLowerCase()}`;
+              if (!seen.has(key)) {
+                seen.add(key);
+                uniqueCats.push(c);
+              }
+            }
+
+            const mapped: CategoryItem[] = uniqueCats.map((c) => ({
               id: c.id,
               name: c.name,
-              type: c.type,
+              type: (c.type as "income" | "expense") || "expense",
               icon: c.icon || "Tag",
               color: c.color || "#4B7BFF",
               budgetLimit: Number(c.budget_limit) || undefined,
@@ -185,9 +207,18 @@ export const PembukuanService = {
               iconName: c.icon || "Tag",
               isDefault: Boolean(c.is_default),
             }));
+
+            // Merge with DEFAULT_CATEGORIES to ensure no default category is ever absent
+            for (const def of DEFAULT_CATEGORIES) {
+              if (!mapped.some((m) => m.name.toLowerCase() === def.name.toLowerCase() && m.type === def.type)) {
+                mapped.push(def);
+              }
+            }
+
+            return mapped;
           }
         } catch (syncErr) {
-          console.warn("Failed auto-syncing simplified categories:", syncErr);
+          console.warn("Failed auto-syncing everyday categories:", syncErr);
         }
       }
 
@@ -195,10 +226,21 @@ export const PembukuanService = {
         return DEFAULT_CATEGORIES;
       }
 
-      return activeCategories.map((c) => ({
+      // Deduplicate categories by type and lowercased name
+      const uniqueCats: typeof activeCategories = [];
+      const seen = new Set<string>();
+      for (const c of activeCategories) {
+        const key = `${c.type}_${c.name.trim().toLowerCase()}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          uniqueCats.push(c);
+        }
+      }
+
+      const mapped: CategoryItem[] = uniqueCats.map((c) => ({
         id: c.id,
         name: c.name,
-        type: c.type,
+        type: (c.type as "income" | "expense") || "expense",
         icon: c.icon || "Tag",
         color: c.color || "#4B7BFF",
         budgetLimit: Number(c.budget_limit) || undefined,
@@ -206,6 +248,15 @@ export const PembukuanService = {
         iconName: c.icon || "Tag",
         isDefault: Boolean(c.is_default),
       }));
+
+      // Merge with DEFAULT_CATEGORIES to guarantee all required categories are present
+      for (const def of DEFAULT_CATEGORIES) {
+        if (!mapped.some((m) => m.name.toLowerCase() === def.name.toLowerCase() && m.type === def.type)) {
+          mapped.push(def);
+        }
+      }
+
+      return mapped;
     } catch (err) {
       console.warn("Error fetching categories:", err);
       return DEFAULT_CATEGORIES;
@@ -213,11 +264,17 @@ export const PembukuanService = {
   },
 
   mapCategoryColorClass(name: string, customColor?: string): string {
-    if (name === "Gaji Pokok") return "text-emerald-400 bg-emerald-500/10 border-emerald-500/25";
-    if (name === "Honor") return "text-blue-400 bg-blue-500/10 border-blue-500/25";
-    if (name === "Sandang") return "text-purple-400 bg-purple-500/10 border-purple-500/25";
-    if (name === "Pangan") return "text-rose-400 bg-rose-500/10 border-rose-500/25";
-    if (name === "Papan") return "text-amber-400 bg-amber-500/10 border-amber-500/25";
+    const n = (name || "").trim().toLowerCase();
+    if (n === "gaji pokok") return "text-emerald-400 bg-emerald-500/10 border-emerald-500/25";
+    if (n === "honor") return "text-blue-400 bg-blue-500/10 border-blue-500/25";
+    if (n === "makan") return "text-amber-400 bg-amber-500/10 border-amber-500/25";
+    if (n === "transportasi") return "text-sky-400 bg-sky-500/10 border-sky-500/25";
+    if (n === "cicilan") return "text-purple-400 bg-purple-500/10 border-purple-500/25";
+    if (n === "kebutuhan") return "text-emerald-400 bg-emerald-500/10 border-emerald-500/25";
+    if (n === "keinginan") return "text-pink-400 bg-pink-500/10 border-pink-500/25";
+    if (n === "sandang") return "text-purple-400 bg-purple-500/10 border-purple-500/25";
+    if (n === "pangan") return "text-rose-400 bg-rose-500/10 border-rose-500/25";
+    if (n === "papan") return "text-amber-400 bg-amber-500/10 border-amber-500/25";
     if (customColor && customColor.includes("bg-")) return customColor;
     return "text-blue-400 bg-blue-500/10 border-blue-500/25";
   },

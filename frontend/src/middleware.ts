@@ -19,6 +19,7 @@ export const config = {
     "/ai/:path*",
     "/monitor/:path*",
     "/nabung/:path*",
+    "/catat/:path*",
     "/pembukuan/:path*",
     "/sheets/:path*",
     "/settings/:path*",

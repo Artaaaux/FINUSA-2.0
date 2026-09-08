@@ -52,6 +52,16 @@ export default function PembukuanFilterBar({
     { id: "custom", label: "Kustom" },
   ];
 
+  const uniqueCategories = React.useMemo(() => {
+    const seen = new Set<string>();
+    return categories.filter((c) => {
+      const key = `${c.type}_${c.name.trim().toLowerCase()}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [categories]);
+
   const resetAllFilters = () => {
     onFilterChange({
       searchQuery: "",
@@ -309,7 +319,7 @@ export default function PembukuanFilterBar({
                 className="w-full px-3 py-2 rounded-xl bg-[#0F1419] border border-slate-700 text-white text-xs focus:outline-none focus:border-blue-500 cursor-pointer"
               >
                 <option value="">Semua Kategori</option>
-                {categories.map((c) => (
+                {uniqueCategories.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name} ({c.type === "income" ? "Masuk" : "Keluar"})
                   </option>

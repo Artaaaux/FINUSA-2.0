@@ -89,7 +89,16 @@ export default function AddTransactionModal({
     }
   }, [editingTransaction, isOpen, categories, accounts]);
 
-  const availableCategories = categories.filter((c) => c.type === (type === "income" ? "income" : "expense"));
+  const availableCategories = React.useMemo(() => {
+    const filtered = categories.filter((c) => c.type === (type === "income" ? "income" : "expense"));
+    const seen = new Set<string>();
+    return filtered.filter((c) => {
+      const lower = c.name.trim().toLowerCase();
+      if (seen.has(lower)) return false;
+      seen.add(lower);
+      return true;
+    });
+  }, [categories, type]);
 
   const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" || e.key === ",") {

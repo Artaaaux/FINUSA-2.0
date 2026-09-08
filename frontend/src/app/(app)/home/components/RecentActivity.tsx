@@ -82,10 +82,10 @@ export default function RecentActivity() {
           <p className="text-xs text-slate-400 mt-0.5">Catatan aktivitas pemasukan dan pengeluaran</p>
         </div>
         <Link
-          href="/pembukuan"
+          href="/catat"
           className="text-xs font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md px-1"
         >
-          Buka Buku Kas <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+          Buka Catat <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
         </Link>
       </div>
 
@@ -99,7 +99,7 @@ export default function RecentActivity() {
           </div>
           <p className="text-xs font-semibold text-slate-300">Belum Ada Transaksi Tercatat</p>
           <p className="text-[11px] text-slate-500 max-w-xs mx-auto">
-            Gunakan fitur Scan AI untuk scan struk otomatis atau catat transaksi manual di Buku Kas.
+            Gunakan fitur Scan AI untuk scan struk otomatis atau catat transaksi manual di Catat.
           </p>
           <div className="flex items-center justify-center gap-2 pt-1">
             <Link
@@ -109,7 +109,7 @@ export default function RecentActivity() {
               Scan Struk AI
             </Link>
             <Link
-              href="/pembukuan"
+              href="/catat"
               className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold transition-colors"
             >
               Catat Manual
