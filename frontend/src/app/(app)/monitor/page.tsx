@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { PeriodType, BudgetCategory, DashboardSummary, Account, Transaction, CashflowPoint, CategoryBreakdownPoint } from "./types";
+import { PeriodType, BudgetCategory, DashboardSummary, Transaction, CashflowPoint, CategoryBreakdownPoint } from "./types";
 import MonitorHeader from "./components/MonitorHeader";
 import KpiCards from "./components/KpiCards";
 import IncomeExpenseChart from "./components/IncomeExpenseChart";

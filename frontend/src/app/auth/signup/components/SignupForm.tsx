@@ -176,7 +176,7 @@ export function SignupForm() {
         </p>
 
         <p className="text-slate-400 text-xs mb-6">
-          Silakan buka inbox email Anda dan klik tombol <strong>"Aktifkan Akun FINUSA"</strong> untuk memverifikasi akun sebelum bisa masuk ke dashboard.
+          Silakan buka inbox email Anda dan klik tombol <strong>&quot;Aktifkan Akun FINUSA&quot;</strong> untuk memverifikasi akun sebelum bisa masuk ke dashboard.
         </p>
 
         {resendSent && (
