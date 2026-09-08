@@ -52,9 +52,9 @@ export function TurnstileWidget({
     onErrorRef.current = onError;
   });
 
-  // Default to Cloudflare Turnstile official testing key (Always Passes) if ENV key is not set
+  // Default to project Cloudflare Turnstile site key
   const siteKey =
-    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA";
+    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "0x4AAAAAAEstz02vdSvKNPY1";
 
   useEffect(() => {
     if (!siteKey || !containerRef.current) return;

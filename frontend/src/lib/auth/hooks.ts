@@ -57,7 +57,8 @@ export function useLogin() {
       setSuccess(true);
       return data;
     } catch (err: unknown) {
-      const errMsg = err instanceof Error ? err.message : "Terjadi kesalahan saat masuk. Silakan coba lagi.";
+      console.error("Login error detail:", err);
+      const errMsg = formatAuthError(err, "Terjadi kesalahan saat masuk. Silakan coba lagi.");
       setError(errMsg);
       throw err;
     } finally {
@@ -88,7 +89,8 @@ export function useForgotPassword() {
 
       setSent(true);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal mengirim email reset. Coba lagi.";
+      console.error("Forgot password error detail:", err);
+      const msg = formatAuthError(err, "Gagal mengirim email reset. Coba lagi.");
       setError(msg);
     } finally {
       setLoading(false);
@@ -96,6 +98,44 @@ export function useForgotPassword() {
   };
 
   return { resetPassword, loading, error, sent, setError };
+}
+
+function formatAuthError(err: unknown, defaultMessage: string): string {
+  let message = defaultMessage;
+
+  if (err && typeof err === "object") {
+    const anyErr = err as Record<string, unknown>;
+    if (typeof anyErr.message === "string" && anyErr.message.trim() !== "" && anyErr.message !== "{}") {
+      message = anyErr.message;
+    } else if (typeof anyErr.msg === "string" && anyErr.msg.trim() !== "" && anyErr.msg !== "{}") {
+      message = anyErr.msg;
+    } else if (typeof anyErr.error_description === "string" && anyErr.error_description.trim() !== "") {
+      message = anyErr.error_description;
+    } else if (anyErr.status === 500 || anyErr.code === 500) {
+      message = "Terjadi kesalahan pada database Supabase (Database error).";
+    }
+  } else if (typeof err === "string" && err.trim() !== "" && err !== "{}") {
+    message = err;
+  }
+
+  const lower = message.toLowerCase();
+  if (lower.includes("user already registered")) {
+    return "Email ini sudah terdaftar. Silakan langsung masuk atau gunakan opsi Lupa Password.";
+  }
+  if (lower.includes("captcha")) {
+    return "Verifikasi CAPTCHA gagal atau kedaluwarsa. Silakan coba kembali.";
+  }
+  if (lower.includes("invalid login credentials")) {
+    return "Email atau password yang Anda masukkan salah.";
+  }
+  if (lower.includes("email not confirmed")) {
+    return "Email Anda belum dikonfirmasi. Silakan periksa inbox email Anda untuk mengaktifkan akun.";
+  }
+  if (lower.includes("database error") || message === "{}") {
+    return "Terjadi kendala pada database Supabase saat menyimpan pengguna baru. Silakan periksa SQL trigger database.";
+  }
+
+  return message;
 }
 
 export function useSignup() {
@@ -125,7 +165,8 @@ export function useSignup() {
       setSuccess(true);
       return data;
     } catch (err: unknown) {
-      const errMsg = err instanceof Error ? err.message : "Terjadi kesalahan saat mendaftar. Silakan coba lagi.";
+      console.error("Signup error detail:", err);
+      const errMsg = formatAuthError(err, "Terjadi kesalahan saat mendaftar. Silakan coba lagi.");
       setError(errMsg);
       throw err;
     } finally {
@@ -158,7 +199,8 @@ export function useResendVerification() {
       if (resendErr) throw resendErr;
       setSent(true);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal mengirim ulang email verifikasi.";
+      console.error("Resend error detail:", err);
+      const msg = formatAuthError(err, "Gagal mengirim ulang email verifikasi.");
       setError(msg);
     } finally {
       setLoading(false);
@@ -195,10 +237,8 @@ export function useGoogleAuth() {
 
       return data;
     } catch (err: unknown) {
-      const errMsg =
-        err instanceof Error
-          ? err.message
-          : "Gagal menghubungkan ke Google. Silakan coba lagi.";
+      console.error("Google auth error detail:", err);
+      const errMsg = formatAuthError(err, "Gagal menghubungkan ke Google. Silakan coba lagi.");
       setError(errMsg);
       throw err;
     } finally {
