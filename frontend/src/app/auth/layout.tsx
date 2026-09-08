@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { AnimatedBackground } from "@/shared/components/ui/animated-background";
 
 export default function AuthLayout({
   children,
@@ -8,7 +9,8 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-premium bg-bg-dark min-h-screen w-full flex flex-col justify-center items-center p-4 sm:p-6 md:p-8 relative select-none">
+    <div className="bg-bg-dark min-h-screen w-full flex flex-col justify-center items-center p-4 sm:p-6 md:p-8 relative select-none overflow-hidden">
+      <AnimatedBackground />
       {/* Floating Home Button */}
       <div className="absolute top-4 left-4 sm:top-6 sm:left-6 z-10">
         <Link

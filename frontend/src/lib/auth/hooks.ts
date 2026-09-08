@@ -68,6 +68,36 @@ export function useLogin() {
   return { login, loading, error, success, setError };
 }
 
+export function useForgotPassword() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [sent, setSent] = useState(false);
+
+  const resetPassword = async (email: string) => {
+    setLoading(true);
+    setError(null);
+    setSent(false);
+
+    try {
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(
+        email,
+        { redirectTo: `${window.location.origin}/auth/callback` }
+      );
+
+      if (resetError) throw resetError;
+
+      setSent(true);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Gagal mengirim email reset. Coba lagi.";
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { resetPassword, loading, error, sent, setError };
+}
+
 export function useSignup() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

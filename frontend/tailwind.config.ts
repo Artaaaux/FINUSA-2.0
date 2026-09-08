@@ -5,7 +5,7 @@ const config: Config = {
   darkMode: ["class"],
   content: [
     "./src/app/**/*.{ts,tsx}",
-    "./src/pages/**/*.{ts,tsx}",
+    "./src/components/**/*.{ts,tsx}",
     "./src/shared/**/*.{ts,tsx}",
   ],
   theme: {
@@ -76,6 +76,10 @@ const config: Config = {
         "dark-sm": "0 2px 8px rgba(0,0,0,0.1)",
         "dark-md": "0 4px 16px rgba(0,0,0,0.12)",
         "dark-lg": "0 8px 24px rgba(0,0,0,0.15)",
+        "premium-blue": "0 0 20px rgba(37,99,235,0.15)",
+        "premium-emerald": "0 0 20px rgba(16,185,129,0.15)",
+        "premium-red": "0 0 20px rgba(239,68,68,0.15)",
+        "premium-purple": "0 0 20px rgba(167,139,250,0.15)",
       },
       keyframes: {
         "accordion-down": {
@@ -86,10 +90,16 @@ const config: Config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "dot-blink": {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.2" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "dot-blink": "dot-blink 1.5s ease-in-out infinite",
       },
     },
   },

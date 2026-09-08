@@ -1,5 +1,3 @@
-import { Heart } from "lucide-react";
-
 const footerColumns = [
   {
     title: "FITUR",
@@ -53,7 +51,7 @@ export function Footer() {
               FINUSA
             </a>
             <p className="mt-3 text-sm leading-relaxed text-gray-400">
-              Finance Nusantara — solusi literasi keuangan untuk mahasiswa &
+              Finance Nusantara, solusi literasi keuangan untuk mahasiswa &
               UMKM Indonesia.
             </p>
           </div>

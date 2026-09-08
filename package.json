@@ -1,1 +1,1 @@
-{"name":"finusa-monorepo","version":"1.0.0","private":true,"workspaces":["frontend","backend","shared"],"scripts":{"dev":"npm run dev --workspace=frontend","build":"npm run build --workspace=frontend","start":"npm run start --workspace=frontend"},"dependencies":{"lenis":"^1.3.25"}}
+{"name":"finusa-monorepo","version":"1.0.0","private":true,"workspaces":["frontend","backend","shared"],"scripts":{"dev":"npm run dev --workspace=frontend","build":"npm run build --workspace=frontend","start":"npm run start --workspace=frontend"}}

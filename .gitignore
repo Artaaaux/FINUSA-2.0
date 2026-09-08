@@ -6,3 +6,10 @@ dist
 .env.local
 .vercel
 *.tsbuildinfo
+
+# backend
+backend/node_modules
+backend/dist
+
+# debug
+debug/

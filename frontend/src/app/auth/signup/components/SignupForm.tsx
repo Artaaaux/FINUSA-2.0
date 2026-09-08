@@ -140,7 +140,7 @@ export function SignupForm() {
       await signup(email, password);
       // Wait a moment for UX, then redirect
       setTimeout(() => {
-        router.push("/dashboard");
+        router.push("/home");
       }, 1500);
     } catch {
       // Error is set in signup hook

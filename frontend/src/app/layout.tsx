@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import { Nunito } from "next/font/google";
+import { Nunito, Roboto_Mono } from "next/font/google";
 import { ThemeProvider } from "@/shared/context/ThemeContext";
-import { SmoothScrollProvider } from "@/shared/components/providers/SmoothScrollProvider";
-import "lenis/dist/lenis.css";
 import "./globals.css";
 
 const nunito = Nunito({
@@ -10,6 +8,13 @@ const nunito = Nunito({
   weight: ["400", "600", "700"],
   display: "swap",
   variable: "--font-nunito",
+});
+
+const robotoMono = Roboto_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  display: "swap",
+  variable: "--font-roboto-mono",
 });
 
 export const metadata: Metadata = {
@@ -24,10 +29,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" suppressHydrationWarning className={`dark ${nunito.variable}`}>
+    <html lang="id" suppressHydrationWarning className={`dark ${nunito.variable} ${robotoMono.variable}`}>
       <body className="min-h-screen bg-bg-dark font-sans text-white">
         <ThemeProvider>
-          <SmoothScrollProvider>{children}</SmoothScrollProvider>
+          {children}
         </ThemeProvider>
       </body>
     </html>

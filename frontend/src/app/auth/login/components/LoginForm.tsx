@@ -77,7 +77,7 @@ export function LoginForm() {
       await login(email, password);
       // Wait a brief moment to show success state, then redirect
       setTimeout(() => {
-        router.push("/dashboard");
+        router.push("/home");
       }, 800);
     } catch {
       // Error handled by hook, displayed in UI
@@ -245,7 +245,7 @@ export function LoginForm() {
         Belum punya akun?{" "}
         <Link
           href="/auth/signup"
-          className="text-accent-cyan hover:text-accent-green hover:underline font-medium transition-colors duration-200"
+          className="text-accent-cyan  hover:underline font-medium transition-colors duration-200"
         >
           Daftar
         </Link>
