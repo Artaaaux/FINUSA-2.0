@@ -140,7 +140,11 @@ export function LoginForm() {
             </div>
             <div className="min-w-0 flex-1">
               <p className="font-bold text-xs text-rose-400 uppercase tracking-wider">Fail</p>
-              <p className="text-slate-300 text-xs mt-0.5 truncate">{error || urlErrorMsg}</p>
+              <p className="text-slate-300 text-xs mt-0.5 leading-relaxed">
+                {(error || urlErrorMsg)?.toLowerCase().includes("email not confirmed")
+                  ? "Email Anda belum dikonfirmasi. Silakan periksa inbox email Anda untuk mengaktifkan akun."
+                  : error || urlErrorMsg}
+              </p>
             </div>
           </motion.div>
         )}

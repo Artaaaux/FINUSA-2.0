@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Mail, Lock, Eye, EyeOff, Loader2, AlertCircle, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useSignup } from "@/lib/auth/hooks";
+import { useSignup, useResendVerification } from "@/lib/auth/hooks";
 import { GoogleAuthButton } from "@/shared/components/auth/GoogleAuthButton";
 import { TurnstileWidget } from "@/shared/components/auth/TurnstileWidget";
 import logoImg from "../../../../../public/Assets/Logo.png";
@@ -13,7 +13,9 @@ import logoImg from "../../../../../public/Assets/Logo.png";
 export function SignupForm() {
   const router = useRouter();
   const { signup, loading, error, success } = useSignup();
+  const { resend, loading: resendLoading, sent: resendSent, error: resendError } = useResendVerification();
   const [captchaToken, setCaptchaToken] = useState<string>("");
+  const [isWaitingVerification, setIsWaitingVerification] = useState(false);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -140,15 +142,77 @@ export function SignupForm() {
     }
 
     try {
-      await signup(email, password, captchaToken);
-      // Wait a moment for UX, then redirect
-      setTimeout(() => {
-        router.push("/home");
-      }, 1500);
+      const data = await signup(email, password, captchaToken);
+      if (data?.session) {
+        setTimeout(() => {
+          router.push("/home");
+        }, 1200);
+      } else {
+        setIsWaitingVerification(true);
+      }
     } catch {
       // Error is set in signup hook
     }
   };
+
+  if (isWaitingVerification) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="w-full bg-[#1a1f3a] border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-[0_8px_24px_rgba(0,0,0,0.15)] relative overflow-hidden text-center"
+      >
+        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-blue-600 via-accent-cyan to-accent-green" />
+
+        <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+          <Mail className="w-8 h-8 animate-bounce" />
+        </div>
+
+        <h2 className="text-2xl font-bold text-white mb-2">Cek Email Anda!</h2>
+        <p className="text-slate-300 text-sm mb-4 leading-relaxed">
+          Tautan verifikasi telah dikirimkan ke alamat email:
+          <br />
+          <span className="font-semibold text-accent-cyan break-all">{email}</span>
+        </p>
+
+        <p className="text-slate-400 text-xs mb-6">
+          Silakan buka inbox email Anda dan klik tombol <strong>"Aktifkan Akun FINUSA"</strong> untuk memverifikasi akun sebelum bisa masuk ke dashboard.
+        </p>
+
+        {resendSent && (
+          <div className="mb-4 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs">
+            Link verifikasi baru telah berhasil dikirim ulang ke email Anda!
+          </div>
+        )}
+        {resendError && (
+          <div className="mb-4 p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs">
+            {resendError}
+          </div>
+        )}
+
+        <div className="space-y-3">
+          <button
+            type="button"
+            onClick={() => resend(email)}
+            disabled={resendLoading || resendSent}
+            className="w-full h-11 flex items-center justify-center font-medium text-sm text-slate-200 bg-[#0F172A] hover:bg-[#1E293B] border border-slate-700/80 rounded-lg transition-all duration-200 disabled:opacity-50"
+          >
+            {resendLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin mr-2" />
+            ) : null}
+            {resendSent ? "Email Terkirim Ulang" : "Kirim Ulang Email Verifikasi"}
+          </button>
+
+          <Link
+            href="/auth/login"
+            className="w-full h-11 flex items-center justify-center font-semibold text-white bg-[#2563EB] hover:bg-blue-600 rounded-lg transition-all duration-200 text-sm"
+          >
+            Sudah Verifikasi? Masuk Sekarang
+          </Link>
+        </div>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div

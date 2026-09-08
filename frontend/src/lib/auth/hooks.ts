@@ -136,6 +136,38 @@ export function useSignup() {
   return { signup, loading, error, success, setError };
 }
 
+export function useResendVerification() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [sent, setSent] = useState(false);
+
+  const resend = async (email: string) => {
+    setLoading(true);
+    setError(null);
+    setSent(false);
+
+    try {
+      const { error: resendErr } = await supabase.auth.resend({
+        type: "signup",
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+
+      if (resendErr) throw resendErr;
+      setSent(true);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Gagal mengirim ulang email verifikasi.";
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { resend, loading, error, sent, setError };
+}
+
 export function useGoogleAuth() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
