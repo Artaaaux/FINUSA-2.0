@@ -41,8 +41,20 @@ export function TurnstileWidget({
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
 
+  // Ref to hold callbacks to prevent widget reset on parent re-renders
+  const onVerifyRef = useRef(onVerify);
+  const onExpireRef = useRef(onExpire);
+  const onErrorRef = useRef(onError);
+
+  useEffect(() => {
+    onVerifyRef.current = onVerify;
+    onExpireRef.current = onExpire;
+    onErrorRef.current = onError;
+  });
+
+  // Default to Cloudflare Turnstile official testing key (Always Passes) if ENV key is not set
   const siteKey =
-    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "0x4AAAAAAEstz02vdSvKNPY1";
+    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA";
 
   useEffect(() => {
     if (!siteKey || !containerRef.current) return;
@@ -52,14 +64,7 @@ export function TurnstileWidget({
     const renderWidget = () => {
       if (!window.turnstile || !containerRef.current || !isMounted) return;
 
-      // Clear previous widget if any
-      if (widgetIdRef.current) {
-        try {
-          window.turnstile.remove(widgetIdRef.current);
-        } catch {
-          // ignore cleanup errors
-        }
-      }
+      if (widgetIdRef.current) return;
 
       try {
         const id = window.turnstile.render(containerRef.current, {
@@ -67,13 +72,13 @@ export function TurnstileWidget({
           theme: theme,
           size: size,
           callback: (token: string) => {
-            if (isMounted) onVerify(token);
+            if (isMounted && onVerifyRef.current) onVerifyRef.current(token);
           },
           "expired-callback": () => {
-            if (isMounted && onExpire) onExpire();
+            if (isMounted && onExpireRef.current) onExpireRef.current();
           },
           "error-callback": (err: unknown) => {
-            if (isMounted && onError) onError(err);
+            if (isMounted && onErrorRef.current) onErrorRef.current(err);
           },
         });
         widgetIdRef.current = id;
@@ -108,12 +113,13 @@ export function TurnstileWidget({
       if (widgetIdRef.current && window.turnstile) {
         try {
           window.turnstile.remove(widgetIdRef.current);
+          widgetIdRef.current = null;
         } catch {
           // ignore
         }
       }
     };
-  }, [siteKey, theme, size, onVerify, onExpire, onError]);
+  }, [siteKey, theme, size]);
 
   if (!siteKey) return null;
 
