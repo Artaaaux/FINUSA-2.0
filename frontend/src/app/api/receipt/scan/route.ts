@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
     // 2. Create high-compression thumbnail for storage saving (~500x500px, ~40-80KB)
     const storageImage = await createStorageReceiptImage(imageBuffer);
 
-    // 3. Extract OCR Data using GitHub Models Vision / Claude 3.5 Sonnet
+    // 3. Extract Receipt Data using NVIDIA Multimodal Vision AI Model
     const extractedData = await extractReceiptData(
       optimizedOcr.base64,
       optimizedOcr.mimeType || mimeType

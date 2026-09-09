@@ -4,7 +4,6 @@ import { useState, useCallback, useEffect } from "react";
 import { supabase } from "@/lib/auth/supabase";
 import { useAuth } from "@/lib/auth/hooks";
 import type { ExtractedReceiptData, ReceiptItem } from "@/shared/lib/receipt/types";
-import { generateSimulatedReceipt } from "@/shared/lib/receipt/sample";
 import { useImageOptimizer } from "./useImageOptimizer";
 
 export type ScannerStep =
@@ -203,11 +202,14 @@ export function useReceiptScanner() {
 
       setStep("confirm");
     } catch (err: unknown) {
-      console.warn("Scan processing error:", err);
-      // Fallback to simulated extraction if API failed completely
-      const fallback = generateSimulatedReceipt();
-      setExtractedData(fallback);
-      setStep("confirm");
+      console.error("Scan processing error:", err);
+      const errorObj = err as Error;
+      setErrorMessage(
+        errorObj.message ||
+          "Gagal memproses struk belanja. Periksa konfigurasi NVIDIA_API_KEY atau koneksi internet Anda."
+      );
+      setErrorType("ocr_failed");
+      setStep("error");
     } finally {
       setIsScanning(false);
     }

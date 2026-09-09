@@ -6,9 +6,13 @@ export interface NvidiaModelsConfig {
   maxRetries?: number;
 }
 
+export type MessageContentPart =
+  | { type: "text"; text: string }
+  | { type: "image_url"; image_url: { url: string } };
+
 export interface ChatMessage {
   role: "system" | "user" | "assistant";
-  content: string;
+  content: string | MessageContentPart[];
 }
 
 export class NvidiaModelsError extends Error {
@@ -26,7 +30,7 @@ export class NvidiaModelsError extends Error {
 }
 
 /**
- * Client for NVIDIA NIM API endpoint with automatic fast-model fallback
+ * Client for NVIDIA NIM API endpoint with vision & fast-model fallback
  */
 export class NvidiaModelsClient {
   private apiKey: string;
@@ -48,8 +52,8 @@ export class NvidiaModelsClient {
     this.model =
       config.model ||
       process.env.NVIDIA_API_MODEL ||
-      "meta/llama-3.1-70b-instruct";
-    this.timeoutMs = config.timeoutMs || 25000;
+      "meta/llama-3.2-11b-vision-instruct";
+    this.timeoutMs = config.timeoutMs || 15000;
     this.maxRetries = config.maxRetries ?? 1;
   }
 
@@ -58,7 +62,53 @@ export class NvidiaModelsClient {
   }
 
   /**
-   * Send a completion request with automatic retry and rate-limiting handling
+   * Directly analyze an image using NVIDIA Vision Multimodal Model
+   */
+  public async analyzeImage(
+    base64Image: string,
+    mimeType = "image/jpeg",
+    prompt: string,
+    systemPrompt?: string
+  ): Promise<string> {
+    const imageUrl = base64Image.startsWith("data:")
+      ? base64Image
+      : `data:${mimeType};base64,${base64Image}`;
+
+    const messages: ChatMessage[] = [];
+
+    if (systemPrompt) {
+      messages.push({
+        role: "system",
+        content: systemPrompt,
+      });
+    }
+
+    messages.push({
+      role: "user",
+      content: [
+        { type: "text", text: prompt },
+        { type: "image_url", image_url: { url: imageUrl } },
+      ],
+    });
+
+    try {
+      return await this.callWithRetry(messages, this.model);
+    } catch (primaryErr: unknown) {
+      const fallbackVision = "meta/llama-3.2-90b-vision-instruct";
+      if (this.model !== fallbackVision) {
+        console.warn(`Primary vision model (${this.model}) failed, attempting fallback to ${fallbackVision}:`, primaryErr);
+        try {
+          return await this.callWithRetry(messages, fallbackVision, 0, 15000);
+        } catch (fallbackErr: unknown) {
+          console.error(`Fallback vision model (${fallbackVision}) also failed:`, fallbackErr);
+        }
+      }
+      throw primaryErr;
+    }
+  }
+
+  /**
+   * Send a text completion request with automatic retry and fallback
    */
   public async analyzeText(
     prompt: string,
@@ -81,8 +131,7 @@ export class NvidiaModelsClient {
     try {
       return await this.callWithRetry(messages, this.model);
     } catch (primaryErr: unknown) {
-      // If primary model failed or timed out, and primary was not already 8b, fallback to fast 8B model
-      const fallbackModel = "meta/llama-3.1-8b-instruct";
+      const fallbackModel = "deepseek-ai/deepseek-v4-flash-0731";
       if (this.model !== fallbackModel) {
         console.warn(`Primary model (${this.model}) failed, falling back to ${fallbackModel}:`, primaryErr);
         try {
@@ -119,7 +168,6 @@ export class NvidiaModelsClient {
           messages,
           temperature: 0.1,
           max_tokens: 2048,
-          response_format: { type: "json_object" },
         }),
         signal: controller.signal,
       });
@@ -128,14 +176,18 @@ export class NvidiaModelsClient {
 
       if (!response.ok) {
         const errorText = await response.text().catch(() => "");
-        let errorJson: { error?: { message?: string; code?: string } } = {};
+        let errorJson: { error?: { message?: string; code?: string }; detail?: string } = {};
         try {
           errorJson = JSON.parse(errorText);
         } catch {
           // ignore
         }
 
-        const errorMessage = errorJson.error?.message || errorText || `HTTP ${response.status} ${response.statusText}`;
+        const errorMessage =
+          errorJson.error?.message ||
+          errorJson.detail ||
+          errorText ||
+          `HTTP ${response.status} ${response.statusText}`;
 
         // Rate Limit (429) -> Check Retry-After or wait 3s
         if (response.status === 429 && attempt < this.maxRetries) {
