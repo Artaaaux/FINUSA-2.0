@@ -21,6 +21,7 @@ export type ScannerErrorType =
   | "ocr_failed"
   | "network"
   | "unauthorized"
+  | "not_receipt"
   | "general";
 
 export interface QuotaInfo {
@@ -182,11 +183,17 @@ export function useReceiptScanner() {
       const json = await res.json();
 
       if (!res.ok) {
-        throw new Error(json.error || "Gagal memproses struk belanja.");
+        const error = new Error(json.error || "Gagal memproses struk belanja.");
+        (error as Error & { code?: string }).code = json.code;
+        throw error;
       }
 
-      if (!json.extractedData) {
-        throw new Error("Data struk tidak dapat dikenali.");
+      if (!json.extractedData || json.extractedData.isReceipt === false || json.extractedData.confidence < 40) {
+        const reason = json.extractedData?.rejectionReason || "Foto yang diambil bukan struk belanja atau bukti transaksi keuangan.";
+        setErrorMessage(reason);
+        setErrorType(reason.toLowerCase().includes("buram") || reason.toLowerCase().includes("terbaca") ? "blurry" : "not_receipt");
+        setStep("error");
+        return;
       }
 
       setExtractedData(json.extractedData);
@@ -194,21 +201,21 @@ export function useReceiptScanner() {
         setOptimizedImage(json.optimizedImage);
       }
 
-      // Check confidence score
-      if (json.extractedData.confidence < 40) {
-        setErrorMessage("Gambar struk kurang jelas atau buram. Kamu bisa foto ulang atau edit data manual di bawah ini.");
-        setErrorType("blurry");
-      }
-
       setStep("confirm");
     } catch (err: unknown) {
       console.error("Scan processing error:", err);
-      const errorObj = err as Error;
+      const errorObj = err as Error & { code?: string };
       setErrorMessage(
         errorObj.message ||
           "Gagal memproses struk belanja. Periksa konfigurasi NVIDIA_API_KEY atau koneksi internet Anda."
       );
-      setErrorType("ocr_failed");
+      if (errorObj.code === "NOT_A_RECEIPT") {
+        setErrorType("not_receipt");
+      } else if (errorObj.code === "RECEIPT_ILLEGIBLE") {
+        setErrorType("blurry");
+      } else {
+        setErrorType("ocr_failed");
+      }
       setStep("error");
     } finally {
       setIsScanning(false);

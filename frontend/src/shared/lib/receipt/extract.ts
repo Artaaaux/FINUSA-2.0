@@ -10,39 +10,57 @@ import { generateSimulatedReceipt } from "./sample";
 export type { ReceiptItem, ExtractedReceiptData };
 export { generateSimulatedReceipt };
 
-const RECEIPT_EXTRACTION_SYSTEM_PROMPT = `You are FINUSA AI, an expert financial data extraction assistant specialized in analyzing receipts, invoices, and payment proof (Indomaret, Alfamart, Supermarket, Restoran, Kafe, SPBU Pertamina, Apotek, etc.).
+const RECEIPT_EXTRACTION_SYSTEM_PROMPT = `You are FINUSA AI, an expert financial receipt verification and data extraction assistant.
 
-Analyze the receipt image or text carefully and return a single valid JSON object strictly matching this schema:
-{
-  "merchant": "Name of the store / merchant / merchant brand",
-  "merchantAddress": "Address or branch location if visible, or null",
-  "date": "Date of transaction in YYYY-MM-DD format (convert Indonesian months, e.g. 23 Ags 2024 -> 2024-08-23). If not found, use current date",
-  "time": "Time of transaction in HH:MM:SS or HH:MM format, or null",
-  "items": [
-    {
-      "name": "Item description or product name",
-      "quantity": 1,
-      "price": 15000,
-      "totalPrice": 15000
-    }
-  ],
-  "subtotal": 0,
-  "tax": 0,
-  "serviceCharge": 0,
-  "discount": 0,
-  "total": 0,
-  "paymentMethod": "Cash / QRIS / Debit / Credit / GoPay / OVO / ShopeePay / Transfer / Unknown",
-  "confidence": 95,
-  "suggestedCategory": "Makanan & Minuman | Belanja & Groceries | Transportasi | Utilitas & Tagihan | Kesehatan | Hiburan & Rekreasi | Operasional Usaha | Lainnya"
-}
+CRITICAL FIRST STEP - RECEIPT VERIFICATION:
+Carefully examine the visual content of the image before extracting any data.
+1. Determine whether the image contains an actual printed receipt, cash register slip, supermarket/store invoice, restaurant bill, or electronic payment proof (e-receipt, QRIS, or transfer screenshot).
+2. If the image is NOT a receipt (for example: photo of a room, bookshelf, furniture, person, selfie, clothing, pet, landscape, random objects, food without a bill, or document without financial transactions):
+   You MUST return strictly:
+   {
+     "isReceipt": false,
+     "confidence": 0,
+     "rejectionReason": "Foto bukan struk belanja atau bukti transaksi keuangan."
+   }
+   ABSOLUTELY DO NOT guess, fabricate, or hallucinate store names, items, or prices!
 
-MANDATORY RULES:
-1. Output ONLY the JSON object. Do NOT write any introduction, commentary, conversational text, or markdown headers (like **Receipt Analysis**).
-2. Start your response directly with '{' and end with '}'.
-3. Format all monetary amounts as clean numbers without currency symbols (Rp), dots, or commas (e.g. Rp 45.000 -> 45000, 36,000 -> 36000).
-4. If total is printed explicitly (Grand Total / Total Akhir / Bayar), make sure 'total' equals that final amount.
-5. If items list is blurry but total is clear, extract whatever items possible and ensure total matches.
-6. If the receipt is completely illegible or empty, set confidence to < 40 and total to 0.`;
+3. If the image contains a receipt but it is completely blurry, illegible, or unreadable:
+   You MUST return strictly:
+   {
+     "isReceipt": false,
+     "confidence": 0,
+     "rejectionReason": "Gambar struk terlalu buram atau tidak terbaca."
+   }
+
+4. ONLY if the image is a genuine, readable receipt or payment proof, return strictly:
+   {
+     "isReceipt": true,
+     "merchant": "Actual store or merchant name seen on receipt",
+     "merchantAddress": "Address if visible, or null",
+     "date": "YYYY-MM-DD",
+     "time": "HH:MM",
+     "items": [
+       {
+         "name": "Item name visible on receipt",
+         "quantity": 1,
+         "price": 0,
+         "totalPrice": 0
+       }
+     ],
+     "subtotal": 0,
+     "tax": 0,
+     "serviceCharge": 0,
+     "discount": 0,
+     "total": 0,
+     "paymentMethod": "Cash / QRIS / Debit / Credit / Transfer / Unknown",
+     "confidence": 95,
+     "suggestedCategory": "Makanan & Minuman | Belanja & Groceries | Transportasi | Utilitas & Tagihan | Kesehatan | Hiburan & Rekreasi | Operasional Usaha | Lainnya"
+   }
+
+STRICT RULES:
+1. Output ONLY a valid JSON object. No conversational prose or markdown wrap outside JSON.
+2. Format all prices and totals as raw numbers without currency symbols (Rp) or commas.
+3. NEVER invent dummy transactions if the photo is not a receipt.`;
 
 /**
  * Normalizes Indonesian date formats to ISO YYYY-MM-DD
@@ -361,37 +379,125 @@ async function performOcr(imageInput: string): Promise<string> {
  * Helper to construct ExtractedReceiptData from parsed JSON
  */
 function buildExtractedData(parsed: Record<string, unknown>): ExtractedReceiptData {
-  const items: ReceiptItem[] = Array.isArray(parsed.items)
-    ? parsed.items.map((item: Record<string, unknown>, idx: number) => {
-        const qty = cleanNumber(item.quantity) || 1;
-        const price = cleanNumber(item.price);
-        const totalPrice = cleanNumber(item.totalPrice) || qty * price;
-        return {
-          id: `item-${Date.now()}-${idx}`,
-          name: String(item.name || `Item ${idx + 1}`).trim(),
-          quantity: qty,
-          price: price || (qty > 0 ? Math.round(totalPrice / qty) : totalPrice),
-          totalPrice,
-        };
-      })
+  const isReceiptExplicit = parsed.isReceipt !== false && parsed.is_receipt !== false;
+  const rejectionReason = typeof parsed.rejectionReason === "string"
+    ? parsed.rejectionReason
+    : typeof parsed.rejection_reason === "string"
+    ? parsed.rejection_reason
+    : undefined;
+
+  // If the model explicitly identified this is not a receipt
+  if (!isReceiptExplicit) {
+    return {
+      isReceipt: false,
+      rejectionReason: rejectionReason || "Foto yang diambil bukan struk belanja atau bukti transaksi keuangan.",
+      merchant: "",
+      date: normalizeDate(),
+      category: "Lainnya",
+      items: [],
+      subtotal: 0,
+      tax: 0,
+      serviceCharge: 0,
+      discount: 0,
+      total: 0,
+      paymentMethod: "",
+      confidence: 0,
+      isSimulated: false,
+    };
+  }
+
+  // Handle nested objects if the model put details in receiptDetails, receipt, or data
+  const data = (
+    parsed.receiptDetails && typeof parsed.receiptDetails === "object"
+      ? parsed.receiptDetails
+      : parsed.receipt && typeof parsed.receipt === "object"
+      ? parsed.receipt
+      : parsed.data && typeof parsed.data === "object"
+      ? parsed.data
+      : parsed
+  ) as Record<string, unknown>;
+
+  const rawItems = Array.isArray(data.items)
+    ? data.items
+    : Array.isArray(parsed.items)
+    ? parsed.items
     : [];
 
-  const total = cleanNumber(parsed.total);
-  const subtotal = cleanNumber(parsed.subtotal) || (items.length > 0 ? items.reduce((acc, i) => acc + i.totalPrice, 0) : total);
-  const tax = cleanNumber(parsed.tax);
-  const serviceCharge = cleanNumber(parsed.serviceCharge);
-  const discount = cleanNumber(parsed.discount);
+  const items: ReceiptItem[] = rawItems.map((item: Record<string, unknown>, idx: number) => {
+    const qty = cleanNumber(item.quantity || item.qty) || 1;
+    const price = cleanNumber(item.unitPrice || item.price);
+    const totalPrice = cleanNumber(item.totalPrice || item.subtotal || item.total) || qty * price;
+    return {
+      id: `item-${Date.now()}-${idx}`,
+      name: String(item.name || item.description || item.itemName || `Item ${idx + 1}`).trim(),
+      quantity: qty,
+      price: price || (qty > 0 ? Math.round(totalPrice / qty) : totalPrice),
+      totalPrice,
+    };
+  });
 
-  const merchant = String(parsed.merchant || "Toko / Merchant").trim();
-  const category = typeof parsed.suggestedCategory === "string" && parsed.suggestedCategory.trim()
+  const total = cleanNumber(data.total || parsed.total || data.grandTotal);
+  const subtotal = cleanNumber(data.subTotal || data.subtotal || parsed.subTotal || parsed.subtotal) ||
+    (items.length > 0 ? items.reduce((acc, i) => acc + i.totalPrice, 0) : total);
+  const tax = cleanNumber(data.tax || parsed.tax);
+  const serviceCharge = cleanNumber(data.serviceCharge || parsed.serviceCharge);
+  const discount = cleanNumber(data.discount || parsed.discount);
+
+  const rawMerchant = typeof data.storeName === "string"
+    ? data.storeName.trim()
+    : typeof data.merchant === "string"
+    ? data.merchant.trim()
+    : typeof parsed.merchant === "string"
+    ? parsed.merchant.trim()
+    : "";
+  const merchant = rawMerchant || "Toko / Merchant";
+  const category = typeof data.suggestedCategory === "string" && data.suggestedCategory.trim()
+    ? data.suggestedCategory.trim()
+    : typeof parsed.suggestedCategory === "string" && parsed.suggestedCategory.trim()
     ? parsed.suggestedCategory.trim()
     : detectCategory(merchant, items);
 
+  let parsedConfidence = parsed.confidence !== undefined
+    ? cleanNumber(parsed.confidence)
+    : data.confidence !== undefined
+    ? cleanNumber(data.confidence)
+    : 85;
+
+  // If confidence was given on a 0.0 - 1.0 scale, convert to percentage (e.g. 0.95 -> 95, 1 -> 100)
+  if (parsedConfidence > 0 && parsedConfidence <= 1) {
+    parsedConfidence = Math.round(parsedConfidence * 100);
+  }
+
+  // Sanity check: If total is 0, no items, or confidence is very low, treat as invalid receipt
+  if ((items.length === 0 && total <= 0) || parsedConfidence < 30) {
+    return {
+      isReceipt: false,
+      rejectionReason: rejectionReason || "Tidak ditemukan rincian transaksi struk belanja yang valid.",
+      merchant: rawMerchant,
+      date: normalizeDate(typeof parsed.date === "string" ? parsed.date : undefined),
+      category: "Lainnya",
+      items: [],
+      subtotal: 0,
+      tax: 0,
+      serviceCharge: 0,
+      discount: 0,
+      total: 0,
+      paymentMethod: "",
+      confidence: parsedConfidence,
+      isSimulated: false,
+    };
+  }
+
   return {
+    isReceipt: true,
     merchant,
-    merchantAddress: typeof parsed.merchantAddress === "string" ? parsed.merchantAddress : undefined,
-    date: normalizeDate(typeof parsed.date === "string" ? parsed.date : undefined),
-    time: typeof parsed.time === "string" ? parsed.time : new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }),
+    merchantAddress: typeof data.merchantAddress === "string"
+      ? data.merchantAddress
+      : typeof parsed.merchantAddress === "string"
+      ? parsed.merchantAddress
+      : undefined,
+    date: normalizeDate(typeof data.transactionDate === "string" ? data.transactionDate : typeof data.date === "string" ? data.date : typeof parsed.date === "string" ? parsed.date : undefined),
+    time: typeof data.transactionTime === "string" ? data.transactionTime : typeof data.time === "string" ? data.time : typeof parsed.time === "string" ? parsed.time : new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }),
     category,
     items,
     subtotal,
@@ -399,8 +505,8 @@ function buildExtractedData(parsed: Record<string, unknown>): ExtractedReceiptDa
     serviceCharge,
     discount,
     total: total || subtotal + tax + serviceCharge - discount,
-    paymentMethod: typeof parsed.paymentMethod === "string" ? parsed.paymentMethod : "QRIS",
-    confidence: Math.min(100, Math.max(0, cleanNumber(parsed.confidence) || 90)),
+    paymentMethod: typeof data.paymentMethod === "string" ? data.paymentMethod : typeof parsed.paymentMethod === "string" ? parsed.paymentMethod : "QRIS",
+    confidence: Math.min(100, Math.max(0, parsedConfidence)),
     notes: undefined,
     isSimulated: false,
   };
@@ -425,7 +531,7 @@ export async function extractReceiptData(
 
   // PRIMARY METHOD: Direct NVIDIA Multimodal Vision Analysis (Fast ~2-4s, Serverless-safe, No Tesseract worker issues)
   try {
-    const visionPrompt = `Extract the transaction data from this receipt image. Output strictly the requested JSON object starting with '{' and ending with '}'. Do NOT write any introduction, commentary, or markdown text outside the JSON.`;
+    const visionPrompt = `Verify and extract data from this image. If this image is NOT an actual receipt or invoice, output {"isReceipt": false, "confidence": 0, "rejectionReason": "Foto bukan struk belanja atau bukti transaksi keuangan."}. Do NOT invent data. Output strictly the requested JSON object starting with '{' and ending with '}'.`;
     const rawResponse = await client.analyzeImage(
       imageUrl,
       mimeType,
@@ -446,7 +552,7 @@ export async function extractReceiptData(
         throw new Error("Gagal membaca teks dari gambar struk (OCR Kosong). Pastikan gambar struk jelas dan tidak blur.");
       }
 
-      const textPrompt = `Below is raw OCR text extracted from a receipt. Structurize this text into the requested JSON schema:\n\n"""\n${ocrText}\n"""`;
+      const textPrompt = `Below is raw OCR text extracted from a potential receipt. If this text is NOT from an actual receipt or invoice, return {"isReceipt": false, "confidence": 0, "rejectionReason": "Teks tidak mencerminkan transaksi struk belanja."}. Otherwise, structurize this text into the requested JSON schema:\n\n"""\n${ocrText}\n"""`;
       const rawTextResponse = await client.analyzeText(
         textPrompt,
         RECEIPT_EXTRACTION_SYSTEM_PROMPT
@@ -461,5 +567,6 @@ export async function extractReceiptData(
     }
   }
 }
+
 
 

@@ -42,6 +42,15 @@ export default function ErrorScreen({
           icon: <HardDrive className="w-8 h-8 text-rose-400" />,
           iconBg: "bg-rose-500/10 border-rose-500/20",
         };
+      case "not_receipt":
+        return {
+          title: "Bukan Struk Belanja",
+          desc:
+            errorMessage ||
+            "Foto yang diambil tidak terdeteksi sebagai struk belanja atau bukti transaksi keuangan. Harap arahkan kamera ke struk fisik atau e-receipt yang valid.",
+          icon: <Camera className="w-8 h-8 text-rose-400" />,
+          iconBg: "bg-rose-500/10 border-rose-500/20",
+        };
       case "ocr_failed":
         return {
           title: "Gagal Membaca Data Struk",

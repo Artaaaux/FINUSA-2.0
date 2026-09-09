@@ -7,6 +7,8 @@ export interface ReceiptItem {
 }
 
 export interface ExtractedReceiptData {
+  isReceipt?: boolean;
+  rejectionReason?: string;
   merchant: string;
   merchantAddress?: string;
   date: string; // YYYY-MM-DD

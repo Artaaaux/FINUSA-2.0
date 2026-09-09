@@ -76,6 +76,24 @@ export async function POST(req: NextRequest) {
       optimizedOcr.mimeType || mimeType
     );
 
+    // 4. Validate if image is actually a valid receipt
+    if (extractedData.isReceipt === false || extractedData.confidence < 40) {
+      const isBlurry =
+        extractedData.rejectionReason?.toLowerCase().includes("buram") ||
+        extractedData.rejectionReason?.toLowerCase().includes("blurry") ||
+        extractedData.rejectionReason?.toLowerCase().includes("terbaca");
+
+      return NextResponse.json(
+        {
+          success: false,
+          error: extractedData.rejectionReason || "Foto yang diambil bukan struk belanja atau bukti pembayaran yang valid.",
+          code: isBlurry ? "RECEIPT_ILLEGIBLE" : "NOT_A_RECEIPT",
+          extractedData,
+        },
+        { status: 422 }
+      );
+    }
+
     return NextResponse.json({
       success: true,
       extractedData,
