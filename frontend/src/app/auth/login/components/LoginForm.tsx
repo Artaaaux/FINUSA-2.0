@@ -7,12 +7,15 @@ import { Mail, Lock, Eye, EyeOff, Loader2, CheckCircle2, XCircle } from "lucide-
 import { motion, AnimatePresence } from "framer-motion";
 import { useLogin } from "@/lib/auth/hooks";
 import { GoogleAuthButton } from "@/shared/components/auth/GoogleAuthButton";
+import { TurnstileWidget } from "@/shared/components/auth/TurnstileWidget";
 import logoImg from "../../../../../public/Assets/Logo.png";
 
 export function LoginForm() {
   const router = useRouter();
-  const { login, loading, error, success } = useLogin();
+  const { login, loading, error, success, setError } = useLogin();
   const [urlErrorMsg, setUrlErrorMsg] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string>("");
+  const [captchaResetKey, setCaptchaResetKey] = useState<number>(0);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -89,16 +92,24 @@ export function LoginForm() {
       return;
     }
 
+    if (!captchaToken && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) {
+      setError("Silakan tunggu atau selesaikan verifikasi CAPTCHA terlebih dahulu.");
+      return;
+    }
+
     setUrlErrorMsg(null);
 
     try {
-      await login(email, password);
+      await login(email, password, captchaToken);
       // Wait a brief moment to show success state, then redirect
       setTimeout(() => {
         router.push("/home");
       }, 800);
     } catch {
       // Error handled by hook, displayed in UI
+      // Reset Turnstile CAPTCHA agar token baru digenerate untuk percobaan berikutnya
+      setCaptchaResetKey((prev) => prev + 1);
+      setCaptchaToken("");
     }
   };
 
@@ -260,11 +271,20 @@ export function LoginForm() {
           </AnimatePresence>
         </div>
 
+        {/* Anti-Bot Cloudflare Turnstile CAPTCHA */}
+        <TurnstileWidget
+          key={captchaResetKey}
+          resetTrigger={captchaResetKey}
+          onVerify={(token) => setCaptchaToken(token)}
+          onExpire={() => setCaptchaToken("")}
+          onError={() => setCaptchaToken("")}
+        />
+
         {/* Submit Button */}
         <button
           type="submit"
           disabled={loading || success}
-          className="w-full h-11 flex items-center justify-center font-semibold text-white bg-[#2563EB] rounded-lg transition-all duration-300 hover:bg-gradient-to-r hover:from-[#2563EB] hover:to-accent-cyan hover:shadow-[0_0_15px_rgba(0,217,255,0.4)] disabled:opacity-50 disabled:cursor-not-allowed select-none active:scale-[0.98]"
+          className="w-full h-11 flex items-center justify-center font-semibold text-white bg-[#2563EB] rounded-lg transition-all duration-300 hover:bg-gradient-to-r hover:from-[#2563EB] hover:to-accent-cyan hover:shadow-[0_0_15px_rgba(0,217,255,0.4)] disabled:opacity-50 disabled:cursor-not-allowed select-none active:scale-[0.98] mt-4"
         >
           {loading ? (
             <Loader2 className="w-5 h-5 animate-spin" />

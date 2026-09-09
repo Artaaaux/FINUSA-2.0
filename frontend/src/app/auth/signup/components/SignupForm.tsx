@@ -12,9 +12,10 @@ import logoImg from "../../../../../public/Assets/Logo.png";
 
 export function SignupForm() {
   const router = useRouter();
-  const { signup, loading, error, success } = useSignup();
+  const { signup, loading, error, success, setError } = useSignup();
   const { resend, loading: resendLoading, sent: resendSent, error: resendError } = useResendVerification();
   const [captchaToken, setCaptchaToken] = useState<string>("");
+  const [captchaResetKey, setCaptchaResetKey] = useState<number>(0);
   const [isWaitingVerification, setIsWaitingVerification] = useState(false);
 
   const [email, setEmail] = useState("");
@@ -141,6 +142,11 @@ export function SignupForm() {
       return;
     }
 
+    if (!captchaToken && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) {
+      setError("Silakan tunggu atau selesaikan verifikasi CAPTCHA terlebih dahulu.");
+      return;
+    }
+
     try {
       const data = await signup(email, password, captchaToken);
       if (data?.session) {
@@ -152,6 +158,9 @@ export function SignupForm() {
       }
     } catch {
       // Error is set in signup hook
+      // Reset Turnstile CAPTCHA agar token baru digenerate untuk percobaan berikutnya
+      setCaptchaResetKey((prev) => prev + 1);
+      setCaptchaToken("");
     }
   };
 
@@ -431,7 +440,13 @@ export function SignupForm() {
         </div>
 
         {/* Anti-Bot Cloudflare Turnstile CAPTCHA */}
-        <TurnstileWidget onVerify={(token) => setCaptchaToken(token)} />
+        <TurnstileWidget
+          key={captchaResetKey}
+          resetTrigger={captchaResetKey}
+          onVerify={(token) => setCaptchaToken(token)}
+          onExpire={() => setCaptchaToken("")}
+          onError={() => setCaptchaToken("")}
+        />
 
         {/* Submit Button */}
         <button

@@ -8,6 +8,7 @@ interface TurnstileWidgetProps {
   onError?: (error: unknown) => void;
   theme?: "dark" | "light" | "auto";
   size?: "normal" | "compact" | "flexible";
+  resetTrigger?: number | string;
 }
 
 declare global {
@@ -37,6 +38,7 @@ export function TurnstileWidget({
   onError,
   theme = "dark",
   size = "normal",
+  resetTrigger,
 }: TurnstileWidgetProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
@@ -51,6 +53,18 @@ export function TurnstileWidget({
     onExpireRef.current = onExpire;
     onErrorRef.current = onError;
   });
+
+  // Handle external reset triggers
+  useEffect(() => {
+    if (resetTrigger && widgetIdRef.current && window.turnstile) {
+      try {
+        window.turnstile.reset(widgetIdRef.current);
+        if (onExpireRef.current) onExpireRef.current();
+      } catch (err) {
+        console.warn("Turnstile reset error:", err);
+      }
+    }
+  }, [resetTrigger]);
 
   // Default to project Cloudflare Turnstile site key
   const siteKey =

@@ -39,7 +39,7 @@ export function useLogin() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string, captchaToken?: string) => {
     setLoading(true);
     setError(null);
     setSuccess(false);
@@ -48,6 +48,9 @@ export function useLogin() {
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
+        options: {
+          captchaToken: captchaToken || undefined,
+        },
       });
 
       if (signInError) {
@@ -74,7 +77,7 @@ export function useForgotPassword() {
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
 
-  const resetPassword = async (email: string) => {
+  const resetPassword = async (email: string, captchaToken?: string) => {
     setLoading(true);
     setError(null);
     setSent(false);
@@ -82,7 +85,10 @@ export function useForgotPassword() {
     try {
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(
         email,
-        { redirectTo: `${window.location.origin}/auth/callback` }
+        {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          captchaToken: captchaToken || undefined,
+        }
       );
 
       if (resetError) throw resetError;
@@ -160,6 +166,11 @@ export function useSignup() {
 
       if (signUpError) {
         throw signUpError;
+      }
+
+      // Supabase mengembalikan identitas kosong jika email sudah pernah terdaftar saat email confirmation aktif
+      if (data?.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+        throw new Error("Email ini sudah terdaftar. Silakan langsung masuk atau gunakan opsi Lupa Password.");
       }
 
       setSuccess(true);

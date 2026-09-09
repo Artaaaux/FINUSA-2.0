@@ -5,12 +5,15 @@ import Link from "next/link";
 import { Mail, Loader2, AlertCircle, ArrowLeft, Send } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useForgotPassword } from "@/lib/auth/hooks";
+import { TurnstileWidget } from "@/shared/components/auth/TurnstileWidget";
 
 export function ForgotPasswordForm() {
   const { resetPassword, loading, error, sent, setError } = useForgotPassword();
 
   const [email, setEmail] = useState("");
   const [fieldError, setFieldError] = useState("");
+  const [captchaToken, setCaptchaToken] = useState<string>("");
+  const [captchaResetKey, setCaptchaResetKey] = useState<number>(0);
 
   const validateEmail = (val: string) => {
     if (!val) return "Email wajib diisi";
@@ -31,7 +34,17 @@ export function ForgotPasswordForm() {
     setFieldError(err);
     if (err) return;
 
-    await resetPassword(email);
+    if (!captchaToken && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) {
+      setError("Silakan tunggu atau selesaikan verifikasi CAPTCHA terlebih dahulu.");
+      return;
+    }
+
+    try {
+      await resetPassword(email, captchaToken);
+    } catch {
+      setCaptchaResetKey((prev) => prev + 1);
+      setCaptchaToken("");
+    }
   };
 
   if (sent) {
@@ -156,11 +169,20 @@ export function ForgotPasswordForm() {
           </AnimatePresence>
         </div>
 
+        {/* Anti-Bot Cloudflare Turnstile CAPTCHA */}
+        <TurnstileWidget
+          key={captchaResetKey}
+          resetTrigger={captchaResetKey}
+          onVerify={(token) => setCaptchaToken(token)}
+          onExpire={() => setCaptchaToken("")}
+          onError={() => setCaptchaToken("")}
+        />
+
         {/* Submit Button */}
         <button
           type="submit"
           disabled={loading}
-          className="w-full h-11 flex items-center justify-center font-semibold text-white bg-[#2563EB] rounded-lg transition-all duration-300 hover:bg-gradient-to-r hover:from-[#2563EB] hover:to-accent-cyan hover:shadow-[0_0_15px_rgba(0,217,255,0.4)] disabled:opacity-50 disabled:cursor-not-allowed select-none active:scale-[0.98]"
+          className="w-full h-11 flex items-center justify-center font-semibold text-white bg-[#2563EB] rounded-lg transition-all duration-300 hover:bg-gradient-to-r hover:from-[#2563EB] hover:to-accent-cyan hover:shadow-[0_0_15px_rgba(0,217,255,0.4)] disabled:opacity-50 disabled:cursor-not-allowed select-none active:scale-[0.98] mt-4"
         >
           {loading ? (
             <Loader2 className="w-5 h-5 animate-spin" />
