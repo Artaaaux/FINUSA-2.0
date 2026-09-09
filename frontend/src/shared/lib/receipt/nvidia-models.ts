@@ -224,6 +224,7 @@ export class NvidiaModelsClient {
           messages,
           temperature: 0.1,
           max_tokens: 2048,
+          response_format: { type: "json_object" },
         }),
         signal: controller.signal,
       });
@@ -244,6 +245,28 @@ export class NvidiaModelsClient {
           errorJson.detail ||
           errorText ||
           `HTTP ${response.status} ${response.statusText}`;
+
+        // If response_format is rejected by endpoint, retry without it
+        if (response.status === 400 && errorText.includes("response_format")) {
+          const fallbackRes = await fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${this.apiKey}`,
+            },
+            body: JSON.stringify({
+              model,
+              messages,
+              temperature: 0.1,
+              max_tokens: 2048,
+            }),
+            signal: controller.signal,
+          });
+          if (fallbackRes.ok) {
+            const fbData = await fallbackRes.json();
+            return fbData.choices?.[0]?.message?.content || "";
+          }
+        }
 
         // Rate Limit (429) -> Check Retry-After or wait 3s
         if (response.status === 429 && attempt < this.maxRetries) {

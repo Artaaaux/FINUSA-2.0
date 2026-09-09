@@ -36,12 +36,13 @@ Analyze the receipt image or text carefully and return a single valid JSON objec
   "suggestedCategory": "Makanan & Minuman | Belanja & Groceries | Transportasi | Utilitas & Tagihan | Kesehatan | Hiburan & Rekreasi | Operasional Usaha | Lainnya"
 }
 
-Important Rules:
-1. Parse all monetary amounts as clean numbers without currency symbols (Rp), dots, or commas (e.g. Rp 45.000 -> 45000).
-2. If total is printed explicitly (Grand Total / Total Akhir / Bayar), make sure 'total' equals that final amount.
-3. If items list is blurry but total is clear, extract whatever items possible and ensure total matches.
-4. If the receipt is completely illegible or empty, set confidence to < 40 and total to 0.
-5. Return ONLY the JSON object. No conversational prose or markdown wrap outside JSON.`;
+MANDATORY RULES:
+1. Output ONLY the JSON object. Do NOT write any introduction, commentary, conversational text, or markdown headers (like **Receipt Analysis**).
+2. Start your response directly with '{' and end with '}'.
+3. Format all monetary amounts as clean numbers without currency symbols (Rp), dots, or commas (e.g. Rp 45.000 -> 45000, 36,000 -> 36000).
+4. If total is printed explicitly (Grand Total / Total Akhir / Bayar), make sure 'total' equals that final amount.
+5. If items list is blurry but total is clear, extract whatever items possible and ensure total matches.
+6. If the receipt is completely illegible or empty, set confidence to < 40 and total to 0.`;
 
 /**
  * Normalizes Indonesian date formats to ISO YYYY-MM-DD
@@ -81,48 +82,201 @@ function cleanNumber(val: unknown): number {
 }
 
 /**
- * Safely extracts and parses JSON from reasoning LLM outputs (handles markdown blocks, reasoning text, etc.)
+ * Repairs malformed JSON strings commonly returned by LLMs
  */
-function extractJsonFromModelResponse(text: string): Record<string, unknown> {
-  // 1. Try matching ```json ... ``` or ``` ... ```
-  const codeBlockMatch = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
-  if (codeBlockMatch && codeBlockMatch[1]) {
-    try {
-      return JSON.parse(codeBlockMatch[1].trim());
-    } catch {
-      // ignore
+function repairJsonString(raw: string): string {
+  let cleaned = raw.trim();
+
+  // 1. Remove markdown code fence if present
+  cleaned = cleaned.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "");
+
+  // 2. Remove comments
+  cleaned = cleaned.replace(/\/\/.*$/gm, "").replace(/\/\*[\s\S]*?\*\//g, "");
+
+  // 3. Remove trailing commas before } or ]
+  cleaned = cleaned.replace(/,\s*([}\]])/g, "$1");
+
+  // 4. Fix numbers with commas as thousands separators (e.g. ": 36,000" -> ": 36000")
+  cleaned = cleaned.replace(/:\s*(\d{1,3}(?:,\d{3})+)(\s*[,}\]])/g, (_, num, end) => {
+    return `: ${num.replace(/,/g, "")}${end}`;
+  });
+
+  // 5. Fix unquoted currency strings (e.g. ": Rp 70.000" or ": Rp 70,000" -> ": 70000")
+  cleaned = cleaned.replace(/:\s*(?:Rp\.?|IDR)\s*([0-9.,]+)(\s*[,}\]])/gi, (_, val, end) => {
+    const cleanNum = val.replace(/[^0-9]/g, "");
+    return `: ${cleanNum}${end}`;
+  });
+
+  return cleaned;
+}
+
+/**
+ * Attempts to parse a candidate JSON string, with repair fallback
+ */
+function tryParseJson(candidate: string): Record<string, unknown> | null {
+  if (!candidate || candidate.trim().length < 2) return null;
+  const trimmed = candidate.trim();
+
+  // 1. Standard parse
+  try {
+    const obj = JSON.parse(trimmed);
+    if (obj && typeof obj === "object" && !Array.isArray(obj)) {
+      return obj as Record<string, unknown>;
     }
+  } catch {
+    // continue to repair
   }
 
-  // 2. Try parsing candidate from the last open brace to the last close brace
-  const lastOpenBrace = text.lastIndexOf("{");
-  const lastCloseBrace = text.lastIndexOf("}");
-  if (lastOpenBrace !== -1 && lastCloseBrace !== -1 && lastCloseBrace > lastOpenBrace) {
-    try {
-      const candidate = text.substring(lastOpenBrace, lastCloseBrace + 1);
-      return JSON.parse(candidate);
-    } catch {
-      // ignore
+  // 2. Repaired parse
+  try {
+    const repaired = repairJsonString(trimmed);
+    const obj = JSON.parse(repaired);
+    if (obj && typeof obj === "object" && !Array.isArray(obj)) {
+      return obj as Record<string, unknown>;
     }
+  } catch {
+    // ignore
   }
 
-  // 3. Search backwards for balanced JSON object candidates
-  for (let i = text.length - 1; i >= 0; i--) {
-    if (text[i] === "}") {
-      for (let j = 0; j < i; j++) {
-        if (text[j] === "{") {
-          try {
-            const candidate = text.substring(j, i + 1);
-            return JSON.parse(candidate);
-          } catch {
-            // continue
-          }
+  return null;
+}
+
+/**
+ * Finds all balanced top-level JSON objects by tracking brace depth in a single O(N) pass
+ */
+function findBalancedJsonObjects(text: string): string[] {
+  const results: string[] = [];
+  let depth = 0;
+  let startIdx = -1;
+  let inString = false;
+  let escape = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    if (escape) {
+      escape = false;
+      continue;
+    }
+    if (char === "\\") {
+      escape = true;
+      continue;
+    }
+    if (char === '"') {
+      inString = !inString;
+      continue;
+    }
+    if (!inString) {
+      if (char === "{") {
+        if (depth === 0) startIdx = i;
+        depth++;
+      } else if (char === "}") {
+        depth--;
+        if (depth === 0 && startIdx !== -1) {
+          results.push(text.substring(startIdx, i + 1));
+          startIdx = -1;
         }
       }
     }
   }
+  return results;
+}
 
-  return JSON.parse(text);
+/**
+ * Fallback parser that heuristically extracts receipt data from plain markdown/text
+ * when the model produces structured text instead of raw JSON.
+ */
+function parseReceiptFromPlainText(text: string): Record<string, unknown> | null {
+  const result: Record<string, unknown> = {};
+
+  const merchantMatch = text.match(/(?:Merchant|Toko|Store)\s*(?:Name)?\s*[:=]\s*([^\n\r*]+)/i);
+  if (merchantMatch) result.merchant = merchantMatch[1].trim();
+
+  const addressMatch = text.match(/(?:Address|Alamat)\s*[:=]\s*([^\n\r*]+)/i);
+  if (addressMatch) result.merchantAddress = addressMatch[1].trim();
+
+  const dateMatch = text.match(/(?:Date|Tanggal|Tgl)\s*[:=]\s*([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{1,2}[-/][0-9]{1,2}[-/][0-9]{2,4})/i);
+  if (dateMatch) result.date = dateMatch[1].trim();
+
+  const timeMatch = text.match(/(?:Time|Waktu|Jam)\s*[:=]\s*([0-9]{1,2}:[0-9]{2}(?::[0-9]{2})?)/i);
+  if (timeMatch) result.time = timeMatch[1].trim();
+
+  const totalMatch = text.match(/(?:Grand Total|Total Akhir|Total)\s*[:=]?\s*(?:Rp\.?|IDR)?\s*([0-9.,]+)/i);
+  if (totalMatch) {
+    result.total = parseFloat(totalMatch[1].replace(/[^0-9]/g, "")) || 0;
+  }
+
+  const paymentMatch = text.match(/(?:Payment|Metode Pembayaran|Bayar)\s*[:=]\s*([^\n\r*]+)/i);
+  if (paymentMatch) result.paymentMethod = paymentMatch[1].trim();
+
+  // Extract items from lines starting with *, -, or +
+  const items: Array<{ name: string; quantity: number; price: number; totalPrice: number }> = [];
+  const itemLines = text.match(/^\s*[*+-]\s+([^:\n\r]+)[:=]\s*([^\n\r]+)/gm);
+  if (itemLines) {
+    for (const line of itemLines) {
+      if (/Date|Time|Total|Subtotal|Merchant|Payment|Address|Confidence|Category/i.test(line)) continue;
+      const m = line.match(/^\s*[*+-]\s+([^:\n\r]+)[:=]\s*(?:.*?)(?:Rp\.?|IDR)?\s*([0-9.,]+)$/i);
+      if (m) {
+        const name = m[1].trim();
+        const price = parseFloat(m[2].replace(/[^0-9]/g, "")) || 0;
+        items.push({ name, quantity: 1, price, totalPrice: price });
+      }
+    }
+  }
+  if (items.length > 0) {
+    result.items = items;
+  }
+
+  if (result.merchant || result.total) {
+    return result;
+  }
+  return null;
+}
+
+/**
+ * Safely extracts and parses JSON from reasoning LLM outputs (handles markdown blocks, reasoning text, etc.)
+ */
+function extractJsonFromModelResponse(text: string): Record<string, unknown> {
+  if (!text || typeof text !== "string") {
+    throw new Error("Respon model AI kosong.");
+  }
+
+  // 1. First, check if text has markdown code block: ```json ... ``` or ``` ... ```
+  const codeBlockMatches = text.matchAll(/```(?:json)?\s*([\s\S]*?)\s*```/gi);
+  for (const match of codeBlockMatches) {
+    if (match && match[1]) {
+      const parsed = tryParseJson(match[1]);
+      if (parsed) return parsed;
+    }
+  }
+
+  // 2. Find outermost balanced JSON object by counting braces { and } in O(N)
+  const balancedObjects = findBalancedJsonObjects(text);
+  for (const candidate of balancedObjects) {
+    const parsed = tryParseJson(candidate);
+    if (parsed) return parsed;
+  }
+
+  // 3. Fallback: Find from first '{' to last '}'
+  const firstOpen = text.indexOf("{");
+  const lastClose = text.lastIndexOf("}");
+  if (firstOpen !== -1 && lastClose > firstOpen) {
+    const candidate = text.substring(firstOpen, lastClose + 1);
+    const parsed = tryParseJson(candidate);
+    if (parsed) return parsed;
+  }
+
+  // 4. Fallback: Heuristic parser from markdown / plain text
+  const heuristic = parseReceiptFromPlainText(text);
+  if (heuristic) {
+    console.warn("[extractJsonFromModelResponse] Parsed receipt heuristically from text output.");
+    return heuristic;
+  }
+
+  // 5. If everything failed, try clean parse of the full string or throw informative error
+  const lastAttempt = tryParseJson(text);
+  if (lastAttempt) return lastAttempt;
+
+  throw new Error(`Respon AI tidak memuat format JSON yang valid. Cuplikan respon: ${text.slice(0, 100)}...`);
 }
 
 /**
@@ -271,7 +425,7 @@ export async function extractReceiptData(
 
   // PRIMARY METHOD: Direct NVIDIA Multimodal Vision Analysis (Fast ~2-4s, Serverless-safe, No Tesseract worker issues)
   try {
-    const visionPrompt = `Analyze this receipt / invoice image directly and extract the financial transaction data strictly according to the requested JSON schema. If any fields are not visible, deduce them reasonably or set to 0.`;
+    const visionPrompt = `Extract the transaction data from this receipt image. Output strictly the requested JSON object starting with '{' and ending with '}'. Do NOT write any introduction, commentary, or markdown text outside the JSON.`;
     const rawResponse = await client.analyzeImage(
       imageUrl,
       mimeType,
