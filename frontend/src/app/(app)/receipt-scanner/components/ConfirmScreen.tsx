@@ -302,6 +302,40 @@ export default function ConfirmScreen({
               </button>
             </div>
 
+            {/* Category Split Breakdown Summary */}
+            {data.items.length > 0 && (
+              <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800/80 space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-slate-300 font-medium flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+                    Alokasi Kategori Otomatis AI
+                  </span>
+                  <span className="text-[11px] text-slate-400">
+                    Item akan dipisah ke pengeluaran masing-masing
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {Object.entries(
+                    data.items.reduce((acc, item) => {
+                      const cat = item.category || data.category || "Makan";
+                      acc[cat] = (acc[cat] || 0) + (item.totalPrice || item.price || 0);
+                      return acc;
+                    }, {} as Record<string, number>)
+                  ).map(([categoryName, amount]) => (
+                    <div
+                      key={categoryName}
+                      className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#161c28] border border-blue-500/20 text-xs"
+                    >
+                      <span className="font-semibold text-slate-200">{categoryName}:</span>
+                      <span className="font-bold text-emerald-400 tabular-nums">
+                        {formatCurrency(amount)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Items Table / List */}
             <div className="space-y-2.5">
               {data.items.map((item, idx) => (
@@ -310,7 +344,7 @@ export default function ConfirmScreen({
                   className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-3 rounded-xl bg-[#0F172A] border border-slate-800"
                 >
                   {/* Qty */}
-                  <div className="w-16 flex-shrink-0">
+                  <div className="w-full sm:w-16 flex-shrink-0">
                     <input
                       type="number"
                       min="1"
@@ -338,8 +372,26 @@ export default function ConfirmScreen({
                     />
                   </div>
 
+                  {/* Item Category */}
+                  <div className="w-full sm:w-36 flex-shrink-0">
+                    <select
+                      value={item.category || data.category || "Makan"}
+                      onChange={(e) =>
+                        onUpdateItem(item.id, { category: e.target.value })
+                      }
+                      className="w-full px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-200 text-xs font-medium focus:outline-none focus:border-blue-500 cursor-pointer"
+                      title="Kategori Item"
+                    >
+                      {FINUSA_CATEGORIES.map((cat) => (
+                        <option key={cat.id} value={cat.name}>
+                          {cat.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
                   {/* Total Price */}
-                  <div className="w-32 flex-shrink-0">
+                  <div className="w-full sm:w-28 flex-shrink-0">
                     <input
                       type="number"
                       value={item.totalPrice}
@@ -360,7 +412,7 @@ export default function ConfirmScreen({
                   <button
                     type="button"
                     onClick={() => onRemoveItem(item.id)}
-                    className="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer flex-shrink-0"
+                    className="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer flex-shrink-0 self-end sm:self-center"
                     aria-label="Hapus item"
                   >
                     <Trash2 className="w-4 h-4" />

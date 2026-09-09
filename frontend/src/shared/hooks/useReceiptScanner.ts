@@ -156,14 +156,6 @@ export function useReceiptScanner() {
   const processScan = useCallback(async () => {
     if (!capturedImage) return;
 
-    // Check quota first
-    if (quota.isQuotaExceeded) {
-      setErrorMessage("Kapasitas penyimpanan struk kamu telah mencapai batas 5MB. Hapus beberapa struk lama untuk melanjutkan.");
-      setErrorType("quota");
-      setStep("error");
-      return;
-    }
-
     setIsScanning(true);
     setStep("processing");
     setErrorMessage(null);
@@ -197,10 +189,6 @@ export function useReceiptScanner() {
       }
 
       setExtractedData(json.extractedData);
-      if (json.optimizedImage) {
-        setOptimizedImage(json.optimizedImage);
-      }
-
       setStep("confirm");
     } catch (err: unknown) {
       console.error("Scan processing error:", err);
@@ -220,7 +208,7 @@ export function useReceiptScanner() {
     } finally {
       setIsScanning(false);
     }
-  }, [capturedImage, quota.isQuotaExceeded]);
+  }, [capturedImage]);
 
   // Update extracted fields
   const updateExtractedData = useCallback(
@@ -243,6 +231,7 @@ export function useReceiptScanner() {
       const newItem: ReceiptItem = {
         id: `item-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
         name: "Item Baru",
+        category: prev.category || "Makan",
         quantity: 1,
         price: 0,
         totalPrice: 0,
@@ -296,7 +285,7 @@ export function useReceiptScanner() {
     []
   );
 
-  // Save to Supabase (Expenses & Storage)
+  // Save to Supabase (Expenses & Transactions per Category)
   const saveExpense = useCallback(async () => {
     if (!extractedData) return;
 
@@ -305,107 +294,104 @@ export function useReceiptScanner() {
 
     try {
       const userId = user?.id;
-      let receiptPhotoId: string | null = null;
-      let storedFilePath: string | null = null;
 
-      // 1. Upload photo to Supabase Storage if user logged in
-      if (userId && (optimizedImage?.base64 || capturedImage)) {
-        const rawBase64 = (optimizedImage?.base64 || capturedImage || "").replace(
-          /^data:image\/\w+;base64,/,
-          ""
-        );
-        const byteCharacters = atob(rawBase64);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
+      // Group items by category to split multi-category receipts (e.g. Makan vs Kebutuhan)
+      const categoryGroups: Record<string, { total: number; items: ReceiptItem[] }> = {};
+
+      if (extractedData.items && extractedData.items.length > 0) {
+        for (const item of extractedData.items) {
+          const cat = item.category || extractedData.category || "Makan";
+          if (!categoryGroups[cat]) {
+            categoryGroups[cat] = { total: 0, items: [] };
+          }
+          categoryGroups[cat].total += item.totalPrice || item.price || 0;
+          categoryGroups[cat].items.push(item);
         }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: "image/jpeg" });
+      } else {
+        const cat = extractedData.category || "Makan";
+        categoryGroups[cat] = { total: extractedData.total, items: [] };
+      }
 
-        const fileName = `${userId}/${Date.now()}-receipt.jpg`;
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from("receipts")
-          .upload(fileName, blob, {
-            contentType: "image/jpeg",
-            upsert: true,
-          });
+      let primaryExpenseId: string | null = null;
+      let userCategories: Array<{ id: string; name: string }> = [];
 
-        if (!uploadError && uploadData) {
-          storedFilePath = uploadData.path;
+      if (userId) {
+        try {
+          const { data: cats } = await supabase
+            .from("categories")
+            .select("id, name")
+            .eq("user_id", userId);
+          if (cats) userCategories = cats;
+        } catch (catErr) {
+          console.warn("Could not fetch user categories:", catErr);
+        }
+      }
 
-          // 2. Insert into receipt_photos table
-          const { data: photoRecord, error: photoError } = await supabase
-            .from("receipt_photos")
-            .insert({
+      for (const [categoryName, group] of Object.entries(categoryGroups)) {
+        const groupAmount = group.total > 0 ? group.total : extractedData.total;
+        const itemNames =
+          group.items.length > 0
+            ? group.items.map((i) => i.name).join(", ")
+            : `Belanja di ${extractedData.merchant}`;
+        const description = `${itemNames} (${extractedData.merchant})`;
+
+        const expensePayload: Record<string, unknown> = {
+          amount: groupAmount,
+          category: categoryName,
+          description,
+          merchant: extractedData.merchant,
+          date: extractedData.date,
+          time: extractedData.time || "12:00",
+          items: group.items,
+          source: "receipt_scan",
+        };
+
+        if (userId) {
+          expensePayload.user_id = userId;
+        }
+
+        const { data: expenseData } = await supabase
+          .from("expenses")
+          .insert(expensePayload)
+          .select("id")
+          .single();
+
+        if (!primaryExpenseId && expenseData?.id) {
+          primaryExpenseId = expenseData.id;
+        }
+
+        // Also create entry in transactions table so it instantly shows in Pembukuan & Monitor
+        if (userId) {
+          try {
+            const matchedCategory = userCategories.find(
+              (c) => c.name.toLowerCase() === categoryName.toLowerCase()
+            );
+            await supabase.from("transactions").insert({
               user_id: userId,
-              file_path: storedFilePath,
-              file_size: optimizedImage?.sizeBytes || byteArray.byteLength,
-              resolution: optimizedImage?.resolution || "1000x1000",
-              extracted_data: extractedData,
-            })
-            .select("id")
-            .single();
-
-          if (!photoError && photoRecord) {
-            receiptPhotoId = photoRecord.id;
+              amount: groupAmount,
+              type: "expense",
+              category_id: matchedCategory?.id || null,
+              description,
+              merchant: extractedData.merchant,
+              date: extractedData.date,
+              time: extractedData.time || "12:00",
+              status: "completed",
+              source: "receipt_scan",
+              tags: ["ocr-receipt", categoryName.toLowerCase().replace(/\s+/g, "-")],
+              metadata: {
+                items: group.items,
+                merchant: extractedData.merchant,
+                paymentMethod: extractedData.paymentMethod,
+                categoryName,
+              },
+            });
+          } catch (e) {
+            console.warn("Could not insert into transactions table:", e);
           }
         }
       }
 
-      // 3. Insert into expenses table
-      const expensePayload: Record<string, unknown> = {
-        amount: extractedData.total,
-        category: extractedData.category,
-        description: `Belanja di ${extractedData.merchant}`,
-        merchant: extractedData.merchant,
-        date: extractedData.date,
-        time: extractedData.time,
-        items: extractedData.items,
-        source: "receipt_scan",
-      };
-
-      if (userId) {
-        expensePayload.user_id = userId;
-      }
-      if (receiptPhotoId) {
-        expensePayload.receipt_photo_id = receiptPhotoId;
-      }
-
-      const { data: expenseData } = await supabase
-        .from("expenses")
-        .insert(expensePayload)
-        .select("id")
-        .single();
-
-      const newExpenseId = expenseData?.id || `exp-${Date.now()}`;
-      setSavedExpenseId(newExpenseId);
-
-      // Also create entry in transactions table so it instantly shows in Pembukuan & Monitor
-      if (userId) {
-        try {
-          await supabase.from("transactions").insert({
-            user_id: userId,
-            amount: extractedData.total,
-            type: "expense",
-            description: `Belanja di ${extractedData.merchant}`,
-            merchant: extractedData.merchant,
-            date: extractedData.date,
-            time: extractedData.time || "12:00",
-            status: "completed",
-            source: "receipt_scan",
-            receipt_photo_id: receiptPhotoId || null,
-            tags: ["ocr-receipt", extractedData.category.toLowerCase().replace(/\s+/g, "-")],
-            metadata: { items: extractedData.items || [] },
-          });
-        } catch (e) {
-          console.warn("Could not insert into transactions table:", e);
-        }
-      }
-
-      // Refresh Quota & Receipts
-      fetchQuota();
-      fetchPastReceipts();
-
+      setSavedExpenseId(primaryExpenseId || `exp-${Date.now()}`);
       setStep("success");
     } catch (err: unknown) {
       console.warn("Save expense failed, falling back to local success:", err);
@@ -414,7 +400,7 @@ export function useReceiptScanner() {
     } finally {
       setIsSaving(false);
     }
-  }, [extractedData, user, optimizedImage, capturedImage, fetchQuota, fetchPastReceipts]);
+  }, [extractedData, user]);
 
   // Delete a receipt from storage & table
   const deleteReceipt = useCallback(

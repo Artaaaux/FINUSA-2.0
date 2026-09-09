@@ -1,6 +1,7 @@
 export interface ReceiptItem {
   id: string;
   name: string;
+  category?: string; // "Makan" | "Kebutuhan" | "Transportasi" | "Cicilan" | "Keinginan" | "Lainnya"
   quantity: number;
   price: number;
   totalPrice: number;

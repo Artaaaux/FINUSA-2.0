@@ -3,59 +3,67 @@ import fs from "fs";
 import { NvidiaModelsClient } from "./nvidia-models";
 
 declare const __non_webpack_require__: NodeRequire | undefined;
-import { detectCategory } from "./categorize";
+import { detectCategory, detectItemCategory } from "./categorize";
 import type { ReceiptItem, ExtractedReceiptData } from "./types";
 import { generateSimulatedReceipt } from "./sample";
 
 export type { ReceiptItem, ExtractedReceiptData };
 export { generateSimulatedReceipt };
 
-const RECEIPT_EXTRACTION_SYSTEM_PROMPT = `You are FINUSA AI, an expert financial receipt verification and data extraction assistant.
+const RECEIPT_EXTRACTION_SYSTEM_PROMPT = `You are FINUSA AI, an expert financial receipt verification and intelligent expense categorizer.
 
-CRITICAL FIRST STEP - RECEIPT VERIFICATION:
-Carefully examine the visual content of the image before extracting any data.
-1. Determine whether the image contains an actual printed receipt, cash register slip, supermarket/store invoice, restaurant bill, or electronic payment proof (e-receipt, QRIS, or transfer screenshot).
-2. If the image is NOT a receipt (for example: photo of a room, bookshelf, furniture, person, selfie, clothing, pet, landscape, random objects, food without a bill, or document without financial transactions):
-   You MUST return strictly:
-   {
-     "isReceipt": false,
-     "confidence": 0,
-     "rejectionReason": "Foto bukan struk belanja atau bukti transaksi keuangan."
-   }
-   ABSOLUTELY DO NOT guess, fabricate, or hallucinate store names, items, or prices!
+CRITICAL STEP 1: STRICT VISUAL RECEIPT IDENTIFICATION
+Before extracting ANY text or numbers, carefully analyze the visual content of the image.
 
-3. If the image contains a receipt but it is completely blurry, illegible, or unreadable:
-   You MUST return strictly:
-   {
-     "isReceipt": false,
-     "confidence": 0,
-     "rejectionReason": "Gambar struk terlalu buram atau tidak terbaca."
-   }
+WHAT CONSTITUTES A VALID RECEIPT:
+1. A genuine physical paper receipt or slip printed by a cash register, POS system, thermal printer, supermarket checkout, or restaurant billing system. Usually characterized by white, greyish, or off-white paper with printed dot-matrix or thermal ink, a merchant name/header, an itemized list of goods, and total amount.
+2. A formal printed paper invoice, bill, or ATM transaction slip.
+3. An official digital payment proof (e-wallet transaction confirmation screen, QRIS payment success screen, or bank transfer receipt with visible currency, date, and payment status).
 
-4. ONLY if the image is a genuine, readable receipt or payment proof, return strictly:
-   {
-     "isReceipt": true,
-     "merchant": "Actual store or merchant name seen on receipt",
-     "merchantAddress": "Address if visible, or null",
-     "date": "YYYY-MM-DD",
-     "time": "HH:MM",
-     "items": [
-       {
-         "name": "Item name visible on receipt",
-         "quantity": 1,
-         "price": 0,
-         "totalPrice": 0
-       }
-     ],
-     "subtotal": 0,
-     "tax": 0,
-     "serviceCharge": 0,
-     "discount": 0,
-     "total": 0,
-     "paymentMethod": "Cash / QRIS / Debit / Credit / Transfer / Unknown",
-     "confidence": 95,
-     "suggestedCategory": "Makanan & Minuman | Belanja & Groceries | Transportasi | Utilitas & Tagihan | Kesehatan | Hiburan & Rekreasi | Operasional Usaha | Lainnya"
-   }
+WHAT IS NOT A RECEIPT (MUST BE REJECTED IMMEDIATELY):
+1. A photo of a laptop screen, computer monitor, tablet, or TV displaying websites, code, terminals, IDE, or dark reflective screens with reflections of a person or room.
+2. A photo of a room, bedroom, living room, bookshelf, table, furniture, bed, keyboard, mouse, or household items.
+3. A selfie, portrait of a person, clothes, shoes, pets, outside landscape, car, or food on a plate without a printed receipt.
+4. Any document that is not a financial receipt (books, notes, letters, random paper).
+
+REJECTION RESPONSE:
+If the image is NOT an actual receipt (especially if it is a laptop screen, room, furniture, or random object):
+You MUST immediately return strictly:
+{
+  "isReceipt": false,
+  "confidence": 0,
+  "rejectionReason": "Foto terdeteksi sebagai layar monitor/laptop atau objek non-struk. Harap arahkan kamera ke struk belanja fisik atau bukti transaksi resmi."
+}
+ABSOLUTELY DO NOT guess, fabricate, or invent store names, items, or prices!
+
+CRITICAL STEP 2: MULTI-CATEGORY ITEM EXTRACTION
+If the image is a genuine receipt, extract transaction details and categorize EACH item into exactly ONE of the standard Finusa expense categories:
+- "Makan": All food, drinks, snacks, restaurant meals, cafe drinks, bakery, groceries meant for consumption (e.g. roti, beras, susu, mie instan, telur, kopi, buah, sayur, cemilan, biskuit, sosis).
+- "Kebutuhan": Daily household necessities, hygiene products, toiletries, cleaning supplies, personal care, medicine (e.g. sabun mandi, deterjen, sampo, pasta gigi, sikat gigi, tisu, pembersih lantai, obat, panadol).
+- "Transportasi": Fuel, bensin, Pertamax, solar, toll tickets, parking, ojek/taxi fares, vehicle maintenance.
+- "Cicilan": Loan installments, debt repayments, monthly billing, credit payments, utilities.
+- "Keinginan": Entertainment, recreation, leisure shopping, hobbies, fashion, accessories, toys, cigarettes.
+- "Lainnya": General items that do not fit the above categories.
+
+Output JSON format strictly:
+{
+  "isReceipt": true,
+  "merchant": "Actual Store or Merchant Name",
+  "date": "YYYY-MM-DD",
+  "time": "HH:MM",
+  "items": [
+    {
+      "name": "Item Name as printed",
+      "category": "Makan | Kebutuhan | Transportasi | Cicilan | Keinginan | Lainnya",
+      "quantity": 1,
+      "price": 15000,
+      "totalPrice": 15000
+    }
+  ],
+  "total": 15000,
+  "paymentMethod": "QRIS | Tunai | Kartu Debit | Kartu Kredit | Transfer | Lainnya",
+  "confidence": 95
+}
 
 STRICT RULES:
 1. Output ONLY a valid JSON object. No conversational prose or markdown wrap outside JSON.
@@ -427,9 +435,15 @@ function buildExtractedData(parsed: Record<string, unknown>): ExtractedReceiptDa
     const qty = cleanNumber(item.quantity || item.qty) || 1;
     const price = cleanNumber(item.unitPrice || item.price);
     const totalPrice = cleanNumber(item.totalPrice || item.subtotal || item.total) || qty * price;
+    const name = String(item.name || item.description || item.itemName || `Item ${idx + 1}`).trim();
+    const itemCat = typeof item.category === "string" && item.category.trim()
+      ? item.category.trim()
+      : detectItemCategory(name);
+
     return {
       id: `item-${Date.now()}-${idx}`,
-      name: String(item.name || item.description || item.itemName || `Item ${idx + 1}`).trim(),
+      name,
+      category: itemCat,
       quantity: qty,
       price: price || (qty > 0 ? Math.round(totalPrice / qty) : totalPrice),
       totalPrice,
@@ -451,11 +465,7 @@ function buildExtractedData(parsed: Record<string, unknown>): ExtractedReceiptDa
     ? parsed.merchant.trim()
     : "";
   const merchant = rawMerchant || "Toko / Merchant";
-  const category = typeof data.suggestedCategory === "string" && data.suggestedCategory.trim()
-    ? data.suggestedCategory.trim()
-    : typeof parsed.suggestedCategory === "string" && parsed.suggestedCategory.trim()
-    ? parsed.suggestedCategory.trim()
-    : detectCategory(merchant, items);
+  const category = detectCategory(merchant, items);
 
   let parsedConfidence = parsed.confidence !== undefined
     ? cleanNumber(parsed.confidence)

@@ -9,7 +9,6 @@ import {
   SwitchCamera,
   Upload,
   Image as ImageIcon,
-  FolderOpen,
 } from "lucide-react";
 import { useCamera } from "@/shared/hooks/useCamera";
 import { cn } from "@/shared/lib/utils";
@@ -17,14 +16,11 @@ import { cn } from "@/shared/lib/utils";
 interface CameraViewProps {
   onCapture: (dataUrl: string) => void;
   onFileUpload: (file: File) => void;
-  onOpenGallery?: () => void;
-  quotaExceeded?: boolean;
 }
 
 export default function CameraView({
   onCapture,
   onFileUpload,
-  onOpenGallery,
 }: CameraViewProps) {
   const {
     videoRef,
@@ -113,17 +109,6 @@ export default function CameraView({
               aria-label="Switch Camera"
             >
               <SwitchCamera className="w-5 h-5" />
-            </button>
-          )}
-
-          {onOpenGallery && (
-            <button
-              onClick={onOpenGallery}
-              className="p-2.5 rounded-full bg-black/70 hover:bg-black text-slate-200 hover:text-white border border-slate-700/60 transition-all cursor-pointer"
-              aria-label="Riwayat Struk"
-              title="Galeri & Kuota Struk"
-            >
-              <FolderOpen className="w-5 h-5 text-blue-400" />
             </button>
           )}
         </div>

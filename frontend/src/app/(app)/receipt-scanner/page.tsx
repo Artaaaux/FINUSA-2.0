@@ -9,7 +9,6 @@ import ProcessingScreen from "./components/ProcessingScreen";
 import ConfirmScreen from "./components/ConfirmScreen";
 import SuccessScreen from "./components/SuccessScreen";
 import ErrorScreen from "./components/ErrorScreen";
-import ReceiptGallery from "./components/ReceiptGallery";
 import { generateSimulatedReceipt } from "@/shared/lib/receipt/sample";
 
 const pageTransition = {
@@ -29,9 +28,6 @@ export default function ReceiptScannerPage() {
     savedExpenseId,
     errorMessage,
     errorType,
-    quota,
-    pastReceipts,
-    isLoadingHistory,
     handleCapture,
     handleFileUpload,
     processScan,
@@ -40,16 +36,8 @@ export default function ReceiptScannerPage() {
     removeItem,
     updateItem,
     saveExpense,
-    deleteReceipt,
     resetScanner,
-    fetchPastReceipts,
   } = useReceiptScanner();
-
-  // Load past receipts when gallery step is triggered
-  const handleOpenGallery = () => {
-    fetchPastReceipts();
-    setStep("gallery");
-  };
 
   const handleManualEntry = () => {
     const blankReceipt = generateSimulatedReceipt();
@@ -76,8 +64,6 @@ export default function ReceiptScannerPage() {
             <CameraView
               onCapture={handleCapture}
               onFileUpload={handleFileUpload}
-              onOpenGallery={handleOpenGallery}
-              quotaExceeded={quota.isQuotaExceeded}
             />
           </motion.div>
         )}
@@ -131,19 +117,6 @@ export default function ReceiptScannerPage() {
               errorMessage={errorMessage}
               onRetry={resetScanner}
               onManualEntry={handleManualEntry}
-              onOpenGallery={handleOpenGallery}
-            />
-          </motion.div>
-        )}
-
-        {step === "gallery" && (
-          <motion.div key="gallery" {...pageTransition}>
-            <ReceiptGallery
-              quota={quota}
-              receipts={pastReceipts}
-              isLoading={isLoadingHistory}
-              onBackToScanner={() => setStep("camera")}
-              onDeleteReceipt={deleteReceipt}
             />
           </motion.div>
         )}

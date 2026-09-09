@@ -8,13 +8,13 @@ export function generateSimulatedReceipt(): ExtractedReceiptData {
     {
       merchant: "Indomaret Point Sudirman",
       merchantAddress: "Jl. Jend. Sudirman No. 45, Jakarta Pusat",
-      category: "Belanja & Groceries",
+      category: "Makan",
       paymentMethod: "QRIS",
       items: [
-        { id: "item-1", name: "Ultra Milk Coklat 250ml", quantity: 2, price: 7500, totalPrice: 15000 },
-        { id: "item-2", name: "Roti Tawar Gandum Sari Roti", quantity: 1, price: 18500, totalPrice: 18500 },
-        { id: "item-3", name: "Aqua Air Mineral 600ml", quantity: 2, price: 4000, totalPrice: 8000 },
-        { id: "item-4", name: "Indomie Goreng Spesial", quantity: 5, price: 3200, totalPrice: 16000 },
+        { id: "item-1", name: "Ultra Milk Coklat 250ml", category: "Makan", quantity: 2, price: 7500, totalPrice: 15000 },
+        { id: "item-2", name: "Roti Tawar Gandum", category: "Makan", quantity: 1, price: 18500, totalPrice: 18500 },
+        { id: "item-3", name: "Sabun Mandi Lifebuoy", category: "Kebutuhan", quantity: 2, price: 4000, totalPrice: 8000 },
+        { id: "item-4", name: "Pasta Gigi Pepsodent", category: "Kebutuhan", quantity: 1, price: 16000, totalPrice: 16000 },
       ],
       tax: 0,
       discount: 2500,
@@ -22,11 +22,11 @@ export function generateSimulatedReceipt(): ExtractedReceiptData {
     {
       merchant: "Kopi Kenangan - Mall Ambassador",
       merchantAddress: "Mall Ambassador Lt. 2, Jakarta Selatan",
-      category: "Makanan & Minuman",
+      category: "Makan",
       paymentMethod: "GoPay",
       items: [
-        { id: "item-1", name: "Kopi Kenangan Mantan (L)", quantity: 1, price: 24000, totalPrice: 24000 },
-        { id: "item-2", name: "Roti Coklat Klasik", quantity: 1, price: 12000, totalPrice: 12000 },
+        { id: "item-1", name: "Kopi Kenangan Mantan (L)", category: "Makan", quantity: 1, price: 24000, totalPrice: 24000 },
+        { id: "item-2", name: "Roti Coklat Klasik", category: "Makan", quantity: 1, price: 12000, totalPrice: 12000 },
       ],
       tax: 3600,
       discount: 0,
@@ -37,7 +37,7 @@ export function generateSimulatedReceipt(): ExtractedReceiptData {
       category: "Transportasi",
       paymentMethod: "MyPertamina / QRIS",
       items: [
-        { id: "item-1", name: "Pertamax (RON 92)", quantity: 7.8, price: 12800, totalPrice: 100000 },
+        { id: "item-1", name: "Pertamax (RON 92)", category: "Transportasi", quantity: 7.8, price: 12800, totalPrice: 100000 },
       ],
       tax: 0,
       discount: 0,
@@ -45,11 +45,11 @@ export function generateSimulatedReceipt(): ExtractedReceiptData {
     {
       merchant: "Apotek Kimia Farma Salemba",
       merchantAddress: "Jl. Salemba Raya No. 12",
-      category: "Kesehatan",
+      category: "Kebutuhan",
       paymentMethod: "Debit BCA",
       items: [
-        { id: "item-1", name: "Panadol Extra 10 Tablet", quantity: 2, price: 14500, totalPrice: 29000 },
-        { id: "item-2", name: "Enervon-C Multivitamin 30s", quantity: 1, price: 45000, totalPrice: 45000 },
+        { id: "item-1", name: "Panadol Extra 10 Tablet", category: "Kebutuhan", quantity: 2, price: 14500, totalPrice: 29000 },
+        { id: "item-2", name: "Enervon-C Multivitamin 30s", category: "Kebutuhan", quantity: 1, price: 45000, totalPrice: 45000 },
       ],
       tax: 0,
       discount: 0,

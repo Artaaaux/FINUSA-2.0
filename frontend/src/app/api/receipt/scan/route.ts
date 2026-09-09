@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { optimizeReceiptImage, createStorageReceiptImage } from "@/shared/lib/receipt/resize-image";
+import { optimizeReceiptImage } from "@/shared/lib/receipt/resize-image";
 import { extractReceiptData } from "@/shared/lib/receipt/extract";
 
 export const runtime = "nodejs";
@@ -67,16 +67,13 @@ export async function POST(req: NextRequest) {
       format: "jpeg",
     });
 
-    // 2. Create high-compression thumbnail for storage saving (~500x500px, ~40-80KB)
-    const storageImage = await createStorageReceiptImage(imageBuffer);
-
-    // 3. Extract Receipt Data using NVIDIA Multimodal Vision AI Model
+    // 2. Extract Receipt Data using NVIDIA Multimodal Vision AI Model
     const extractedData = await extractReceiptData(
       optimizedOcr.base64,
       optimizedOcr.mimeType || mimeType
     );
 
-    // 4. Validate if image is actually a valid receipt
+    // 3. Validate if image is actually a valid receipt
     if (extractedData.isReceipt === false || extractedData.confidence < 40) {
       const isBlurry =
         extractedData.rejectionReason?.toLowerCase().includes("buram") ||
@@ -97,12 +94,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       extractedData,
-      optimizedImage: {
-        base64: `data:${storageImage.mimeType};base64,${storageImage.base64}`,
-        sizeBytes: storageImage.sizeBytes,
-        resolution: storageImage.resolution,
-        mimeType: storageImage.mimeType,
-      },
     });
   } catch (error: unknown) {
     console.error("Receipt Scan API Error:", error);

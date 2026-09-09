@@ -9,60 +9,44 @@ export interface CategoryOption {
 
 export const FINUSA_CATEGORIES: CategoryOption[] = [
   {
-    id: "makanan",
-    name: "Makanan & Minuman",
-    description: "Restoran, kafe, warung makan, kuliner harian",
+    id: "makan",
+    name: "Makan",
+    description: "Makanan, minuman, kuliner, dan kebutuhan konsumsi harian",
     iconName: "Utensils",
     colorClass: "text-amber-400 bg-amber-500/10 border-amber-500/25",
     badgeClass: "bg-amber-500/15 text-amber-300 border-amber-500/30",
   },
   {
-    id: "belanja",
-    name: "Belanja & Groceries",
-    description: "Minimarket, supermarket, pasar, kebutuhan pokok",
-    iconName: "ShoppingCart",
-    colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25",
-    badgeClass: "bg-blue-500/15 text-blue-300 border-blue-500/30",
-  },
-  {
-    id: "transportasi",
-    name: "Transportasi",
-    description: "Bensin, parkir, tol, ojek online, tiket perjalanan",
-    iconName: "Car",
+    id: "kebutuhan",
+    name: "Kebutuhan",
+    description: "Kebutuhan pokok rumah tangga, sabun, odol, deterjen, perawatan diri",
+    iconName: "Package",
     colorClass: "text-emerald-400 bg-emerald-500/10 border-emerald-500/25",
     badgeClass: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
   },
   {
-    id: "utilitas",
-    name: "Utilitas & Tagihan",
-    description: "Listrik, air, pulsa, paket data, wifi, langganan",
-    iconName: "Zap",
+    id: "transportasi",
+    name: "Transportasi",
+    description: "Bensin, tol, parkir, ojek/taksi online, perawatan kendaraan",
+    iconName: "Car",
+    colorClass: "text-sky-400 bg-sky-500/10 border-sky-500/25",
+    badgeClass: "bg-sky-500/15 text-sky-300 border-sky-500/30",
+  },
+  {
+    id: "cicilan",
+    name: "Cicilan",
+    description: "Cicilan, tagihan berkala, pulsa, listrik, air, kredit",
+    iconName: "CreditCard",
     colorClass: "text-purple-400 bg-purple-500/10 border-purple-500/25",
     badgeClass: "bg-purple-500/15 text-purple-300 border-purple-500/30",
   },
   {
-    id: "kesehatan",
-    name: "Kesehatan",
-    description: "Apotek, obat, klinik, dokter, vitamin",
-    iconName: "HeartPulse",
-    colorClass: "text-rose-400 bg-rose-500/10 border-rose-500/25",
-    badgeClass: "bg-rose-500/15 text-rose-300 border-rose-500/30",
-  },
-  {
-    id: "hiburan",
-    name: "Hiburan & Rekreasi",
-    description: "Bioskop, buku, game, hobi, rekreasi",
-    iconName: "Clapperboard",
+    id: "keinginan",
+    name: "Keinginan",
+    description: "Hiburan, santai, hobi, belanja baju, rokok, rekreasi",
+    iconName: "Sparkles",
     colorClass: "text-pink-400 bg-pink-500/10 border-pink-500/25",
     badgeClass: "bg-pink-500/15 text-pink-300 border-pink-500/30",
-  },
-  {
-    id: "operasional",
-    name: "Operasional Usaha",
-    description: "Kulakan bahan baku, packaging, stok jualan UMKM",
-    iconName: "Briefcase",
-    colorClass: "text-teal-400 bg-teal-500/10 border-teal-500/25",
-    badgeClass: "bg-teal-500/15 text-teal-300 border-teal-500/30",
   },
   {
     id: "lainnya",
@@ -74,60 +58,93 @@ export const FINUSA_CATEGORIES: CategoryOption[] = [
   },
 ];
 
-const CATEGORY_KEYWORD_MAP: Record<string, string[]> = {
-  "Makanan & Minuman": [
-    "restoran", "restaurant", "cafe", "coffee", "kopi", "warung", "warteg",
-    "mcdonalds", "mcd", "kfc", "hokben", "burger", "pizza", "starbucks",
-    "mixue", "janji jiwa", "kenangan", "chatime", "fore", "dapur", "bakso",
-    "mie gacoan", "gacoan", "solaria", "richeese", "ayam", "bebek", "soto",
-    "sate", "nasi", "padang", "haus", "tea", "roti", "bakery", "bread",
+const ITEM_CATEGORY_KEYWORDS: Record<string, string[]> = {
+  "Makan": [
+    "roti", "bread", "bakery", "susu", "milk", "kopi", "coffee", "teh", "tea",
+    "mie", "indomie", "sedap", "nasi", "beras", "ayam", "daging", "ikan",
+    "telur", "egg", "sayur", "buah", "apel", "jeruk", "pisang", "biskuit",
+    "snack", "chiki", "oreo", "wafer", "coklat", "chocolate", "keju", "cheese",
+    "mentega", "minyak", "goreng", "saus", "kecap", "garam", "gula", "bumbu",
+    "aqua", "air mineral", "le minerale", "teh botol", "pocari", "jus", "juice",
+    "sosis", "nugget", "bakso", "kfc", "mcd", "burger", "pizza", "kuliner",
+    "makan", "minum", "food", "beverage", "drink", "gacoan", "solaria",
   ],
-  "Belanja & Groceries": [
-    "indomaret", "alfamart", "alfamidi", "superindo", "hypermart", "transmart",
-    "lotte", "hero", "grand lucky", "papaya", "yoma", "famima", "family mart",
-    "circle k", "supermarket", "minimarket", "toko", "pasar", "mart", "store",
-    "uniqlo", "zara", "h&m", "matahari", "miniso", "kKV", "sociolla",
+  "Kebutuhan": [
+    "sabun", "soap", "lifebuoy", "lux", "dettol", "biore", "shampoo", "sampo",
+    "pantene", "sunsilk", "clear", "pasta gigi", "odol", "pepsodent", "ciptadent",
+    "sikat gigi", "tisu", "tissue", "pashmina", "deterjen", "detergent", "rinso",
+    "daia", "soklin", "downy", "molto", "sunlight", "mama lemon", "pembersih",
+    "baygon", "hit", "autan", "obat nyamuk", "wipol", "karbol", "spons", "pel",
+    "shampo", "conditioner", "deodorant", "rexona", "pembalut", "charm", "laurier",
+    "popok", "pampers", "mamypoko", "kapas", "cotton bud", "obat", "panadol",
+    "bodrex", "paracetamol", "tolak angin", "minyak kayu putih", "betadine",
+    "plester", "hansaplast", "lampu", "baterai", "kantong", "plastik", "kresek",
   ],
   "Transportasi": [
-    "pertamina", "shell", "bp-akr", "spbu", "bensin", "parkir", "parking",
-    "jasamarga", "toll", "tol", "grab", "gojek", "maxim", "indrive", "bluebird",
-    "kereta", "kai", "krl", "mrt", "transjakarta", "garuda", "lion air",
+    "pertamax", "pertalite", "bensin", "solar", "dexlite", "shell", "spbu",
+    "oli", "pelumas", "parkir", "parking", "tol", "toll", "jasamarga",
+    "grab", "gojek", "goride", "gocar", "maxim", "indrive", "tiket", "krl",
+    "mrt", "kereta", "bengkel", "tambal ban", "cuci motor", "cuci mobil",
   ],
-  "Utilitas & Tagihan": [
-    "pln", "listrik", "token", "pdam", "air", "telkom", "indihome", "myrepublic",
-    "biznet", "first media", "telkomsel", "indosat", "xl", "smartfren", "pulsa",
+  "Cicilan": [
+    "pln", "listrik", "token", "pdam", "air", "pulsa", "paket data", "kuota",
+    "indihome", "biznet", "wifi", "bpjs", "asuransi", "cicilan", "angsuran",
+    "kredit", "paylater", "kartu kredit", "sewa",
   ],
-  "Kesehatan": [
-    "kimia farma", "guardian", "watsons", "k-24", "apotek", "pharmacy", "obat",
-    "klinik", "clinic", "rumah sakit", "hospital", "lab", "prodia", "halodoc",
-  ],
-  "Hiburan & Rekreasi": [
-    "xxi", "cinema", "cgv", "cinepolis", "bioskop", "gramedia", "periplus",
-    "timezone", "timezone", "netflix", "spotify", "steam", "playstation",
-  ],
-  "Operasional Usaha": [
-    "kulakan", "bahan baku", "distributor", "grosir", "plastik", "dus",
-    "packaging", "kardus", "supplier", "cetak", "percetakan", "atk",
+  "Keinginan": [
+    "rokok", "surya", "sampoerna", "marlboro", "magnum", "djarum", "esse",
+    "vape", "liquid", "game", "steam", "playstation", "topup", "diamond",
+    "bioskop", "cinema", "xxi", "cgv", "buku", "novel", "komik", "mainan",
+    "baju", "kaos", "celana", "sepatu", "sandal", "tas", "aksesoris",
+    "parfum", "makeup", "skincare", "lipstik", "nonton", "karaoke",
   ],
 };
 
 /**
- * Auto-detects category from merchant name and item descriptions
+ * Detects specific category for an individual item
+ */
+export function detectItemCategory(itemName: string): string {
+  const lower = (itemName || "").toLowerCase();
+
+  for (const [category, keywords] of Object.entries(ITEM_CATEGORY_KEYWORDS)) {
+    for (const kw of keywords) {
+      if (lower.includes(kw)) {
+        return category;
+      }
+    }
+  }
+
+  return "Makan"; // Default to Makan for general minimarket purchases
+}
+
+/**
+ * Auto-detects primary category for a receipt from merchant and items
  */
 export function detectCategory(
   merchantName?: string,
-  items?: Array<{ name: string; price?: number }>,
+  items?: Array<{ name: string; price?: number; category?: string }>,
   rawText?: string
 ): string {
-  const combined = [
-    merchantName || "",
-    ...(items ? items.map((i) => i.name) : []),
-    rawText || "",
-  ]
-    .join(" ")
-    .toLowerCase();
+  if (items && items.length > 0) {
+    // If items already have categories, pick the most frequent or highest total
+    const counts: Record<string, number> = {};
+    for (const item of items) {
+      const cat = item.category || detectItemCategory(item.name);
+      counts[cat] = (counts[cat] || 0) + (item.price || 1);
+    }
+    let bestCat = "Makan";
+    let maxVal = -1;
+    for (const [cat, val] of Object.entries(counts)) {
+      if (val > maxVal) {
+        maxVal = val;
+        bestCat = cat;
+      }
+    }
+    return bestCat;
+  }
 
-  for (const [category, keywords] of Object.entries(CATEGORY_KEYWORD_MAP)) {
+  const combined = [merchantName || "", rawText || ""].join(" ").toLowerCase();
+  for (const [category, keywords] of Object.entries(ITEM_CATEGORY_KEYWORDS)) {
     for (const kw of keywords) {
       if (combined.includes(kw)) {
         return category;
@@ -135,8 +152,9 @@ export function detectCategory(
     }
   }
 
-  return "Belanja & Groceries";
+  return "Makan";
 }
+
 
 /**
  * Get category metadata for UI rendering
