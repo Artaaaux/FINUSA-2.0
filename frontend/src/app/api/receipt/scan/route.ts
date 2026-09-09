@@ -59,11 +59,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 1. Optimize image for OCR (max 1000x1000px, WebP or JPEG ~100KB)
+    // 1. Optimize image for AI Vision & OCR (vertical receipt ratio, ~50-80KB)
     const optimizedOcr = await optimizeReceiptImage(imageBuffer, {
-      maxWidth: 1000,
-      maxHeight: 1000,
-      quality: 80,
+      maxWidth: 800,
+      maxHeight: 1200,
+      quality: 75,
       format: "jpeg",
     });
 

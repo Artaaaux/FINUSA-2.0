@@ -4,7 +4,12 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  serverExternalPackages: ["tesseract.js", "sharp"],
+  serverExternalPackages: ["tesseract.js", "tesseract.js-core", "sharp"],
+  outputFileTracingIncludes: {
+    "/api/**/*": [
+      "./node_modules/tesseract.js-core/**/*.wasm",
+    ],
+  },
   experimental: {
     optimizePackageImports: [
       "lucide-react",

@@ -1,7 +1,8 @@
-import { createWorker } from "tesseract.js";
 import path from "path";
 import fs from "fs";
 import { NvidiaModelsClient } from "./nvidia-models";
+
+declare const __non_webpack_require__: NodeRequire | undefined;
 import { detectCategory } from "./categorize";
 import type { ReceiptItem, ExtractedReceiptData } from "./types";
 import { generateSimulatedReceipt } from "./sample";
@@ -125,43 +126,81 @@ function extractJsonFromModelResponse(text: string): Record<string, unknown> {
 }
 
 /**
- * Executes local Tesseract OCR with explicitly resolved workerPath to avoid bundler resolution issues
+ * Checks whether Tesseract WebAssembly binaries are present on disk before spawning worker
+ */
+function isTesseractWasmAvailable(): boolean {
+  try {
+    const req = typeof __non_webpack_require__ !== "undefined" ? __non_webpack_require__ : require;
+    const corePkg = req.resolve("tesseract.js-core/package.json");
+    const coreDir = path.dirname(corePkg);
+    const candidateFiles = [
+      "tesseract-core-relaxedsimd.wasm",
+      "tesseract-core-simd.wasm",
+      "tesseract-core.wasm",
+    ];
+    return candidateFiles.some((file) => fs.existsSync(path.join(coreDir, file)));
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Executes local Tesseract OCR with safety checks and timeout to prevent serverless worker hangs
  */
 async function performOcr(imageInput: string): Promise<string> {
-  const workerOptions: Record<string, unknown> = {};
+  if (!isTesseractWasmAvailable()) {
+    console.warn("[performOcr] Tesseract WASM binaries not found in environment, skipping local OCR fallback.");
+    throw new Error("Local OCR WASM binary is not available in this serverless environment.");
+  }
 
-  try {
-    const tesseractEntry = require.resolve("tesseract.js");
-    const workerPath = path.join(path.dirname(tesseractEntry), "worker-script", "node", "index.js");
-    if (fs.existsSync(workerPath)) {
-      workerOptions.workerPath = workerPath;
+  const ocrPromise = async () => {
+    let worker;
+    try {
+      const workerOptions: Record<string, unknown> = {};
+
+      try {
+        const req = typeof __non_webpack_require__ !== "undefined" ? __non_webpack_require__ : require;
+        const tesseractEntry = req.resolve("tesseract.js/package.json");
+        const workerPath = path.join(path.dirname(tesseractEntry), "dist", "worker.min.js");
+        if (fs.existsSync(workerPath)) {
+          workerOptions.workerPath = workerPath;
+        }
+      } catch {
+        // fallback if require.resolve is unavailable
+      }
+
+      // Check for local traineddata files to avoid remote CDN download delay
+      const candidateDirs = [
+        process.cwd(),
+        path.join(process.cwd(), "frontend"),
+        path.resolve(__dirname, "../../../.."),
+      ];
+
+      for (const dir of candidateDirs) {
+        if (fs.existsSync(path.join(dir, "eng.traineddata")) || fs.existsSync(path.join(dir, "ind.traineddata"))) {
+          workerOptions.langPath = dir;
+          workerOptions.gzip = false;
+          break;
+        }
+      }
+
+      const { createWorker } = await import("tesseract.js");
+      worker = await createWorker("ind+eng", 1, workerOptions);
+      const ret = await worker.recognize(imageInput);
+      return ret.data.text || "";
+    } finally {
+      if (worker) {
+        await worker.terminate().catch(() => {});
+      }
     }
-  } catch {
-    // fallback if require.resolve is unavailable
-  }
+  };
 
-  // Check for local traineddata files to avoid remote CDN download delay
-  const candidateDirs = [
-    process.cwd(),
-    path.join(process.cwd(), "frontend"),
-    path.resolve(__dirname, "../../../.."),
-  ];
-
-  for (const dir of candidateDirs) {
-    if (fs.existsSync(path.join(dir, "eng.traineddata")) || fs.existsSync(path.join(dir, "ind.traineddata"))) {
-      workerOptions.langPath = dir;
-      workerOptions.gzip = false;
-      break;
-    }
-  }
-
-  const worker = await createWorker("ind+eng", 1, workerOptions);
-  try {
-    const ret = await worker.recognize(imageInput);
-    return ret.data.text || "";
-  } finally {
-    await worker.terminate();
-  }
+  return Promise.race([
+    ocrPromise(),
+    new Promise<string>((_, reject) =>
+      setTimeout(() => reject(new Error("OCR operation timed out after 12 seconds")), 12000)
+    ),
+  ]);
 }
 
 /**
