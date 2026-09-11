@@ -139,8 +139,8 @@ function formatAuthError(err: unknown, defaultMessage: string): string {
   if (lower.includes("invalid login credentials")) {
     return "Email atau password yang Anda masukkan salah.";
   }
-  if (lower.includes("email not confirmed")) {
-    return "Email Anda belum dikonfirmasi. Silakan periksa inbox email Anda untuk mengaktifkan akun.";
+  if (lower.includes("sending confirmation mail") || lower.includes("error sending") || lower.includes("smtp") || lower.includes("email provider")) {
+    return "Gagal mengirim email verifikasi ke alamat tersebut. Domain/SMTP di Resend atau Supabase belum selesai diverifikasi DNS-nya.";
   }
   if (lower.includes("database error") || message === "{}") {
     const hint = rawMessage && rawMessage !== "Database error saving new user" ? ` (${rawMessage})` : "";
