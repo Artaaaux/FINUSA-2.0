@@ -220,16 +220,16 @@ ALTER TABLE public.user_preferences ENABLE ROW LEVEL SECURITY;
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'profiles' AND policyname = 'Service role all profiles') THEN
-        CREATE POLICY "Service role all profiles" ON public.profiles TO service_role FOR ALL USING (true) WITH CHECK (true);
+        CREATE POLICY "Service role all profiles" ON public.profiles FOR ALL TO service_role USING (true) WITH CHECK (true);
     END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'accounts' AND policyname = 'Service role all accounts') THEN
-        CREATE POLICY "Service role all accounts" ON public.accounts TO service_role FOR ALL USING (true) WITH CHECK (true);
+        CREATE POLICY "Service role all accounts" ON public.accounts FOR ALL TO service_role USING (true) WITH CHECK (true);
     END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'categories' AND policyname = 'Service role all categories') THEN
-        CREATE POLICY "Service role all categories" ON public.categories TO service_role FOR ALL USING (true) WITH CHECK (true);
+        CREATE POLICY "Service role all categories" ON public.categories FOR ALL TO service_role USING (true) WITH CHECK (true);
     END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'user_preferences' AND policyname = 'Service role all preferences') THEN
-        CREATE POLICY "Service role all preferences" ON public.user_preferences TO service_role FOR ALL USING (true) WITH CHECK (true);
+        CREATE POLICY "Service role all preferences" ON public.user_preferences FOR ALL TO service_role USING (true) WITH CHECK (true);
     END IF;
 END $$;
 
