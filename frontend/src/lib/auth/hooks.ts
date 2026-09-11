@@ -108,20 +108,25 @@ export function useForgotPassword() {
 
 function formatAuthError(err: unknown, defaultMessage: string): string {
   let message = defaultMessage;
+  let rawMessage = "";
 
   if (err && typeof err === "object") {
     const anyErr = err as Record<string, unknown>;
     if (typeof anyErr.message === "string" && anyErr.message.trim() !== "" && anyErr.message !== "{}") {
       message = anyErr.message;
+      rawMessage = anyErr.message;
     } else if (typeof anyErr.msg === "string" && anyErr.msg.trim() !== "" && anyErr.msg !== "{}") {
       message = anyErr.msg;
+      rawMessage = anyErr.msg;
     } else if (typeof anyErr.error_description === "string" && anyErr.error_description.trim() !== "") {
       message = anyErr.error_description;
+      rawMessage = anyErr.error_description;
     } else if (anyErr.status === 500 || anyErr.code === 500) {
       message = "Terjadi kesalahan pada database Supabase (Database error).";
     }
   } else if (typeof err === "string" && err.trim() !== "" && err !== "{}") {
     message = err;
+    rawMessage = err;
   }
 
   const lower = message.toLowerCase();
@@ -138,7 +143,8 @@ function formatAuthError(err: unknown, defaultMessage: string): string {
     return "Email Anda belum dikonfirmasi. Silakan periksa inbox email Anda untuk mengaktifkan akun.";
   }
   if (lower.includes("database error") || message === "{}") {
-    return "Terjadi kendala pada database Supabase saat menyimpan pengguna baru. Silakan periksa SQL trigger database.";
+    const hint = rawMessage && rawMessage !== "Database error saving new user" ? ` (${rawMessage})` : "";
+    return `Terjadi kendala pada database Supabase saat menyimpan pengguna baru.${hint} Silakan periksa SQL trigger database atau jalankan skrip drop trigger.`;
   }
 
   return message;

@@ -13,6 +13,20 @@ export const SettingsService = {
     const firstName = data?.first_name || meta.first_name || meta.name || "";
     const lastName = data?.last_name || meta.last_name || "";
 
+    // If profile row doesn't exist yet in Supabase, auto-create it gracefully
+    if (!data && user) {
+      try {
+        await supabase.from("profiles").upsert({
+          id: user.id,
+          email: user.email || "",
+          first_name: firstName || user.email?.split("@")[0] || "Pengguna FINUSA",
+          role: "Pemilik Akun",
+        });
+      } catch (err) {
+        console.warn("Auto-create profile fallback notice:", err);
+      }
+    }
+
     return {
       firstName,
       lastName,
