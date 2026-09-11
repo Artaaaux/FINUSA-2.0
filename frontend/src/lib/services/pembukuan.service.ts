@@ -37,6 +37,30 @@ export const PembukuanService = {
       console.warn("Failed to fetch accounts from Supabase:", error.message);
       return [];
     }
+
+    if (!data || data.length === 0) {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const defaultAccounts = [
+            { user_id: user.id, name: "Cash / Tunai", type: "cash", balance: 0, color: "#E8A76F", is_default: true },
+            { user_id: user.id, name: "Transfer Bank", type: "bank", balance: 0, color: "#4B7BFF", is_default: false },
+            { user_id: user.id, name: "QRIS", type: "e_wallet", balance: 0, color: "#2A9D8F", is_default: false },
+            { user_id: user.id, name: "E-Wallet", type: "e_wallet", balance: 0, color: "#10B981", is_default: false },
+          ];
+          const { data: inserted } = await supabase
+            .from("accounts")
+            .insert(defaultAccounts)
+            .select();
+          if (inserted && inserted.length > 0) {
+            return inserted;
+          }
+        }
+      } catch (seedErr) {
+        console.warn("Auto-seed accounts fallback error:", seedErr);
+      }
+    }
+
     return data || [];
   },
 
