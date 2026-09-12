@@ -67,7 +67,7 @@ const finusaFeatures = [
     icon: <FileSpreadsheet className="w-5 h-5 text-sky-400" aria-hidden="true" />,
     badgeClass: "text-sky-400 bg-sky-500/10 border-sky-500/25",
     iconBg: "bg-sky-500/15 border-sky-500/30",
-    href: "/sheets",
+    href: "/template",
   },
 ];
 

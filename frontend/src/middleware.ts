@@ -21,7 +21,7 @@ export const config = {
     "/nabung/:path*",
     "/catat/:path*",
     "/pembukuan/:path*",
-    "/sheets/:path*",
+    "/template/:path*",
     "/settings/:path*",
     "/help/:path*",
   ],

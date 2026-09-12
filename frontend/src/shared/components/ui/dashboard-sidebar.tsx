@@ -32,7 +32,7 @@ const finusaNavItems: NavItemData[] = [
   { id: 'monitor', title: 'Monitor', icon: Activity, href: "/monitor" },
   { id: 'nabung', title: 'Nabung', icon: CreditCard, href: "/nabung" },
   { id: 'catat', title: 'Catat', icon: FolderKanban, href: "/catat" },
-  { id: 'sheets', title: 'Template', icon: FileSpreadsheet, href: "/sheets" },
+  { id: 'template', title: 'Template', icon: FileSpreadsheet, href: "/template" },
 ];
 
 const finusaBottomItems: NavItemData[] = [

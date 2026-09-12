@@ -39,6 +39,11 @@ const nextConfig = {
         destination: "/catat",
         permanent: true,
       },
+      {
+        source: "/sheets",
+        destination: "/template",
+        permanent: true,
+      },
     ];
   },
 };
