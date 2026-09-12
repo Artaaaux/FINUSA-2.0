@@ -5,7 +5,7 @@ const footerColumns = [
       { label: "AI Advisor", href: "#features" },
       { label: "Budget Tracker", href: "#features" },
       { label: "Savings Goals", href: "#features" },
-      { label: "UMKM Tools", href: "#features" },
+      { label: "Fitur Tabungan", href: "#features" },
     ],
   },
   {
@@ -51,8 +51,8 @@ export function Footer() {
               FINUSA
             </a>
             <p className="mt-3 text-sm leading-relaxed text-gray-400">
-              Finance Nusantara, solusi literasi keuangan untuk mahasiswa &
-              UMKM Indonesia.
+              Finance Nusantara, solusi literasi keuangan untuk pelajar &amp;
+              generasi muda Indonesia.
             </p>
           </div>
 

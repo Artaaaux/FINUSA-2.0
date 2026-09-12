@@ -20,7 +20,7 @@ const robotoMono = Roboto_Mono({
 export const metadata: Metadata = {
   title: "FINUSA - Finance Nusantara",
   description:
-    "Solusi literasi dan pengelolaan finansial untuk mahasiswa dan UMKM Indonesia.",
+    "Solusi literasi dan pengelolaan finansial untuk pelajar dan generasi muda Indonesia.",
   verification: {
     google: "u6crRizJRBxe3tYTV75j4rqH0qDZhielj23ypAUGT4I",
   },

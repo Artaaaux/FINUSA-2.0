@@ -1,13 +1,11 @@
 "use client";
 
-import { Plus, Download, Sparkles, Award, Target } from "lucide-react";
+import { Plus, Download, Target } from "lucide-react";
 
 interface NabungHeaderProps {
   activeGoalsCount: number;
   totalGoalsCount: number;
   onOpenCreate: () => void;
-  onOpenInsights: () => void;
-  onOpenAchievements: () => void;
   onOpenExport: () => void;
 }
 
@@ -15,8 +13,6 @@ export default function NabungHeader({
   activeGoalsCount,
   totalGoalsCount,
   onOpenCreate,
-  onOpenInsights,
-  onOpenAchievements,
   onOpenExport,
 }: NabungHeaderProps) {
   return (
@@ -36,30 +32,12 @@ export default function NabungHeader({
           </div>
         </div>
         <p className="text-xs sm:text-sm text-slate-400 mt-1.5 max-w-2xl leading-relaxed">
-          Rencanakan pos tabungan untuk keperluan usaha, kuliah, proteksi darurat, dan kebutuhan masa depan dengan simulasi realistis serta alokasi debit otomatis.
+          Rencanakan pos tabungan untuk keperluan belajar, proteksi darurat, dan kebutuhan masa depan dengan simulasi realistis serta alokasi debit otomatis.
         </p>
       </div>
 
       {/* Action Buttons */}
       <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap">
-        <button
-          type="button"
-          onClick={onOpenInsights}
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/25 transition-all shadow-sm cursor-pointer"
-        >
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Smart Insights</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={onOpenAchievements}
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium text-purple-300 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/25 transition-all shadow-sm cursor-pointer"
-        >
-          <Award className="w-3.5 h-3.5" />
-          <span>Lencana</span>
-        </button>
-
         <button
           type="button"
           onClick={onOpenExport}

@@ -57,11 +57,11 @@ export const SHEET_TEMPLATES: SheetTemplate[] = [
   },
   {
     id: "tpl-tax-summary",
-    name: "Rekap Pajak UMKM (PPh Final)",
+    name: "Rekap Pajak Usaha Pribadi (PPh Final)",
     category: "tax",
     categoryLabel: "Pajak",
     description: "Kompilasi omzet bruto bulanan dengan kalkulator PPh Final 0.5% (PP 55/2022).",
-    longDescription: "Didesain untuk kepatuhan pajak UMKM Indonesia. Memisahkan transaksi yang dikenakan PPh Final 0.5% dan potongan pihak ketiga.",
+    longDescription: "Didesain untuk kepatuhan pajak usaha pribadi dan pekerja lepas di Indonesia. Memisahkan transaksi yang dikenakan PPh Final 0.5% dan potongan pihak ketiga.",
     formulas: ["SUMIF", "IF (PTKP)", "Akumulasi YTD"],
     sampleColumns: ["Masa Pajak", "Omzet Bruto", "Akumulasi YTD", "Dasar Pengenaan", "PPh Final 0.5%", "Status"],
     sampleRows: [

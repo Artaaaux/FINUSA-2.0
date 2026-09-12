@@ -19,7 +19,7 @@ interface GoalItem {
   id: string;
   name: string;
   category: string;
-  userType: "UMKM" | "Mahasiswa" | "Umum";
+  userType: "Pelajar" | "Umum";
   target: number;
   current: number;
   deadline: string;
@@ -94,7 +94,7 @@ export default function SavingsGoals() {
             id: g.id,
             name: g.name,
             category: g.categoryLabel || g.category,
-            userType: "UMKM",
+            userType: g.userType || "Pelajar",
             target: g.targetAmount,
             current: g.currentAmount,
             deadline: g.targetDate || "Des 2026",
@@ -156,7 +156,7 @@ export default function SavingsGoals() {
               </span>
             </div>
             <p className="text-xs text-slate-400 mt-1">
-              Rencana alokasi dana dan target finansial masa depan mahasiswa & UMKM
+              Rencana alokasi dana dan target finansial masa depan pelajar & umum
             </p>
           </div>
 

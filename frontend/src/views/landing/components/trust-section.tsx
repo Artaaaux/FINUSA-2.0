@@ -35,15 +35,15 @@ const badges = [
 const faqs = [
   {
     question: "Apakah FINUSA benar-benar gratis?",
-    answer: "Ya, FINUSA 100% gratis tanpa biaya tersembunyi. Semua fitur literasi keuangan, AI advisor, pembukuan kas UMKM, dan simulasi tabungan dapat digunakan sepenuhnya secara gratis.",
+    answer: "Ya, FINUSA 100% gratis tanpa biaya tersembunyi. Semua fitur literasi keuangan, AI advisor, pencatatan kas mandiri, dan simulasi tabungan dapat digunakan sepenuhnya secara gratis.",
   },
   {
     question: "Bagaimana FINUSA mengamankan data saya?",
     answer: "Kami mengutamakan privasi Anda. Semua data transaksi dan finansial Anda diamankan dengan Row-Level Security (RLS) di Supabase dan koneksi SSL terenkripsi, memastikan tidak ada pihak lain yang bisa mengintip catatan Anda.",
   },
   {
-    question: "Bagaimana cara kerja integrasi Google Sheets?",
-    answer: "Anda dapat menghubungkan akun Google Anda di halaman pengaturan. FINUSA akan secara otomatis mengekspor data pencatatan pengeluaran harian dan buku kas UMKM Anda ke spreadsheet pilihan Anda secara berkala.",
+    question: "Bagaimana cara kerja fitur Template Spreadsheet?",
+    answer: "Anda dapat mengunduh template spreadsheet keuangan siap pakai dalam format .xlsx langsung dari browser. File bisa langsung dibuka di Excel atau Google Sheets tanpa perlu izin akun ataupun koneksi API yang rumit.",
   },
   {
     question: "Apakah ada aplikasi mobile untuk FINUSA?",

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { FileSpreadsheet, Download } from "lucide-react";
+import { FileSpreadsheet } from "lucide-react";
 import { SHEET_TEMPLATES } from "./constants";
 import TemplateCard from "./components/TemplateCard";
 
@@ -24,8 +24,7 @@ export default function SheetsPage() {
       </div>
 
       {/* Info Banner */}
-      <div className="flex items-start gap-3 p-4 rounded-xl bg-blue-500/5 border border-blue-500/15">
-        <Download className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+      <div className="p-4 rounded-xl bg-blue-500/5 border border-blue-500/15">
         <div className="text-xs text-slate-400 leading-relaxed">
           <span className="text-slate-200 font-medium">Cara pakai:</span> Pilih template yang sesuai, klik Download, lalu buka file-nya. Kamu bisa langsung mengisi data di atas contoh yang ada, atau hapus baris contoh dan mulai dari awal.
         </div>

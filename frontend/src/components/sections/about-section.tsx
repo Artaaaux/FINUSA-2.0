@@ -6,10 +6,10 @@ import { motion, useReducedMotion } from "framer-motion";
 const audiences = [
   {
     icon: GraduationCap,
-    title: "Untuk Mahasiswa",
-    desc: "Belajar membagi uang, menabung untuk impian, dan mengerti financial planning sejak muda.",
+    title: "Untuk Pelajar",
+    desc: "Belajar membagi uang saku, menabung untuk impian, dan mengerti financial planning sejak muda.",
     highlights: [
-      "Budgeting uang jajan & beasiswa",
+      "Budgeting uang saku & beasiswa",
       "Simulasi tabungan & target impian",
       "Materi literasi keuangan gratis",
     ],
@@ -20,12 +20,12 @@ const audiences = [
   },
   {
     icon: Briefcase,
-    title: "Untuk Pemilik UMKM",
-    desc: "Pantau arus kas bisnis, hitung margin, break-even point, dan planning pertumbuhan bisnis.",
+    title: "Untuk Pekerja & Mandiri",
+    desc: "Pantau arus kas harian, alokasi tabungan, kelola penghasilan, dan rencanakan masa depan finansial.",
     highlights: [
-      "Pembukuan kas digital sederhana",
-      "Pencatatan laba/rugi otomatis",
-      "Analisis margin keuntungan",
+      "Pencatatan kas digital sederhana",
+      "Simulasi dana darurat otomatis",
+      "Analisis pengeluaran bulanan",
     ],
     iconColor: "text-accent-purple",
     bgColor: "bg-accent-purple/10 border-accent-purple/20",
@@ -94,7 +94,7 @@ export function AboutSection() {
               transition={{ delay: 0.15 }}
               className="mb-8 text-base leading-relaxed text-gray-400"
             >
-              Finusa dirancang khusus untuk memecahkan masalah keuangan yang sering dialami oleh mahasiswa dan pengusaha mikro di Indonesia. Kami menggabungkan kecerdasan buatan dengan alat praktis agar siapa saja bisa mengambil keputusan keuangan yang bijak.
+              Finusa dirancang khusus untuk memecahkan masalah keuangan yang sering dialami oleh pelajar dan generasi muda di Indonesia. Kami menggabungkan kecerdasan buatan dengan alat praktis agar siapa saja bisa mengambil keputusan keuangan yang bijak.
             </motion.p>
 
             {/* Glowing Stats Column inside Left Block */}

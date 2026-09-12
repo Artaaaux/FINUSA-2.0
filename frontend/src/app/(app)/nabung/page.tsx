@@ -1,19 +1,14 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { Plus, Target } from "lucide-react";
 import {
   SavingsGoal,
-  SavingsInsight,
-  SavingsAchievement,
   GoalFilterState,
   AutoSaveSettings,
 } from "./types";
-import {
-  INITIAL_ACHIEVEMENTS,
-} from "./constants";
 import { SavingsService } from "@/lib/services/savings.service";
 import NabungHeader from "./components/NabungHeader";
 import NabungKpiSummary from "./components/NabungKpiSummary";
@@ -25,8 +20,6 @@ import CreateGoalModal from "./components/CreateGoalModal";
 import AddMoneyModal from "./components/AddMoneyModal";
 import AutoSaveModal from "./components/AutoSaveModal";
 import MilestoneCelebrationModal from "./components/MilestoneCelebrationModal";
-import SmartSavingsInsights from "./components/SmartSavingsInsights";
-import AchievementsShowcase from "./components/AchievementsShowcase";
 import NabungExportModal from "./components/NabungExportModal";
 
 const staggered = (delay: number) => ({
@@ -66,8 +59,6 @@ function NabungFooter() {
 export default function NabungPage() {
   // State Initialization
   const [goals, setGoals] = useState<SavingsGoal[]>([]);
-  const [insights] = useState<SavingsInsight[]>([]);
-  const [achievements] = useState<SavingsAchievement[]>(INITIAL_ACHIEVEMENTS);
   const [isClient, setIsClient] = useState(false);
 
   // Filters State
@@ -87,9 +78,7 @@ export default function NabungPage() {
   const [editingGoal, setEditingGoal] = useState<SavingsGoal | null>(null);
   const [depositGoal, setDepositGoal] = useState<SavingsGoal | null>(null);
   const [autoSaveGoal, setAutoSaveGoal] = useState<SavingsGoal | null>(null);
-  const [isAchievementsOpen, setIsAchievementsOpen] = useState(false);
   const [isExportOpen, setIsExportOpen] = useState(false);
-  const [showInsightsBanner, setShowInsightsBanner] = useState(true);
 
   // Celebration Modal State
   const [celebrationState, setCelebrationState] = useState<{
@@ -244,7 +233,7 @@ export default function NabungPage() {
         name: goalData.name || "Target Baru",
         category: goalData.category || "darurat",
         categoryLabel: goalData.categoryLabel || "Dana Darurat",
-        userType: goalData.userType || "UMKM",
+        userType: goalData.userType || "Pelajar",
         targetAmount: goalData.targetAmount || 10000000,
         currentAmount: goalData.currentAmount || 0,
         startDate: new Date().toISOString().split("T")[0],
@@ -331,23 +320,6 @@ export default function NabungPage() {
     );
   };
 
-  // Handle Insight Action Trigger
-  const handleInsightAction = (insight: SavingsInsight) => {
-    if (insight.actionType === "add_money" && insight.goalIdTarget) {
-      const targetG = goals.find((g) => g.id === insight.goalIdTarget);
-      if (targetG) {
-        setDepositGoal(targetG);
-      }
-    } else if (insight.actionType === "setup_autosave" && insight.goalIdTarget) {
-      const targetG = goals.find((g) => g.id === insight.goalIdTarget);
-      if (targetG) {
-        setAutoSaveGoal(targetG);
-      }
-    } else {
-      setIsCreateOpen(true);
-    }
-  };
-
   // Filter and Sort Goals
   const filteredGoals = useMemo(() => {
     return goals
@@ -414,8 +386,6 @@ export default function NabungPage() {
             setEditingGoal(null);
             setIsCreateOpen(true);
           }}
-          onOpenInsights={() => setShowInsightsBanner(!showInsightsBanner)}
-          onOpenAchievements={() => setIsAchievementsOpen(true)}
           onOpenExport={() => setIsExportOpen(true)}
         />
       </motion.div>
@@ -425,24 +395,7 @@ export default function NabungPage() {
         <NabungKpiSummary goals={goals} />
       </motion.div>
 
-      {/* 3. Smart Savings Insights Banner */}
-      <AnimatePresence>
-        {showInsightsBanner && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <SmartSavingsInsights
-              insights={insights}
-              onActionClick={handleInsightAction}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* 4. Filter, Search & Sort Bar */}
+      {/* 3. Filter, Search & Sort Bar */}
       <motion.div {...staggered(0.08)}>
         <NabungFilterBar
           filters={filters}
@@ -595,12 +548,6 @@ export default function NabungPage() {
         targetAmount={celebrationState.targetAmount}
       />
 
-      {/* Achievements Showcase Modal */}
-      <AchievementsShowcase
-        isOpen={isAchievementsOpen}
-        onClose={() => setIsAchievementsOpen(false)}
-        achievements={achievements}
-      />
 
       {/* Export Modal */}
       <NabungExportModal

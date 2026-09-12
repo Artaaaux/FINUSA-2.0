@@ -47,7 +47,7 @@ export function MynaHero() {
             className="mb-5 inline-flex items-center gap-2 rounded-full border border-accent-cyan/30 bg-white/[0.12] px-4 py-2 text-sm font-semibold text-blue-50 shadow-sm backdrop-blur-xl"
           >
             <ShieldCheck className="h-4 w-4 text-accent-cyan" />
-            Finance Nusantara untuk mahasiswa &amp; UMKM
+            Finance Nusantara untuk pelajar &amp; generasi muda
           </motion.div>
 
           {/* Title with staggered word animation */}
@@ -79,7 +79,7 @@ export function MynaHero() {
             }}
             className="mt-5 max-w-2xl text-[15px] leading-[1.6] text-blue-100 md:text-[18px]"
           >
-            Solusi finansial lengkap untuk mahasiswa &amp; UMKM — belajar literasi
+            Solusi finansial lengkap untuk pelajar &amp; generasi muda — belajar literasi
             keuangan, memantau pasar, dan mengatur arus kas harian.
           </motion.p>
 

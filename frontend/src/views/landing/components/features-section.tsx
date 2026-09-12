@@ -193,21 +193,21 @@ export function FeaturesSection() {
                       75% Selesai
                     </span>
                   </div>
-                  <p className="text-[11px] text-gray-400 mb-2">Beli Laptop Baru (UMKM Kerja)</p>
+                  <p className="text-[11px] text-gray-400 mb-2">Beli Laptop Baru (Pelajar &amp; Belajar)</p>
                   <div className="h-1.5 w-full rounded-full bg-slate-900 overflow-hidden mb-2">
                     <div className="h-full bg-gradient-to-r from-violet-500 to-accent-purple" style={{ width: '75%' }} />
                   </div>
                   <span className="text-[10px] text-gray-500">Kumpul Rp 6.0M dari Rp 8.0M</span>
                 </div>
 
-                {/* Google Sheets / UMKM integration */}
+                {/* Template Spreadsheet */}
                 <div className="rounded-xl border border-accent-purple/15 bg-slate-950/60 p-5 shadow-sm flex flex-col justify-between">
                   <div>
                     <h4 className="text-xs font-semibold text-white flex items-center gap-1.5 mb-2">
-                      <span><ChartColumn size={17} className="text-accent-purple" /></span> Sinkronisasi Sheets
+                      <span><ChartColumn size={17} className="text-accent-purple" /></span> Template Spreadsheet
                     </h4>
                     <p className="text-[11px] text-gray-400 leading-relaxed">
-                      Ekspor data transaksi, pembukuan kas UMKM, dan riwayat anggaran otomatis langsung ke Google Sheets Anda.
+                      Download template spreadsheet keuangan, pencatatan kas mandiri, dan format anggaran siap pakai langsung dalam format .xlsx.
                     </p>
                   </div>
                   <div className="flex gap-2 mt-3">

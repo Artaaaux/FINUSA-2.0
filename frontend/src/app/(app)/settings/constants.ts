@@ -9,10 +9,10 @@ export const INITIAL_PROFILE: UserProfileSettings = {
   lastName: "Rachta",
   email: "artaaaux.finance@gmail.com",
   phoneNumber: "+62 812-3456-7890",
-  bio: "Pengusaha UMKM Kuliner & Creator Finansial. Mengelola operasional dan target tabungan bisnis di Finusa.",
+  bio: "Pelajar & Penggiat Literasi Finansial. Mengelola pencatatan kas dan target tabungan mandiri di Finusa.",
   avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&h=160&fit=crop&crop=faces",
-  companyName: "PT Nusantara Prima Boga",
-  role: "Pemilik Bisnis / Admin",
+  companyName: "Nusantara Financial Community",
+  role: "Pelajar / Pengguna Mandiri",
   timezone: "Asia/Jakarta (WIB)",
 };
 

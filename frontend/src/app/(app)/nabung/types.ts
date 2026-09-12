@@ -50,7 +50,7 @@ export interface SavingsGoal {
   name: string;
   category: SavingsCategory;
   categoryLabel: string;
-  userType: "UMKM" | "Mahasiswa" | "Umum";
+  userType: "Pelajar" | "Umum";
   targetAmount: number;
   currentAmount: number;
   startDate: string;

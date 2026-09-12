@@ -31,9 +31,15 @@ export default function NabungKpiSummary({ goals }: NabungKpiSummaryProps) {
           <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
             <TrendingUp className="w-5 h-5" />
           </div>
-          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">
-            <ArrowUpRight className="w-3 h-3" /> +12.4%
-          </span>
+          {totalTarget > 0 ? (
+            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">
+              <ArrowUpRight className="w-3 h-3" /> {completionRate}% Tercapai
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-400 bg-slate-800/80 border border-slate-700/60 px-2 py-0.5 rounded-full">
+              {goals.length} Pos
+            </span>
+          )}
         </div>
         <div>
           <p className="text-xs text-slate-400 font-medium tracking-wide">Total Terkumpul</p>

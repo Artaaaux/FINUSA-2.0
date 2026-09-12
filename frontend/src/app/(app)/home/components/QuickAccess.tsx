@@ -81,7 +81,7 @@ export default function QuickAccess() {
             <span className="inline-block h-2 w-2 rounded-full bg-blue-500" aria-hidden="true" />
             Akses Cepat Fitur FINUSA
           </h2>
-          <p className="text-xs text-slate-400 mt-0.5">Modul utama pengelolaan finansial mahasiswa & UMKM</p>
+          <p className="text-xs text-slate-400 mt-0.5">Modul utama pengelolaan finansial pelajar & umum</p>
         </div>
       </div>
 
