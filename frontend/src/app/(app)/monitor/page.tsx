@@ -8,7 +8,6 @@ import MonitorHeader from "./components/MonitorHeader";
 import KpiCards from "./components/KpiCards";
 import IncomeExpenseChart from "./components/IncomeExpenseChart";
 import CategoryBreakdown from "./components/CategoryBreakdown";
-import BudgetProgress from "./components/BudgetProgress";
 import TransactionTable from "./components/TransactionTable";
 import BudgetModal from "./components/BudgetModal";
 import ExportModal from "./components/ExportModal";
@@ -270,18 +269,7 @@ export default function MonitorPage() {
         </div>
       </motion.div>
 
-      {/* 4. Controls: Budget Progress */}
-      <motion.div
-        {...staggered(0.12)}
-        className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6"
-      >
-        <div className="lg:col-span-12">
-          <BudgetProgress
-            budgets={budgets}
-            onOpenBudgetModal={() => setIsBudgetModalOpen(true)}
-          />
-        </div>
-      </motion.div>
+
 
       {/* 5. Complete Transaction Ledger Table */}
       <motion.div {...staggered(0.16)}>
