@@ -82,8 +82,8 @@ export default function TemplatePage() {
         </div>
         <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-2xl">
           Template keuangan Finusa via{" "}
-          <span className="text-emerald-400 font-medium">Google Sheets</span>{" "}
-          — pantau keuangan kamu secara{" "}
+          <span className="text-emerald-400 font-medium">Google Sheets</span> untuk{" "}
+          pantau keuangan kamu secara{" "}
           <span className="text-white font-medium">bulanan</span> dan{" "}
           <span className="text-white font-medium">tahunan</span>. Cocok
           sebagai pelengkap pencatatan harian di aplikasi Finusa.
@@ -106,7 +106,7 @@ export default function TemplatePage() {
             <span className="text-emerald-400 font-medium">
               rekap bulanan & tahunan
             </span>{" "}
-            — kamu bisa melihat gambaran besar keuangan, alokasi investasi,
+            agar kamu bisa melihat gambaran besar keuangan, alokasi investasi,
             dan tracking cicilan/hutang dalam satu spreadsheet yang rapi.
           </div>
         </div>
