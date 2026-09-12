@@ -28,7 +28,7 @@ const GUIDE_STEPS = [
     title: "Buka menu File",
     description:
       'Setelah membuka template, klik menu "File" di toolbar bagian kiri atas Google Sheets.',
-    image: "/Assets/sheets-guide/step-1-file-menu.png",
+    image: "/Assets/sheets-guide/BukaFile.webp",
     tip: 'Menu "File" ada di pojok kiri atas, tepat di bawah judul spreadsheet.',
   },
   {
@@ -37,7 +37,7 @@ const GUIDE_STEPS = [
     title: 'Klik "Buat salinan"',
     description:
       'Dari dropdown menu File, pilih "Buat salinan" untuk menyalin template ke Google Drive kamu sendiri.',
-    image: "/Assets/sheets-guide/step-2-buat-salinan.png",
+    image: "/Assets/sheets-guide/BuatSalinan.webp",
     tip: "Opsi ini akan membuat salinan template yang bisa kamu edit secara bebas tanpa mengubah template aslinya.",
   },
   {
@@ -46,7 +46,7 @@ const GUIDE_STEPS = [
     title: "Simpan ke Google Drive kamu",
     description:
       'Akan muncul dialog "Salin dokumen". Kamu bisa mengganti nama file sesuai keinginan, pilih folder penyimpanan, lalu klik tombol "Buat salinan".',
-    image: "/Assets/sheets-guide/step-3-save.png",
+    image: "/Assets/sheets-guide/Save.webp",
     tip: "Setelah disalin, file akan langsung terbuka dan siap diisi. Semua perubahan otomatis tersimpan di Google Drive kamu.",
   },
 ];
