@@ -9,7 +9,6 @@ import KpiCards from "./components/KpiCards";
 import IncomeExpenseChart from "./components/IncomeExpenseChart";
 import CategoryBreakdown from "./components/CategoryBreakdown";
 import TransactionTable from "./components/TransactionTable";
-import BudgetModal from "./components/BudgetModal";
 import ExportModal from "./components/ExportModal";
 import { PembukuanService } from "@/lib/services/pembukuan.service";
 import { AnalyticsService } from "@/lib/services/analytics.service";
@@ -99,7 +98,6 @@ export default function MonitorPage() {
   const [monthlyTrend, setMonthlyTrend] = useState<CashflowPoint[]>([]);
   const [categoryBreakdown, setCategoryBreakdown] = useState<CategoryBreakdownPoint[]>([]);
 
-  const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   useEffect(() => {
@@ -247,7 +245,6 @@ export default function MonitorPage() {
           selectedPeriod={selectedPeriod}
           onPeriodChange={setSelectedPeriod}
           onOpenExport={() => setIsExportModalOpen(true)}
-          onOpenBudgetModal={() => setIsBudgetModalOpen(true)}
         />
       </motion.div>
 
@@ -277,13 +274,6 @@ export default function MonitorPage() {
       </motion.div>
 
       {/* Modals */}
-      <BudgetModal
-        isOpen={isBudgetModalOpen}
-        onClose={() => setIsBudgetModalOpen(false)}
-        budgets={budgets}
-        onSaveBudgets={setBudgets}
-      />
-
       <ExportModal
         isOpen={isExportModalOpen}
         onClose={() => setIsExportModalOpen(false)}

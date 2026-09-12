@@ -9,14 +9,12 @@ interface MonitorHeaderProps {
   selectedPeriod: PeriodType;
   onPeriodChange: (period: PeriodType) => void;
   onOpenExport: () => void;
-  onOpenBudgetModal: () => void;
 }
 
 export default function MonitorHeader({
   selectedPeriod,
   onPeriodChange,
   onOpenExport,
-  onOpenBudgetModal,
 }: MonitorHeaderProps) {
   const periods: { id: PeriodType; label: string }[] = [
     { id: "this_month", label: "Bulan Ini" },
@@ -68,16 +66,6 @@ export default function MonitorHeader({
 
         {/* Action Buttons — icon-only on mobile, labeled on desktop */}
         <div className="flex items-center gap-1.5 sm:gap-2">
-          <button
-            type="button"
-            onClick={onOpenBudgetModal}
-            className="inline-flex items-center justify-center gap-1.5 w-9 h-9 sm:w-auto sm:h-auto sm:px-3 sm:py-1.5 rounded-lg text-xs font-medium bg-slate-800/90 hover:bg-slate-700/80 text-slate-200 border border-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/40"
-            aria-label="Atur Anggaran"
-          >
-            <SlidersHorizontal className="w-4 h-4 sm:w-3.5 sm:h-3.5 text-blue-400" />
-            <span className="hidden sm:inline">Atur Anggaran</span>
-          </button>
-
           <button
             type="button"
             onClick={onOpenExport}
