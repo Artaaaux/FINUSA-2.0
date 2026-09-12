@@ -7,7 +7,7 @@ import {
   ChevronLeft,
   Activity,
   CreditCard,
-  Blocks,
+  FileSpreadsheet,
   Command,
   ScanLine
 } from 'lucide-react';
@@ -32,7 +32,7 @@ const finusaNavItems: NavItemData[] = [
   { id: 'monitor', title: 'Monitor', icon: Activity, href: "/monitor" },
   { id: 'nabung', title: 'Nabung', icon: CreditCard, href: "/nabung" },
   { id: 'catat', title: 'Catat', icon: FolderKanban, href: "/catat" },
-  { id: 'sheets', title: 'Sheets', icon: Blocks, href: "/sheets" },
+  { id: 'sheets', title: 'Template', icon: FileSpreadsheet, href: "/sheets" },
 ];
 
 const finusaBottomItems: NavItemData[] = [

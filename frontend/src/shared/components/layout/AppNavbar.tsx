@@ -43,7 +43,7 @@ const routeMeta: Record<
   "/nabung": { label: "Nabung", subtitle: "Target & Tabungan Impian", icon: CreditCard },
   "/catat": { label: "Catat", subtitle: "Pemasukan & Pengeluaran", icon: FolderKanban },
   "/pembukuan": { label: "Catat", subtitle: "Pemasukan & Pengeluaran", icon: FolderKanban },
-  "/sheets": { label: "Google Sheets", subtitle: "Sinkronisasi Data Kas", icon: Blocks },
+  "/sheets": { label: "Template", subtitle: "Download Template Keuangan", icon: Blocks },
   "/settings": { label: "Pengaturan", subtitle: "Preferensi Akun & Sistem", icon: Settings },
   "/help": { label: "Bantuan", subtitle: "Panduan Penggunaan Finusa", icon: HelpCircle },
 };
@@ -191,7 +191,7 @@ export default function AppNavbar({ isCollapsed }: { isCollapsed: boolean }) {
     { title: "Monitor Likuiditas & Kas", category: "Menu Utama", href: "/monitor", icon: Activity },
     { title: "Nabung & Alokasi Target", category: "Menu Utama", href: "/nabung", icon: CreditCard },
     { title: "Scan Struk Belanja (OCR)", category: "Alat AI", href: "/receipt-scanner", icon: ScanLine },
-    { title: "Sinkronisasi Google Sheets", category: "Integrasi", href: "/sheets", icon: Blocks },
+    { title: "Template Spreadsheet Keuangan", category: "Alat", href: "/sheets", icon: Blocks },
     { title: "Pengaturan Akun & Profil", category: "Sistem", href: "/settings", icon: Settings },
     { title: "Panduan & Bantuan", category: "Dukungan", href: "/help", icon: HelpCircle },
   ];
