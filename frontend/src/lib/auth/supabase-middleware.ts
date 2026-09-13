@@ -6,7 +6,10 @@ export async function updateSession(request: NextRequest) {
 
   const allCookies = request.cookies.getAll();
   const hasAuthCookie = allCookies.some(
-    (c) => c.name.startsWith("sb-") || c.name.includes("auth-token")
+    (c) =>
+      c.name.startsWith("sb-") ||
+      c.name.includes("auth-token") ||
+      c.name.includes("supabase")
   );
 
   // Quick return if no auth cookies present — avoids unnecessary network calls to Supabase API
@@ -39,10 +42,10 @@ export async function updateSession(request: NextRequest) {
       },
     });
 
-    // Race with a 1500ms timeout to prevent Supabase network latency from blocking requests
+    // Safely fetch user from Supabase auth with generous 8000ms timeout
     const userPromise = supabase.auth.getUser();
     const timeoutPromise = new Promise<{ data: { user: null } }>((resolve) =>
-      setTimeout(() => resolve({ data: { user: null } }), 1500)
+      setTimeout(() => resolve({ data: { user: null } }), 8000)
     );
 
     const {
