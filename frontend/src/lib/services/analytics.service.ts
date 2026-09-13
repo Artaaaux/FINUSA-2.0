@@ -178,28 +178,53 @@ export const AnalyticsService = {
       percentage: totalExpense > 0 ? Math.round((val.amount / totalExpense) * 100) : 0,
     })).sort((a, b) => b.amount - a.amount);
 
-    // Compute monthly trend (6 months ending at trendEndYear / trendEndMonth)
+    // Compute monthly trend: 12 months for "this_year", 6 months for monthly views
     const monthlyTrend: Array<{ month: string; income: number; expense: number; net: number }> = [];
-    for (let i = 5; i >= 0; i--) {
-      const d = new Date(trendEndYear, trendEndMonth - 1 - i, 1);
-      const mStr = `${d.getFullYear()}-${pad(d.getMonth() + 1)}`;
-      const mLabel = d.toLocaleString("id-ID", { month: "short" });
 
-      let inc = 0;
-      let exp = 0;
-      transactions.forEach((tx) => {
-        if (tx.date.startsWith(mStr)) {
-          if (tx.type === "income") inc += tx.amount;
-          if (tx.type === "expense") exp += tx.amount;
-        }
-      });
+    if (period === "this_year") {
+      for (let m = 1; m <= 12; m++) {
+        const d = new Date(currentYear, m - 1, 1);
+        const mStr = `${currentYear}-${pad(m)}`;
+        const mLabel = d.toLocaleString("id-ID", { month: "short" });
 
-      monthlyTrend.push({
-        month: mLabel,
-        income: inc,
-        expense: exp,
-        net: inc - exp,
-      });
+        let inc = 0;
+        let exp = 0;
+        transactions.forEach((tx) => {
+          if (tx.date.startsWith(mStr)) {
+            if (tx.type === "income") inc += tx.amount;
+            if (tx.type === "expense") exp += tx.amount;
+          }
+        });
+
+        monthlyTrend.push({
+          month: mLabel,
+          income: inc,
+          expense: exp,
+          net: inc - exp,
+        });
+      }
+    } else {
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(trendEndYear, trendEndMonth - 1 - i, 1);
+        const mStr = `${d.getFullYear()}-${pad(d.getMonth() + 1)}`;
+        const mLabel = d.toLocaleString("id-ID", { month: "short" });
+
+        let inc = 0;
+        let exp = 0;
+        transactions.forEach((tx) => {
+          if (tx.date.startsWith(mStr)) {
+            if (tx.type === "income") inc += tx.amount;
+            if (tx.type === "expense") exp += tx.amount;
+          }
+        });
+
+        monthlyTrend.push({
+          month: mLabel,
+          income: inc,
+          expense: exp,
+          net: inc - exp,
+        });
+      }
     }
 
     return {
