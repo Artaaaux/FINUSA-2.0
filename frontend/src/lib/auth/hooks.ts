@@ -86,7 +86,7 @@ export function useForgotPassword() {
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(
         email,
         {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: `${window.location.origin}/auth/callback?next=/auth/reset-password`,
           captchaToken: captchaToken || undefined,
         }
       );
