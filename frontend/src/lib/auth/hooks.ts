@@ -20,7 +20,12 @@ export function useAuth() {
     // Listen for auth state changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY") {
+        if (typeof window !== "undefined" && !window.location.pathname.startsWith("/auth/reset-password")) {
+          window.location.href = "/auth/reset-password";
+        }
+      }
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);

@@ -4,7 +4,13 @@ import { createServerClient } from "@supabase/ssr";
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/home";
+  const type = searchParams.get("type");
+  const rawNext = searchParams.get("next");
+
+  // Determine target path: if type is recovery or next contains reset-password, redirect to /auth/reset-password
+  const next = (type === "recovery" || rawNext === "/auth/reset-password" || rawNext?.includes("reset-password"))
+    ? "/auth/reset-password"
+    : (rawNext ?? "/home");
 
   if (code) {
     const forwardedHost = request.headers.get("x-forwarded-host");
