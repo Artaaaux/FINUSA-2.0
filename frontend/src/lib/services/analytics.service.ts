@@ -29,7 +29,7 @@ export const AnalyticsService = {
       PembukuanService.getAccounts(),
     ]);
 
-    const totalAccountBalance = accounts.reduce((acc, curr) => acc + Number(curr.balance), 0);
+    const currentTotalAccountBalance = accounts.reduce((acc, curr) => acc + Number(curr.balance), 0);
 
     const now = new Date();
     const pad = (n: number) => String(n).padStart(2, "0");
@@ -39,32 +39,53 @@ export const AnalyticsService = {
     // Filter strings based on period
     let currentMatch: (dateStr: string) => boolean;
     let previousMatch: (dateStr: string) => boolean;
+    let afterPeriodMatch: (dateStr: string) => boolean;
+
+    let trendEndYear = currentYear;
+    let trendEndMonth = currentMonth;
 
     if (period === "this_month") {
       const curMonthStr = `${currentYear}-${pad(currentMonth)}`;
       const prevDate = new Date(currentYear, currentMonth - 2, 1);
       const prevMonthStr = `${prevDate.getFullYear()}-${pad(prevDate.getMonth() + 1)}`;
+      const nextMonthDate = new Date(currentYear, currentMonth, 1);
+      const nextMonthStr = `${nextMonthDate.getFullYear()}-${pad(nextMonthDate.getMonth() + 1)}`;
+
       currentMatch = (d) => d.startsWith(curMonthStr);
       previousMatch = (d) => d.startsWith(prevMonthStr);
+      afterPeriodMatch = (d) => d >= nextMonthStr;
     } else if (period === "last_month") {
       const targetDate = new Date(currentYear, currentMonth - 2, 1);
       const targetMonthStr = `${targetDate.getFullYear()}-${pad(targetDate.getMonth() + 1)}`;
       const prevDate = new Date(currentYear, currentMonth - 3, 1);
       const prevMonthStr = `${prevDate.getFullYear()}-${pad(prevDate.getMonth() + 1)}`;
+
       currentMatch = (d) => d.startsWith(targetMonthStr);
       previousMatch = (d) => d.startsWith(prevMonthStr);
+
+      const curMonthStr = `${currentYear}-${pad(currentMonth)}`;
+      afterPeriodMatch = (d) => d >= curMonthStr;
+
+      trendEndYear = targetDate.getFullYear();
+      trendEndMonth = targetDate.getMonth() + 1;
     } else {
       // this_year
       const curYearStr = `${currentYear}-`;
       const prevYearStr = `${currentYear - 1}-`;
+
       currentMatch = (d) => d.startsWith(curYearStr);
       previousMatch = (d) => d.startsWith(prevYearStr);
+
+      const nextYearStr = `${currentYear + 1}-`;
+      afterPeriodMatch = (d) => d >= nextYearStr;
     }
 
     let totalIncome = 0;
     let totalExpense = 0;
     let previousIncome = 0;
     let previousExpense = 0;
+    let afterIncome = 0;
+    let afterExpense = 0;
 
     const expenseCategoryMap: Record<string, { amount: number; color: string }> = {};
     const incomeCategoryMap: Record<string, number> = {};
@@ -90,7 +111,19 @@ export const AnalyticsService = {
           previousExpense += tx.amount;
         }
       }
+
+      if (afterPeriodMatch(tx.date)) {
+        if (tx.type === "income") {
+          afterIncome += tx.amount;
+        } else if (tx.type === "expense") {
+          afterExpense += tx.amount;
+        }
+      }
     });
+
+    // Calculate historical balance at the end of selected period
+    const netAfterPeriod = afterIncome - afterExpense;
+    const totalAccountBalance = Math.max(0, currentTotalAccountBalance - netAfterPeriod);
 
     const netSavings = totalIncome - totalExpense;
     const savingsRatePercent = totalIncome > 0 ? Math.round((netSavings / totalIncome) * 100) : 0;
@@ -145,10 +178,10 @@ export const AnalyticsService = {
       percentage: totalExpense > 0 ? Math.round((val.amount / totalExpense) * 100) : 0,
     })).sort((a, b) => b.amount - a.amount);
 
-    // Compute monthly trend (last 6 months)
+    // Compute monthly trend (6 months ending at trendEndYear / trendEndMonth)
     const monthlyTrend: Array<{ month: string; income: number; expense: number; net: number }> = [];
     for (let i = 5; i >= 0; i--) {
-      const d = new Date(currentYear, currentMonth - 1 - i, 1);
+      const d = new Date(trendEndYear, trendEndMonth - 1 - i, 1);
       const mStr = `${d.getFullYear()}-${pad(d.getMonth() + 1)}`;
       const mLabel = d.toLocaleString("id-ID", { month: "short" });
 

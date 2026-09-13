@@ -112,19 +112,39 @@ export default function MonitorPage() {
         ]);
 
         if (dbTx) {
-          const mappedTx: Transaction[] = dbTx.map((t) => ({
-            id: t.id,
-            date: t.date,
-            description: t.description || t.merchant || "Transaksi",
-            category: t.categoryName || "Lainnya",
-            categoryId: t.categoryId,
-            account: t.accountName || "Kas Primer",
-            accountId: t.accountId,
-            amount: t.amount,
-            type: (t.type === "income" ? "income" : "expense") as "income" | "expense",
-            status: (t.status === "completed" ? "completed" : "pending") as "completed" | "pending",
-            merchant: t.merchant,
-          }));
+          const now = new Date();
+          const pad = (n: number) => String(n).padStart(2, "0");
+          const currentYear = now.getFullYear();
+          const currentMonth = now.getMonth() + 1;
+
+          let periodMatch = (dateStr: string) => true;
+          if (selectedPeriod === "this_month") {
+            const curMonthStr = `${currentYear}-${pad(currentMonth)}`;
+            periodMatch = (d) => d.startsWith(curMonthStr);
+          } else if (selectedPeriod === "last_month") {
+            const targetDate = new Date(currentYear, currentMonth - 2, 1);
+            const targetMonthStr = `${targetDate.getFullYear()}-${pad(targetDate.getMonth() + 1)}`;
+            periodMatch = (d) => d.startsWith(targetMonthStr);
+          } else if (selectedPeriod === "this_year") {
+            const curYearStr = `${currentYear}-`;
+            periodMatch = (d) => d.startsWith(curYearStr);
+          }
+
+          const mappedTx: Transaction[] = dbTx
+            .filter((t) => periodMatch(t.date))
+            .map((t) => ({
+              id: t.id,
+              date: t.date,
+              description: t.description || t.merchant || "Transaksi",
+              category: t.categoryName || "Lainnya",
+              categoryId: t.categoryId,
+              account: t.accountName || "Kas Primer",
+              accountId: t.accountId,
+              amount: t.amount,
+              type: (t.type === "income" ? "income" : "expense") as "income" | "expense",
+              status: (t.status === "completed" ? "completed" : "pending") as "completed" | "pending",
+              merchant: t.merchant,
+            }));
           setLiveTransactions(mappedTx);
         }
 
