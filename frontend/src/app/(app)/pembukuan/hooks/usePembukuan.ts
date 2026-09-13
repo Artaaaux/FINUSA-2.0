@@ -138,6 +138,10 @@ export function usePembukuan() {
     }, 3500);
   }, []);
 
+  const dismissToast = useCallback(() => {
+    setToastMessage(null);
+  }, []);
+
   const refreshAccounts = useCallback(async () => {
     try {
       const dbAcc = await PembukuanService.getAccounts();
@@ -651,6 +655,7 @@ export function usePembukuan() {
     setSelectedIds,
     kpiData,
     toastMessage,
+    dismissToast,
     accounts,
     addTransaction,
     updateTransaction,

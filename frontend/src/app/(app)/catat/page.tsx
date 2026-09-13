@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { CheckCircle2, AlertCircle, Info } from "lucide-react";
+import { CheckCircle2, AlertCircle, Info, X } from "lucide-react";
+import { cn } from "@/shared/lib/utils";
 import { usePembukuan } from "@/app/(app)/pembukuan/hooks/usePembukuan";
 import { PembukuanTransaction } from "@/app/(app)/pembukuan/types";
 
@@ -68,6 +69,7 @@ export default function CatatPage() {
     setSelectedIds,
     kpiData,
     toastMessage,
+    dismissToast,
     accounts,
     addTransaction,
     updateTransaction,
@@ -130,32 +132,59 @@ export default function CatatPage() {
 
   return (
     <div className="space-y-5 sm:space-y-6 min-h-screen">
-      {/* Toast Notification Alert */}
+      {/* Toast Notification Alert - Centered Top */}
       <AnimatePresence>
         {toastMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: -20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            className="fixed top-5 right-5 z-50 p-4 rounded-2xl bg-[#161c28] border border-slate-700 shadow-2xl flex items-center gap-3 text-xs max-w-sm"
-          >
-            {toastMessage.type === "success" && (
-              <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
-            )}
-            {toastMessage.type === "error" && (
-              <AlertCircle className="w-5 h-5 text-rose-400 flex-shrink-0" />
-            )}
-            {toastMessage.type === "info" && (
-              <Info className="w-5 h-5 text-blue-400 flex-shrink-0" />
-            )}
+          <div className="fixed top-16 sm:top-20 inset-x-0 flex justify-center z-[100] pointer-events-none px-4">
+            <motion.div
+              initial={{ opacity: 0, y: -16, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -12, scale: 0.95 }}
+              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+              className="pointer-events-auto max-w-md w-auto py-3 px-4 sm:px-5 rounded-2xl bg-[#141a24]/95 backdrop-blur-xl border border-slate-700/80 shadow-[0_16px_40px_rgba(0,0,0,0.65)] flex items-center gap-3 text-xs"
+            >
+              <div
+                className={cn(
+                  "w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border",
+                  toastMessage.type === "success"
+                    ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-400"
+                    : toastMessage.type === "error"
+                    ? "bg-rose-500/15 border-rose-500/30 text-rose-400"
+                    : "bg-blue-500/15 border-blue-500/30 text-blue-400"
+                )}
+              >
+                {toastMessage.type === "success" && (
+                  <CheckCircle2 className="w-4 h-4" />
+                )}
+                {toastMessage.type === "error" && (
+                  <AlertCircle className="w-4 h-4" />
+                )}
+                {toastMessage.type === "info" && (
+                  <Info className="w-4 h-4" />
+                )}
+              </div>
 
-            <div>
-              <p className="font-bold text-white">{toastMessage.title}</p>
-              {toastMessage.desc && (
-                <p className="text-slate-400 mt-0.5">{toastMessage.desc}</p>
-              )}
-            </div>
-          </motion.div>
+              <div className="min-w-0 pr-1">
+                <p className="font-semibold text-white text-xs leading-tight">
+                  {toastMessage.title}
+                </p>
+                {toastMessage.desc && (
+                  <p className="text-slate-300 text-[11px] mt-0.5 leading-snug">
+                    {toastMessage.desc}
+                  </p>
+                )}
+              </div>
+
+              <button
+                type="button"
+                onClick={dismissToast}
+                className="p-1 -mr-1 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors ml-auto cursor-pointer"
+                aria-label="Tutup notifikasi"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
 

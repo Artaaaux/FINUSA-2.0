@@ -162,10 +162,12 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0d14] text-slate-100 font-sans antialiased pb-24 lg:pb-12">
-      {/* Toast Notification */}
+      {/* Toast Notification - Centered Top */}
       {toastMessage && (
-        <div className="fixed bottom-28 lg:bottom-6 right-4 lg:right-6 z-50 px-4 py-3 rounded-xl bg-blue-600 text-white text-xs font-semibold shadow-2xl border border-blue-400/40 animate-bounce">
-          {toastMessage}
+        <div className="fixed top-16 sm:top-20 inset-x-0 flex justify-center z-[100] pointer-events-none px-4">
+          <div className="pointer-events-auto px-4 py-3 rounded-2xl bg-[#141a24]/95 backdrop-blur-xl text-white text-xs font-semibold shadow-[0_16px_40px_rgba(0,0,0,0.65)] border border-slate-700/80">
+            {toastMessage}
+          </div>
         </div>
       )}
 
