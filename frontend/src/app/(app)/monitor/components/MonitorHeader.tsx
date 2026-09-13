@@ -30,10 +30,6 @@ export default function MonitorHeader({
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
             Monitor Keuangan
           </h1>
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
-            Real-time
-          </span>
         </div>
         <p className="text-sm text-slate-400">
           Pantau ringkasan pemasukan, pengeluaran, dan kondisi keuangan usaha Anda secara mudah dan jelas.
