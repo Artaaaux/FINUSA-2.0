@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -155,8 +155,13 @@ export default function SettingsPage() {
     }
   };
 
+  const isGoogleOAuth = Boolean(
+    user?.app_metadata?.provider === "google" ||
+    (user?.identities && user.identities.length > 0 && user.identities.every((i) => i.provider === "google"))
+  );
+
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-[#0a0d14] text-slate-100 font-sans antialiased pb-24 lg:pb-12">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-28 lg:bottom-6 right-4 lg:right-6 z-50 px-4 py-3 rounded-xl bg-blue-600 text-white text-xs font-semibold shadow-2xl border border-blue-400/40 animate-bounce">
@@ -194,6 +199,7 @@ export default function SettingsPage() {
           onChangePasswordSuccess={handleChangePasswordSuccess}
           onChangePassword={handleChangePassword}
           onLogout={handleLogout}
+          isGoogleOAuth={isGoogleOAuth}
         />
       </div>
 
@@ -219,6 +225,7 @@ export default function SettingsPage() {
         isOpen={isPasswordModalOpen}
         onClose={() => setIsPasswordModalOpen(false)}
         onSuccess={handleChangePasswordSuccess}
+        isGoogleOAuth={isGoogleOAuth}
       />
 
       {/* Data Export Modal */}

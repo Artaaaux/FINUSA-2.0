@@ -122,6 +122,30 @@ export const SettingsService = {
       return { success: false, error: "Sesi telah berakhir. Silakan login kembali." };
     }
 
+    // Check if user registered via Google OAuth
+    const isGoogleOAuth =
+      user.app_metadata?.provider === "google" ||
+      (user.identities && user.identities.length > 0 && user.identities.every((i) => i.provider === "google"));
+
+    if (isGoogleOAuth) {
+      return {
+        success: false,
+        error: "Akun Anda terhubung menggunakan Google Sign-In. Pengelolaan kata sandi dikelola langsung via akun Google Anda.",
+      };
+    }
+
+    if (!currentPassword || !currentPassword.trim()) {
+      return { success: false, error: "Harap masukkan kata sandi saat ini." };
+    }
+
+    if (!newPassword || newPassword.length < 8) {
+      return { success: false, error: "Kata sandi baru minimal harus 8 karakter." };
+    }
+
+    if (currentPassword === newPassword) {
+      return { success: false, error: "Kata sandi baru tidak boleh sama dengan kata sandi saat ini." };
+    }
+
     // Verify current password by signing in
     const { error: signInError } = await supabase.auth.signInWithPassword({
       email: user.email,
@@ -138,7 +162,17 @@ export const SettingsService = {
     });
 
     if (updateError) {
-      return { success: false, error: updateError.message || "Gagal memperbarui kata sandi." };
+      const msg = updateError.message || "";
+      if (msg.toLowerCase().includes("at least")) {
+        return { success: false, error: "Kata sandi baru minimal harus 8 karakter." };
+      }
+      if (msg.toLowerCase().includes("different")) {
+        return { success: false, error: "Kata sandi baru tidak boleh sama dengan kata sandi lama." };
+      }
+      if (msg.toLowerCase().includes("security") || msg.toLowerCase().includes("rate")) {
+        return { success: false, error: "Terlalu banyak permintaan. Harap tunggu beberapa saat sebelum mencoba lagi." };
+      }
+      return { success: false, error: msg || "Gagal memperbarui kata sandi." };
     }
 
     return { success: true };

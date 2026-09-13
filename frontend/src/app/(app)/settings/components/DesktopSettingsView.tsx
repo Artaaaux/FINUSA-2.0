@@ -15,7 +15,12 @@ import {
   ShieldCheck,
   Info,
   LogOut,
-  Wallet
+  Wallet,
+  Lock,
+  Eye,
+  EyeOff,
+  AlertCircle,
+  CheckCircle2,
 } from "lucide-react";
 import { UserProfileSettings } from "../types";
 import { SettingsService } from "@/lib/services/settings.service";
@@ -31,6 +36,7 @@ interface DesktopSettingsViewProps {
   onChangePasswordSuccess: () => void;
   onChangePassword?: (current: string, next: string) => Promise<{ success: boolean; error?: string }>;
   onLogout: () => void;
+  isGoogleOAuth?: boolean;
 }
 
 const TIMEZONES = [
@@ -74,6 +80,7 @@ export default function DesktopSettingsView({
   onChangePasswordSuccess,
   onChangePassword,
   onLogout,
+  isGoogleOAuth = false,
 }: DesktopSettingsViewProps) {
   const [formData, setFormData] = useState<UserProfileSettings>(profile);
   const [avatarPreview, setAvatarPreview] = useState<string>(profile.avatarUrl);
@@ -85,8 +92,27 @@ export default function DesktopSettingsView({
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [isSubmittingPassword, setIsSubmittingPassword] = useState(false);
+
+  // Helper password strength
+  const getPasswordStrength = (pwd: string) => {
+    if (!pwd) return { level: 0, label: "", color: "bg-slate-700", text: "text-slate-500" };
+    let score = 0;
+    if (pwd.length >= 8) score++;
+    if (/[A-Z]/.test(pwd) && /[a-z]/.test(pwd)) score++;
+    if (/\d/.test(pwd)) score++;
+    if (/[^A-Za-z0-9]/.test(pwd)) score++;
+
+    if (score <= 1) return { level: 1, label: "Lemah", color: "bg-rose-500", text: "text-rose-400" };
+    if (score <= 2) return { level: 2, label: "Sedang", color: "bg-amber-500", text: "text-amber-400" };
+    return { level: 3, label: "Kuat", color: "bg-emerald-500", text: "text-emerald-400" };
+  };
+
+  const passwordStrength = getPasswordStrength(newPassword);
 
   useEffect(() => {
     setFormData(profile);
@@ -112,8 +138,8 @@ export default function DesktopSettingsView({
     };
 
     updateClock();
-    const interval = setInterval(updateClock, 1000);
-    return () => clearInterval(interval);
+    const timer = setInterval(updateClock, 1000);
+    return () => clearInterval(timer);
   }, []);
 
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -155,8 +181,16 @@ export default function DesktopSettingsView({
     e.preventDefault();
     setPasswordError(null);
 
+    if (!currentPassword.trim()) {
+      setPasswordError("Harap masukkan kata sandi saat ini.");
+      return;
+    }
     if (newPassword.length < 8) {
       setPasswordError("Kata sandi baru minimal harus 8 karakter.");
+      return;
+    }
+    if (currentPassword === newPassword) {
+      setPasswordError("Kata sandi baru tidak boleh sama dengan kata sandi saat ini.");
       return;
     }
     if (newPassword !== confirmPassword) {
@@ -440,17 +474,27 @@ export default function DesktopSettingsView({
               <div className="flex items-center gap-2.5 text-amber-400 font-bold text-xs mb-1">
                 <KeyRound className="w-4 h-4" />
                 <span>Kata Sandi Masuk</span>
+                {isGoogleOAuth && (
+                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-400 border border-blue-500/30">
+                    Google Sign-In
+                  </span>
+                )}
               </div>
               <p className="text-xs text-slate-400">
-                Perbarui kata sandi secara berkala untuk menjaga akun tetap aman.
+                {isGoogleOAuth
+                  ? "Akun Anda terhubung via Google OAuth. Keamanan sandi dikelola langsung via Google."
+                  : "Perbarui kata sandi secara berkala untuk menjaga akun tetap aman."}
               </p>
             </div>
             <button
               type="button"
-              onClick={() => setShowPasswordForm(!showPasswordForm)}
+              onClick={() => {
+                setShowPasswordForm(!showPasswordForm);
+                setPasswordError(null);
+              }}
               className="mt-4 inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-white bg-slate-800 hover:bg-slate-750 border border-slate-700 transition-colors cursor-pointer"
             >
-              {showPasswordForm ? "Tutup Form Sandi" : "Ubah Kata Sandi"}
+              {showPasswordForm ? "Tutup Form Sandi" : isGoogleOAuth ? "Lihat Status Keamanan" : "Ubah Kata Sandi"}
             </button>
           </div>
 
@@ -476,57 +520,195 @@ export default function DesktopSettingsView({
           </div>
         </div>
 
-        {/* Expandable Password Change Form */}
+        {/* Expandable Password Section */}
         {showPasswordForm && (
-          <form onSubmit={handleChangePasswordSubmit} className="p-4 rounded-2xl bg-slate-900 border border-amber-500/30 space-y-3">
-            <h4 className="text-xs font-bold text-amber-300">Form Ubah Kata Sandi</h4>
-            {passwordError && (
-              <p className="text-xs text-rose-400 bg-rose-950/40 p-2 rounded-lg border border-rose-800/40">
-                {passwordError}
-              </p>
-            )}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div>
-                <label className="text-[11px] font-semibold text-slate-300 block mb-1">Sandi Saat Ini</label>
-                <input
-                  type="password"
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-[#121722] border border-slate-800 text-white focus:outline-none focus:border-amber-500"
-                  required
-                />
+          isGoogleOAuth ? (
+            <div className="p-5 rounded-2xl bg-blue-500/10 border border-blue-500/30 flex items-start gap-3.5 animate-fadeIn">
+              <div className="w-9 h-9 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 shrink-0">
+                <ShieldCheck className="w-5 h-5" />
               </div>
-              <div>
-                <label className="text-[11px] font-semibold text-slate-300 block mb-1">Sandi Baru</label>
-                <input
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-[#121722] border border-slate-800 text-white focus:outline-none focus:border-amber-500"
-                  required
-                />
-              </div>
-              <div>
-                <label className="text-[11px] font-semibold text-slate-300 block mb-1">Konfirmasi Sandi Baru</label>
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-[#121722] border border-slate-800 text-white focus:outline-none focus:border-amber-500"
-                  required
-                />
+              <div className="space-y-1">
+                <h5 className="text-sm font-bold text-white">Akun Menggunakan Google Sign-In</h5>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Akun Anda terdaftar dan masuk menggunakan autentikasi resmi Google. FINUSA tidak menyimpan kata sandi terpisah untuk akun Anda. Untuk mengubah kata sandi atau mengatur verifikasi 2 langkah, silakan lakukan langsung melalui setelan akun Google Anda.
+                </p>
               </div>
             </div>
-            <div className="flex justify-end pt-1">
-              <button
-                type="submit"
-                disabled={isSubmittingPassword}
-                className="px-4 py-2 rounded-lg text-xs font-bold text-white bg-amber-600 hover:bg-amber-500 disabled:opacity-50 transition-colors cursor-pointer"
-              >
-                {isSubmittingPassword ? "Memperbarui..." : "Simpan Kata Sandi Baru"}
-              </button>
-            </div>
-          </form>
+          ) : (
+            <form onSubmit={handleChangePasswordSubmit} className="p-5 rounded-2xl bg-[#0f141e] border border-amber-500/30 space-y-4 animate-fadeIn">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div className="flex items-center gap-2">
+                  <KeyRound className="w-4 h-4 text-amber-400" />
+                  <h4 className="text-sm font-bold text-white">Form Pembaruan Kata Sandi</h4>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowPasswordForm(false);
+                    setPasswordError(null);
+                  }}
+                  className="text-xs text-slate-400 hover:text-white transition-colors cursor-pointer"
+                >
+                  Tutup
+                </button>
+              </div>
+
+              {passwordError && (
+                <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
+                  <span>{passwordError}</span>
+                </div>
+              )}
+
+              <div className="space-y-4 max-w-lg">
+                {/* Sandi Saat Ini */}
+                <div>
+                  <label className="text-xs font-semibold text-slate-300 block mb-1.5">
+                    Kata Sandi Saat Ini
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showCurrentPassword ? "text" : "password"}
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      placeholder="Masukkan kata sandi lama Anda"
+                      className="w-full pl-9 pr-10 py-2.5 text-xs rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
+                      required
+                    />
+                    <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
+                    <button
+                      type="button"
+                      onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                      className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-200 cursor-pointer"
+                    >
+                      {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Sandi Baru */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="text-xs font-semibold text-slate-300">
+                      Kata Sandi Baru
+                    </label>
+                    {newPassword && (
+                      <span className={`text-[11px] font-semibold ${passwordStrength.text}`}>
+                        Kekuatan: {passwordStrength.label}
+                      </span>
+                    )}
+                  </div>
+                  <div className="relative">
+                    <input
+                      type={showNewPassword ? "text" : "password"}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="Minimal 8 karakter"
+                      className="w-full pl-9 pr-10 py-2.5 text-xs rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
+                      required
+                    />
+                    <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-200 cursor-pointer"
+                    >
+                      {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+
+                  {/* Strength meter bar */}
+                  {newPassword && (
+                    <div className="mt-2 space-y-1">
+                      <div className="grid grid-cols-3 gap-1.5 h-1.5">
+                        <div className={`rounded-full transition-colors ${passwordStrength.level >= 1 ? passwordStrength.color : "bg-slate-800"}`} />
+                        <div className={`rounded-full transition-colors ${passwordStrength.level >= 2 ? passwordStrength.color : "bg-slate-800"}`} />
+                        <div className={`rounded-full transition-colors ${passwordStrength.level >= 3 ? passwordStrength.color : "bg-slate-800"}`} />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Konfirmasi Sandi Baru */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="text-xs font-semibold text-slate-300">
+                      Konfirmasi Kata Sandi Baru
+                    </label>
+                    {confirmPassword && (
+                      <span className={`text-[11px] font-semibold ${newPassword === confirmPassword ? "text-emerald-400" : "text-rose-400"}`}>
+                        {newPassword === confirmPassword ? "Cocok" : "Belum cocok"}
+                      </span>
+                    )}
+                  </div>
+                  <div className="relative">
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Ulangi kata sandi baru Anda"
+                      className="w-full pl-9 pr-10 py-2.5 text-xs rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
+                      required
+                    />
+                    <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-200 cursor-pointer"
+                    >
+                      {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Checklist syarat kata sandi */}
+                <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800 space-y-1.5 text-[11px]">
+                  <div className={`flex items-center gap-1.5 ${newPassword.length >= 8 ? "text-emerald-400" : "text-slate-400"}`}>
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Minimal 8 karakter</span>
+                  </div>
+                  <div className={`flex items-center gap-1.5 ${/[a-zA-Z]/.test(newPassword) && /\d/.test(newPassword) ? "text-emerald-400" : "text-slate-400"}`}>
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Kombinasi huruf dan angka</span>
+                  </div>
+                  <div className={`flex items-center gap-1.5 ${confirmPassword.length > 0 && newPassword === confirmPassword ? "text-emerald-400" : "text-slate-400"}`}>
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Konfirmasi kata sandi cocok</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowPasswordForm(false);
+                    setPasswordError(null);
+                  }}
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-750 transition-colors cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmittingPassword || newPassword.length < 8 || newPassword !== confirmPassword}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-amber-600 hover:bg-amber-500 disabled:opacity-40 transition-colors cursor-pointer shadow-lg shadow-amber-600/20"
+                >
+                  {isSubmittingPassword ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Menyimpan Sandi...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>Simpan Kata Sandi Baru</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          )
         )}
 
         {/* Danger & Logout Row */}
