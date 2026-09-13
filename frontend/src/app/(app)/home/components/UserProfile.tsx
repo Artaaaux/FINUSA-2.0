@@ -112,11 +112,6 @@ export function UserProfile() {
               ) : (
                 <div className="h-4 w-24 rounded bg-white/5 animate-pulse" />
               )}
-
-              <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" aria-hidden="true" />
-                Tersambung Cloud
-              </div>
             </div>
 
             {/* Action icons */}
