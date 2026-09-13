@@ -35,7 +35,11 @@ const badges = [
 const faqs = [
   {
     question: "Apakah FINUSA benar-benar gratis?",
-    answer: "Ya, FINUSA 100% gratis tanpa biaya tersembunyi. Semua fitur literasi keuangan, AI advisor, pencatatan kas mandiri, dan simulasi tabungan dapat digunakan sepenuhnya secara gratis.",
+    answer: "Ya, FINUSA 100% gratis tanpa biaya tersembunyi. Semua fitur pencatatan kas, scan struk otomatis AI, target tabungan, dan template spreadsheet dapat digunakan sepenuhnya secara gratis.",
+  },
+  {
+    question: "Bagaimana cara kerja fitur Scan Struk AI?",
+    answer: "Cukup ambil foto struk fisik atau unggah gambar dari galeri. AI Vision Finusa langsung mengekstrak nama merchant, tanggal transaksi, rincian barang, hingga total pengeluaran secara otomatis dan siap disimpan ke pembukuan.",
   },
   {
     question: "Bagaimana FINUSA mengamankan data saya?",
@@ -47,7 +51,7 @@ const faqs = [
   },
   {
     question: "Apakah ada aplikasi mobile untuk FINUSA?",
-    answer: "Saat ini FINUSA difokuskan sebagai aplikasi web yang sangat responsif di perangkat mobile dan desktop. Pengembangan versi aplikasi mobile native (React Native) direncanakan pada peta jalan pengembangan selanjutnya.",
+    answer: "Saat ini FINUSA difokuskan sebagai aplikasi web responsif untuk mobile dan desktop. Tampilan dioptimalkan untuk layar ponsel dengan navigasi cepat layaknya aplikasi mobile modern.",
   },
 ];
 
@@ -74,9 +78,6 @@ export function TrustSection() {
       <div className="relative z-10 mx-auto max-w-4xl">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-accent-cyan/20 bg-accent-cyan/5 px-3 py-1 text-xs font-semibold tracking-wider text-accent-cyan uppercase">
-            JAMINAN & FITUR
-          </div>
           <h2 className="text-4xl font-bold tracking-tight text-white sm:text-5xl bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
             Aman, Cepat, dan Transparan
           </h2>
@@ -174,16 +175,6 @@ export function TrustSection() {
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-blue-500/5 via-accent-cyan/5 to-accent-purple/5" />
 
           <div className="relative z-10">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-accent-cyan/20 bg-accent-cyan/5 px-3 py-1 text-xs font-semibold tracking-wider text-accent-cyan uppercase"
-            >
-              <Sparkles className="h-3 w-3" aria-hidden="true" />
-              SIAP MULAI?
-            </motion.div>
-
             <h3 className="mb-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">
               Mulai kelola keuanganmu hari ini.
             </h3>

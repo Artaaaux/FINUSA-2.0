@@ -3,10 +3,9 @@
 import { motion, useReducedMotion } from "framer-motion";
 import {
   ArrowRight,
-  Bot,
-  Calculator,
+  ScanLine,
+  CreditCard,
   LineChart,
-  ShieldCheck,
 } from "lucide-react";
 
 import { GlassButton } from "@/shared/components/ui/glass-button";
@@ -14,9 +13,9 @@ import { GlassButton } from "@/shared/components/ui/glass-button";
 const titleWords = ["Kelola", "Keuangan", "Dengan", "Mudah"];
 
 const featureLabels = [
-  { icon: Bot, text: "AI Advisor" },
+  { icon: ScanLine, text: "Scan Struk AI" },
   { icon: LineChart, text: "Monitor Keuangan" },
-  { icon: Calculator, text: "Budget Tools" },
+  { icon: CreditCard, text: "Target Tabungan" },
 ];
 
 export function HeroSection() {
@@ -33,19 +32,6 @@ export function HeroSection() {
       <div className="pointer-events-none absolute bottom-20 left-10 h-72 w-72 rounded-full bg-accent-purple opacity-20 blur-3xl" />
 
       <div className="relative z-10 mx-auto w-full max-w-6xl text-center">
-        {/* Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: shouldReduceMotion ? 0 : 0.4 }}
-          className="mb-8 inline-flex items-center gap-2 rounded-full border border-blue-700/50 bg-blue-900/30 px-4 py-2 backdrop-blur-sm"
-        >
-          <ShieldCheck className="h-4 w-4 text-accent-cyan" aria-hidden="true" />
-          <span className="text-sm font-medium text-blue-200">
-            Finance Nusantara 
-          </span>
-        </motion.div>
-
         {/* Title with staggered word animation */}
         <h1 className="mb-6 text-5xl font-bold leading-tight text-white sm:text-6xl lg:text-7xl">
           {titleWords.map((word, i) => (

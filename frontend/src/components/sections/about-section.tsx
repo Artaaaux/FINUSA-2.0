@@ -38,7 +38,7 @@ const audiences = [
     desc: "Membantu Anda memahami keuangan pribadi, merencanakan investasi, dan masa depan finansial.",
     highlights: [
       "Dashboard keuangan personal",
-      "Tips cerdas dari AI advisor",
+      "Scan struk belanja otomatis",
       "Perencanaan dana darurat",
     ],
     iconColor: "text-accent-green",
@@ -68,15 +68,6 @@ export function AboutSection() {
           
           {/* Left Column: Context, Story & Stats */}
           <div className="lg:col-span-5 flex flex-col justify-center">
-            <motion.div
-              initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="mb-4 inline-flex w-fit items-center gap-1.5 rounded-full border border-accent-cyan/20 bg-accent-cyan/5 px-3 py-1 text-xs font-semibold tracking-wider text-accent-cyan uppercase"
-            >
-              TENTANG FINUSA
-            </motion.div>
-
             <motion.h2
               initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -111,12 +102,12 @@ export function AboutSection() {
               </div>
               <div className="h-8 w-px bg-slate-800" />
               <div className="flex flex-col">
-                <span className="text-3xl font-extrabold text-accent-purple">24/7</span>
-                <span className="text-xs font-medium text-gray-400 mt-1">AI Chat Support</span>
+                <span className="text-3xl font-extrabold text-accent-purple">AI OCR</span>
+                <span className="text-xs font-medium text-gray-400 mt-1">Scan Struk Instan</span>
               </div>
               <div className="h-8 w-px bg-slate-800" />
               <div className="flex flex-col">
-                <span className="text-3xl font-extrabold text-accent-green">3+</span>
+                <span className="text-3xl font-extrabold text-accent-green">6+</span>
                 <span className="text-xs font-medium text-gray-400 mt-1">Modul Utama</span>
               </div>
             </motion.div>

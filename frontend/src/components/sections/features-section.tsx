@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpen, TrendingUp, Wrench, ArrowRight, Sparkles, Goal, ChartColumn   } from "lucide-react";
+import { ScanLine, TrendingUp, Wrench, ArrowRight, Goal, ChartColumn } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 
 export function FeaturesSection() {
@@ -27,21 +27,18 @@ export function FeaturesSection() {
           transition={{ duration: 0.5 }}
           className="mb-16 text-center"
         >
-          <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-accent-cyan/20 bg-accent-cyan/5 px-3 py-1 text-xs font-semibold tracking-wider text-accent-cyan uppercase">
-            FITUR ISTIMEWA
-          </div>
           <h2 className="mb-4 text-4xl font-bold tracking-tight sm:text-5xl bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
-            Satu tempat untuk belajar, memantau, dan mengatur keuangan
+            Satu tempat untuk mencatat, memantau, dan mencapai target finansial
           </h2>
           <p className="mx-auto max-w-2xl text-base text-gray-400 leading-relaxed">
-            Setiap fitur dirancang untuk membuat pengelolaan keuangan jadi
-            sederhana dan bisa dipahami siapa saja.
+            Setiap fitur dirancang praktis agar pengelolaan keuangan harian jadi
+            mudah dan menyenangkan untuk siapa saja.
           </p>
         </motion.div>
 
         {/* Bento Grid */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          {/* Card 1: Edukasi Finansial (md:col-span-2) */}
+          {/* Card 1: Scan Struk AI (md:col-span-2) */}
           <motion.div
             initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -54,48 +51,45 @@ export function FeaturesSection() {
             <div>
               <div className="flex items-center justify-between mb-6">
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-blue-500/25 bg-blue-500/15 text-blue-400">
-                  <BookOpen size={22} aria-hidden="true" />
+                  <ScanLine size={22} aria-hidden="true" />
                 </div>
                 <span className="rounded-full border border-blue-500/20 bg-blue-500/10 px-4 py-0.5 text-[11px] font-bold tracking-wider text-blue-300">
-                  01 . EDUKASI
+                  01 . SCAN AI
                 </span>
               </div>
-              <h3 className="mb-2 text-2xl font-bold text-white">Edukasi Finansial</h3>
+              <h3 className="mb-2 text-2xl font-bold text-white">Scan Struk AI Otomatis</h3>
               <p className="mb-6 text-sm leading-relaxed text-gray-400 max-w-md">
-                Belajar manage keuangan dengan AI advisor yang siap menjawab pertanyaan finansial kapan saja. Dapatkan saran finansial khusus untuk kebutuhan Anda.
+                Foto atau unggah struk belanja fisik Anda. AI Vision otomatis mengekstrak total nominal, nama merchant, tanggal, hingga pos kategori pengeluaran secara instan.
               </p>
             </div>
 
-            {/* Visual Preview: Interactive Chat Bubble Interface */}
+            {/* Visual Preview: OCR Scan Result Preview */}
             <div className="mt-2 rounded-xl border border-blue-500/15 bg-slate-950/60 p-4 font-sans text-xs text-gray-300 shadow-inner">
               <div className="flex items-center justify-between border-b border-white/5 pb-2 text-[10px] text-gray-500">
                 <div className="flex items-center gap-1.5">
                   <div className="h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
-                  <span className="font-semibold text-gray-400">Finusa AI Assistant</span>
+                  <span className="font-semibold text-gray-400">OCR AI Vision Scanner</span>
                 </div>
-                <span>Baru saja</span>
+                <span className="text-blue-400 font-semibold bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">Auto Extracted</span>
               </div>
-              <div className="mt-3 space-y-3">
-                <div className="flex items-start gap-2.5">
-                  <div className="h-5 w-5 shrink-0 rounded-full bg-slate-800 flex items-center justify-center text-[10px] font-bold text-white border border-slate-700">U</div>
-                  <div className="rounded-lg bg-slate-900/80 px-3 py-1.5 text-gray-300 border border-slate-800">
-                    Bagaimana cara memulai budget 50-30-20?
+              <div className="mt-3 space-y-2">
+                <div className="flex items-center justify-between rounded-lg bg-slate-900/80 px-3 py-2 border border-slate-800">
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-emerald-400" />
+                    <span className="text-xs text-white font-medium">Kantin Kampus / Minimarket</span>
                   </div>
+                  <span className="text-xs font-bold text-white">Rp 25.000</span>
                 </div>
-                <div className="flex items-start gap-2.5">
-                  <div className="h-5 w-5 shrink-0 rounded-full bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
-                    <Sparkles size={11} className="text-blue-400" />
-                  </div>
-                  <div className="rounded-lg bg-blue-950/20 px-3 py-1.5 text-gray-300 border border-blue-950/30">
-                    Bagi pendapatan bersih menjadi 3 bagian: <strong className="text-blue-300">50% Kebutuhan</strong>, <strong className="text-blue-300">30% Keinginan</strong>, dan <strong className="text-blue-300">20% Tabungan/Investasi</strong>. Mulailah dengan mencatat pengeluaran Anda terlebih dahulu!
-                  </div>
+                <div className="flex items-center justify-between text-[11px] text-slate-400 px-1">
+                  <span>Kategori: Makan &amp; Minum</span>
+                  <span>13 Sep 2026</span>
                 </div>
               </div>
             </div>
 
             <div className="mt-6 pt-4 border-t border-white/5">
-             <p className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-400 transition-all duration-200 group-hover:gap-2.5">
-                Mulai belajar dengan AI
+              <p className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-400 transition-all duration-200 group-hover:gap-2.5">
+                Pindai struk otomatis sekarang
               </p>
             </div>
           </motion.div>
@@ -116,12 +110,12 @@ export function FeaturesSection() {
                   <TrendingUp size={22} aria-hidden="true" />
                 </div>
                 <span className="rounded-full border border-accent-green/20 bg-accent-green/10 px-4 py-0.5 text-[11px] font-bold tracking-wider text-accent-green">
-                  02 . TRACKING
+                  02 . MONITOR KAS
                 </span>
               </div>
-              <h3 className="mb-2 text-2xl font-bold text-white">Monitor & Tracking</h3>
+              <h3 className="mb-2 text-2xl font-bold text-white">Monitor Arus Kas</h3>
               <p className="mb-6 text-sm leading-relaxed text-gray-400">
-                Track pengeluaran, kelola budget, dan monitor arus kas harian dengan detail & analytics yang cerdas.
+                Pantau pengeluaran harian, alokasi anggaran, dan analisis likuiditas finansial secara visual dan real-time.
               </p>
             </div>
 
@@ -165,12 +159,12 @@ export function FeaturesSection() {
                       <Wrench size={22} aria-hidden="true" />
                     </div>
                     <span className="rounded-full border border-accent-purple/20 bg-accent-purple/10 px-4 py-0.5 text-[11px] font-bold tracking-wider text-accent-purple md:ml-4">
-                      03 . TOOLS
+                      03 . GOALS & TEMPLATE
                     </span>
                   </div>
-                  <h3 className="mb-2 text-2xl font-bold text-white">Fitur & Tools Terlengkap</h3>
+                  <h3 className="mb-2 text-2xl font-bold text-white">Target Tabungan & Template</h3>
                   <p className="mb-4 text-sm leading-relaxed text-gray-400">
-                    Goals planning, spreadsheets, dan buku kas digital terintegrasi untuk membantu mencapai tujuan finansial Anda.
+                    Rencanakan tabungan impian dengan sistem milestone terarah dan unduh template spreadsheet keuangan siap pakai.
                   </p>
                 </div>
 

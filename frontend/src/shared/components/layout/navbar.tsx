@@ -17,8 +17,8 @@ const menuItems = [
     iconColor: "text-blue-500",
   },
   {
-    icon: Blocks ,
-    label: "Feature",
+    icon: Blocks,
+    label: "Fitur",
     href: "#features",
     gradient:
       "radial-gradient(circle, rgba(0,217,255,0.15) 0%, rgba(0,217,255,0.06) 50%, rgba(0,217,255,0) 100%)",
@@ -34,7 +34,7 @@ const menuItems = [
   },
   {
     icon: LogIn,
-    label: "Daftar",
+    label: "Mulai",
     href: "#trust",
     gradient:
       "radial-gradient(circle, rgba(167,139,250,0.15) 0%, rgba(167,139,250,0.06) 50%, rgba(167,139,250,0) 100%)",
