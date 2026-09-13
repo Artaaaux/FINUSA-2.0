@@ -23,7 +23,7 @@ export function generateSimulatedReceipt(): ExtractedReceiptData {
       merchant: "Kopi Kenangan - Mall Ambassador",
       merchantAddress: "Mall Ambassador Lt. 2, Jakarta Selatan",
       category: "Makan",
-      paymentMethod: "GoPay",
+      paymentMethod: "E-Wallet",
       items: [
         { id: "item-1", name: "Kopi Kenangan Mantan (L)", category: "Makan", quantity: 1, price: 24000, totalPrice: 24000 },
         { id: "item-2", name: "Roti Coklat Klasik", category: "Makan", quantity: 1, price: 12000, totalPrice: 12000 },
@@ -35,7 +35,7 @@ export function generateSimulatedReceipt(): ExtractedReceiptData {
       merchant: "SPBU Pertamina 31.129.02",
       merchantAddress: "Jl. HR Rasuna Said Kav. 10",
       category: "Transportasi",
-      paymentMethod: "MyPertamina / QRIS",
+      paymentMethod: "QRIS",
       items: [
         { id: "item-1", name: "Pertamax (RON 92)", category: "Transportasi", quantity: 7.8, price: 12800, totalPrice: 100000 },
       ],
@@ -46,7 +46,7 @@ export function generateSimulatedReceipt(): ExtractedReceiptData {
       merchant: "Apotek Kimia Farma Salemba",
       merchantAddress: "Jl. Salemba Raya No. 12",
       category: "Kebutuhan",
-      paymentMethod: "Debit BCA",
+      paymentMethod: "Transfer Bank",
       items: [
         { id: "item-1", name: "Panadol Extra 10 Tablet", category: "Kebutuhan", quantity: 2, price: 14500, totalPrice: 29000 },
         { id: "item-2", name: "Enervon-C Multivitamin 30s", category: "Kebutuhan", quantity: 1, price: 45000, totalPrice: 45000 },
@@ -62,7 +62,9 @@ export function generateSimulatedReceipt(): ExtractedReceiptData {
 
   const today = new Date();
   const dateStr = today.toISOString().split("T")[0];
-  const timeStr = today.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+  const hours = String(today.getHours()).padStart(2, "0");
+  const minutes = String(today.getMinutes()).padStart(2, "0");
+  const timeStr = `${hours}:${minutes}`;
 
   return {
     merchant: randomSample.merchant,

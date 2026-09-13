@@ -24,6 +24,19 @@ function isValidUUID(str?: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(str);
 }
 
+function formatTimeDisplay(timeStr?: string): string {
+  if (!timeStr) return "12:00";
+  // If corrupted/confused with price e.g. "20,000" or "20.000" or contains currency symbols
+  if (/[.,]\d{3}/.test(timeStr) || /rp|idr/i.test(timeStr)) {
+    return "12:00";
+  }
+  const match = timeStr.match(/^([01]?[0-9]|2[0-3])[:.]([0-5][0-9])/);
+  if (match) {
+    return `${match[1].padStart(2, "0")}:${match[2]}`;
+  }
+  return timeStr;
+}
+
 export const PembukuanService = {
   // 1. ACCOUNTS
   async getAccounts(): Promise<AccountItem[]> {
@@ -394,11 +407,11 @@ export const PembukuanService = {
       categoryIcon: t.categories?.icon || "Layers",
       categoryColor: t.categories?.color || "#4B7BFF",
       accountId: t.account_id || "",
-      accountName: t.accounts?.name || "Rekening Utama",
+      accountName: (t.metadata as Record<string, any>)?.paymentMethod || t.accounts?.name || "Rekening Utama",
       description: t.description || "",
       merchant: t.merchant || "",
       date: t.date,
-      time: t.time || "12:00",
+      time: formatTimeDisplay(t.time),
       status: t.status,
       source: t.source || "manual",
       receiptPhotoId: t.receipt_photo_id,

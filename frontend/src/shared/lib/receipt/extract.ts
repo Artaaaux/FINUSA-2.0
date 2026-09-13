@@ -61,14 +61,16 @@ Output JSON format strictly:
     }
   ],
   "total": 15000,
-  "paymentMethod": "QRIS | Tunai | Kartu Debit | Kartu Kredit | Transfer | Lainnya",
+  "paymentMethod": "E-Wallet | QRIS | Transfer Bank | Cash | (leave empty string \"\" if not detected on receipt)",
   "confidence": 95
 }
 
 STRICT RULES:
 1. Output ONLY a valid JSON object. No conversational prose or markdown wrap outside JSON.
 2. Format all prices and totals as raw numbers without currency symbols (Rp) or commas.
-3. NEVER invent dummy transactions if the photo is not a receipt.`;
+3. For "time", strictly format as 24-hour "HH:MM" (e.g. "14:30"). NEVER confuse prices, subtotals, or amounts (such as 20,000 or 20.000) with time! If no valid transaction time is printed on the receipt, output "" (empty string).
+4. For "paymentMethod", choose ONLY from: "E-Wallet", "QRIS", "Transfer Bank", "Cash". If unknown or not printed on the receipt, output "" (empty string).
+5. NEVER invent dummy transactions if the photo is not a receipt.`;
 
 /**
  * Normalizes Indonesian date formats to ISO YYYY-MM-DD
@@ -92,6 +94,140 @@ function normalizeDate(rawDate?: string): string {
 
   // Fallback to today
   return new Date().toISOString().split("T")[0];
+}
+
+/**
+ * Returns current scan time in 24-hour HH:mm format
+ */
+export function getCurrentScanTime(): string {
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  return `${hours}:${minutes}`;
+}
+
+/**
+ * Normalizes time to HH:mm 24-hour format.
+ * If invalid, looks like a price (e.g. 20,000 / 20.000 / Rp), or missing,
+ * falls back to the current scan time as requested by user.
+ */
+export function normalizeTime(rawTime?: unknown): string {
+  if (!rawTime || typeof rawTime !== "string") {
+    return getCurrentScanTime();
+  }
+
+  const trimmed = rawTime.trim();
+  if (!trimmed) {
+    return getCurrentScanTime();
+  }
+
+  // Reject anything that looks like a price with thousand separator: e.g. "20,000", "20.000"
+  if (/[.,]\d{3}/.test(trimmed)) {
+    return getCurrentScanTime();
+  }
+
+  // Reject if it contains currency symbols or terms
+  if (/rp|idr|rupiah/i.test(trimmed)) {
+    return getCurrentScanTime();
+  }
+
+  // Reject if it contains alphabetic characters not related to time indicators
+  const withoutMeridiem = trimmed.replace(/\b(am|pm|wib|wita|wit)\b/gi, "").trim();
+  if (/[a-z]/i.test(withoutMeridiem)) {
+    return getCurrentScanTime();
+  }
+
+  // Match standard 24h or 12h time format: "HH:mm", "HH.mm", "H:mm", "HH:mm:ss"
+  const match = trimmed.match(/^([01]?[0-9]|2[0-3])[:.]([0-5][0-9])(?::[0-5][0-9])?(?:\s*(am|pm))?$/i);
+  if (!match) {
+    return getCurrentScanTime();
+  }
+
+  let hours = parseInt(match[1], 10);
+  const minutes = parseInt(match[2], 10);
+  const meridiem = match[3]?.toLowerCase();
+
+  if (meridiem === "pm" && hours < 12) {
+    hours += 12;
+  } else if (meridiem === "am" && hours === 12) {
+    hours = 0;
+  }
+
+  if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
+    return getCurrentScanTime();
+  }
+
+  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+}
+
+export const ALLOWED_PAYMENT_METHODS = [
+  "E-Wallet",
+  "QRIS",
+  "Transfer Bank",
+  "Cash",
+] as const;
+
+export type AllowedPaymentMethod = (typeof ALLOWED_PAYMENT_METHODS)[number];
+
+/**
+ * Normalizes payment method to one of the 4 supported types:
+ * "E-Wallet" | "QRIS" | "Transfer Bank" | "Cash"
+ * If unknown or not printed on receipt, returns "" (empty string) so the user can fill it in.
+ */
+export function normalizePaymentMethod(rawMethod?: unknown): string {
+  if (!rawMethod || typeof rawMethod !== "string") {
+    return "";
+  }
+
+  const clean = rawMethod.trim();
+  if (!clean) return "";
+
+  const lower = clean.toLowerCase();
+
+  // QRIS
+  if (lower.includes("qris")) {
+    return "QRIS";
+  }
+
+  // E-Wallet (gopay, ovo, dana, shopee, linkaja, e-wallet, ewallet, wallet)
+  if (
+    lower.includes("wallet") ||
+    lower.includes("gopay") ||
+    lower.includes("ovo") ||
+    lower.includes("dana") ||
+    lower.includes("shopee") ||
+    lower.includes("linkaja")
+  ) {
+    return "E-Wallet";
+  }
+
+  // Transfer Bank (transfer, tf, bank, debit, kredit, credit, rekening, atm, bca, mandiri, bri, bni)
+  if (
+    lower.includes("transfer") ||
+    lower.includes("tf") ||
+    lower.includes("bank") ||
+    lower.includes("debit") ||
+    lower.includes("kredit") ||
+    lower.includes("credit") ||
+    lower.includes("rekening") ||
+    lower.includes("atm") ||
+    lower.includes("bca") ||
+    lower.includes("mandiri") ||
+    lower.includes("bri") ||
+    lower.includes("bni")
+  ) {
+    return "Transfer Bank";
+  }
+
+  // Cash / Tunai
+  if (
+    lower.includes("cash") ||
+    lower.includes("tunai")
+  ) {
+    return "Cash";
+  }
+
+  return "";
 }
 
 /**
@@ -401,6 +537,7 @@ function buildExtractedData(parsed: Record<string, unknown>): ExtractedReceiptDa
       rejectionReason: rejectionReason || "Foto yang diambil bukan struk belanja atau bukti transaksi keuangan.",
       merchant: "",
       date: normalizeDate(),
+      time: getCurrentScanTime(),
       category: "Lainnya",
       items: [],
       subtotal: 0,
@@ -485,6 +622,7 @@ function buildExtractedData(parsed: Record<string, unknown>): ExtractedReceiptDa
       rejectionReason: rejectionReason || "Tidak ditemukan rincian transaksi struk belanja yang valid.",
       merchant: rawMerchant,
       date: normalizeDate(typeof parsed.date === "string" ? parsed.date : undefined),
+      time: getCurrentScanTime(),
       category: "Lainnya",
       items: [],
       subtotal: 0,
@@ -507,7 +645,7 @@ function buildExtractedData(parsed: Record<string, unknown>): ExtractedReceiptDa
       ? parsed.merchantAddress
       : undefined,
     date: normalizeDate(typeof data.transactionDate === "string" ? data.transactionDate : typeof data.date === "string" ? data.date : typeof parsed.date === "string" ? parsed.date : undefined),
-    time: typeof data.transactionTime === "string" ? data.transactionTime : typeof data.time === "string" ? data.time : typeof parsed.time === "string" ? parsed.time : new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }),
+    time: normalizeTime(typeof data.transactionTime === "string" ? data.transactionTime : typeof data.time === "string" ? data.time : typeof parsed.time === "string" ? parsed.time : undefined),
     category,
     items,
     subtotal,
@@ -515,7 +653,7 @@ function buildExtractedData(parsed: Record<string, unknown>): ExtractedReceiptDa
     serviceCharge,
     discount,
     total: total || subtotal + tax + serviceCharge - discount,
-    paymentMethod: typeof data.paymentMethod === "string" ? data.paymentMethod : typeof parsed.paymentMethod === "string" ? parsed.paymentMethod : "QRIS",
+    paymentMethod: normalizePaymentMethod(typeof data.paymentMethod === "string" ? data.paymentMethod : typeof parsed.paymentMethod === "string" ? parsed.paymentMethod : undefined),
     confidence: Math.min(100, Math.max(0, parsedConfidence)),
     notes: undefined,
     isSimulated: false,

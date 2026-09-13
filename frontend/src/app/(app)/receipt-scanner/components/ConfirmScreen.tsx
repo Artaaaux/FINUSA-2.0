@@ -24,6 +24,8 @@ import {
   Clapperboard,
   Briefcase,
   MoreHorizontal,
+  AlertTriangle,
+  AlertCircle,
 } from "lucide-react";
 import type { ExtractedReceiptData, ReceiptItem } from "@/shared/lib/receipt/types";
 import { FINUSA_CATEGORIES } from "@/shared/lib/receipt/categorize";
@@ -66,6 +68,17 @@ export default function ConfirmScreen({
 }: ConfirmScreenProps) {
   const [isZoomModalOpen, setIsZoomModalOpen] = useState(false);
   const [mobileTab, setMobileTab] = useState<"form" | "image">("form");
+  const [paymentError, setPaymentError] = useState<string | null>(null);
+
+  const handleSave = () => {
+    if (!data.paymentMethod || !data.paymentMethod.trim()) {
+      setPaymentError("Bagian ini belum terisi, mohon pilih salah satu metode pembayaran.");
+      setMobileTab("form");
+      return;
+    }
+    setPaymentError(null);
+    onSave();
+  };
 
   return (
     <div className="w-full max-w-6xl mx-auto space-y-6">
@@ -438,24 +451,47 @@ export default function ConfirmScreen({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Payment Method */}
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-slate-300">
-                  Metode Pembayaran
-                </label>
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-medium text-slate-300">
+                    Metode Pembayaran
+                  </label>
+                  {!data.paymentMethod && (
+                    <span className="text-[10px] text-amber-400 font-medium">
+                      Wajib diisi
+                    </span>
+                  )}
+                </div>
                 <select
-                  value={data.paymentMethod}
-                  onChange={(e) => onUpdateData({ paymentMethod: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#0F172A] border border-slate-700 text-white text-sm focus:outline-none focus:border-blue-500 cursor-pointer"
+                  value={data.paymentMethod || ""}
+                  onChange={(e) => {
+                    onUpdateData({ paymentMethod: e.target.value });
+                    if (e.target.value) setPaymentError(null);
+                  }}
+                  className={cn(
+                    "w-full px-3.5 py-2.5 rounded-xl bg-[#0F172A] text-white text-sm focus:outline-none cursor-pointer transition-colors",
+                    !data.paymentMethod
+                      ? "border border-amber-500/80 focus:border-amber-400 ring-1 ring-amber-500/20"
+                      : "border border-slate-700 focus:border-blue-500"
+                  )}
                 >
+                  <option value="">-- Pilih Metode Pembayaran --</option>
+                  <option value="E-Wallet">E-Wallet</option>
                   <option value="QRIS">QRIS</option>
-                  <option value="Tunai">Tunai / Cash</option>
-                  <option value="Kartu Debit">Kartu Debit</option>
-                  <option value="Kartu Kredit">Kartu Kredit</option>
-                  <option value="GoPay">GoPay</option>
-                  <option value="OVO">OVO</option>
-                  <option value="ShopeePay">ShopeePay</option>
-                  <option value="Transfer / E-Wallet">Transfer / E-Wallet</option>
-                  <option value="Lainnya">Lainnya</option>
+                  <option value="Transfer Bank">Transfer Bank</option>
+                  <option value="Cash">Cash</option>
                 </select>
+                {!data.paymentMethod && (
+                  <p className="text-[11px] text-amber-400 font-medium flex items-center gap-1.5 mt-1">
+                    <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                    <span>Bagian ini belum terisi, mohon isi</span>
+                  </p>
+                )}
+                {paymentError && (
+                  <p className="text-[11px] text-rose-400 font-medium flex items-center gap-1.5 mt-1">
+                    <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                    <span>{paymentError}</span>
+                  </p>
+                )}
               </div>
 
               {/* Subtotal */}
@@ -529,6 +565,19 @@ export default function ConfirmScreen({
             </div>
           </div>
 
+          {/* AI Notice Disclaimer Banner */}
+          <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-start gap-3 shadow-md">
+            <div className="p-1.5 rounded-xl bg-amber-500/20 text-amber-400 flex-shrink-0 mt-0.5">
+              <AlertTriangle className="w-4 h-4" />
+            </div>
+            <div className="space-y-0.5">
+              <p className="text-xs font-bold text-amber-300">Peringatan</p>
+              <p className="text-xs text-amber-200/90 leading-relaxed">
+                Scan AI ini masih versi awal dan pasti ada kesalahan, cek kembali detail pembayaran.
+              </p>
+            </div>
+          </div>
+
           {/* Action Bar */}
           <div className="p-5 rounded-2xl bg-[#161c28] border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
             <button
@@ -541,7 +590,7 @@ export default function ConfirmScreen({
 
             <button
               type="button"
-              onClick={onSave}
+              onClick={handleSave}
               disabled={isSaving}
               className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30 transition-all transform active:scale-98 cursor-pointer disabled:opacity-50"
             >

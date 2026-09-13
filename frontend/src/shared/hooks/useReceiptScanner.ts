@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect } from "react";
 import { supabase } from "@/lib/auth/supabase";
 import { useAuth } from "@/lib/auth/hooks";
 import type { ExtractedReceiptData, ReceiptItem } from "@/shared/lib/receipt/types";
+import { getCurrentScanTime } from "@/shared/lib/receipt/extract";
 import { useImageOptimizer } from "./useImageOptimizer";
 
 export type ScannerStep =
@@ -314,18 +315,36 @@ export function useReceiptScanner() {
 
       let primaryExpenseId: string | null = null;
       let userCategories: Array<{ id: string; name: string }> = [];
+      let userAccounts: Array<{ id: string; name: string }> = [];
 
       if (userId) {
         try {
-          const { data: cats } = await supabase
-            .from("categories")
-            .select("id, name")
-            .eq("user_id", userId);
+          const [{ data: cats }, { data: accs }] = await Promise.all([
+            supabase.from("categories").select("id, name").eq("user_id", userId),
+            supabase.from("accounts").select("id, name").eq("user_id", userId),
+          ]);
           if (cats) userCategories = cats;
+          if (accs) userAccounts = accs;
         } catch (catErr) {
-          console.warn("Could not fetch user categories:", catErr);
+          console.warn("Could not fetch user categories/accounts:", catErr);
         }
       }
+
+      // Match account based on selected paymentMethod
+      let matchedAccountId: string | null = null;
+      if (userAccounts.length > 0) {
+        if (extractedData.paymentMethod) {
+          const pm = extractedData.paymentMethod.toLowerCase();
+          const found = userAccounts.find(
+            (a) => a.name.toLowerCase().includes(pm) || pm.includes(a.name.toLowerCase())
+          );
+          matchedAccountId = found?.id || userAccounts[0]?.id || null;
+        } else {
+          matchedAccountId = userAccounts[0]?.id || null;
+        }
+      }
+
+      const scanTime = extractedData.time || getCurrentScanTime();
 
       for (const [categoryName, group] of Object.entries(categoryGroups)) {
         const groupAmount = group.total > 0 ? group.total : extractedData.total;
@@ -341,7 +360,7 @@ export function useReceiptScanner() {
           description,
           merchant: extractedData.merchant,
           date: extractedData.date,
-          time: extractedData.time || "12:00",
+          time: scanTime,
           items: group.items,
           source: "receipt_scan",
         };
@@ -368,13 +387,14 @@ export function useReceiptScanner() {
             );
             await supabase.from("transactions").insert({
               user_id: userId,
+              account_id: matchedAccountId,
               amount: groupAmount,
               type: "expense",
               category_id: matchedCategory?.id || null,
               description,
               merchant: extractedData.merchant,
               date: extractedData.date,
-              time: extractedData.time || "12:00",
+              time: scanTime,
               status: "completed",
               source: "receipt_scan",
               tags: ["ocr-receipt", categoryName.toLowerCase().replace(/\s+/g, "-")],

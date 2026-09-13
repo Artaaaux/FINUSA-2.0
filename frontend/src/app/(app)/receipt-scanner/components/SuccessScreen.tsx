@@ -104,7 +104,7 @@ export default function SuccessScreen({
             <div>
               <span className="text-slate-500 font-medium block">Pembayaran</span>
               <span className="text-slate-200 font-semibold mt-0.5 block">
-                {data.paymentMethod || "QRIS"}
+                {data.paymentMethod || "-"}
               </span>
             </div>
           </div>
