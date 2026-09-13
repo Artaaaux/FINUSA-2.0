@@ -70,7 +70,7 @@ export class NvidiaModelsClient {
       process.env.NVIDIA_API_MODEL ||
       DEFAULT_VISION_MODEL;
     this.timeoutMs = config.timeoutMs || 45000;
-    this.maxRetries = config.maxRetries ?? 1;
+    this.maxRetries = config.maxRetries ?? 2;
   }
 
   public isConfigured(): boolean {
@@ -276,9 +276,12 @@ export class NvidiaModelsClient {
           return this.callWithRetry(messages, model, attempt + 1, customTimeoutMs);
         }
 
-        // Server Error (5xx) -> Exponential backoff retry
+        // Server Error (5xx) -> Exponential backoff retry (e.g. 1.5s, 3s)
         if (response.status >= 500 && attempt < this.maxRetries) {
-          const backoffMs = Math.pow(2, attempt) * 1000;
+          const backoffMs = (attempt + 1) * 1500;
+          console.warn(
+            `[NvidiaModelsClient] Server error ${response.status} from model '${model}' (attempt ${attempt + 1}/${this.maxRetries + 1}). Retrying in ${backoffMs}ms...`
+          );
           await new Promise((resolve) => setTimeout(resolve, backoffMs));
           return this.callWithRetry(messages, model, attempt + 1, customTimeoutMs);
         }
@@ -315,6 +318,18 @@ export class NvidiaModelsClient {
 
       if (err instanceof Error && err.name === "AbortError") {
         throw new NvidiaModelsError(`Request timed out after ${Math.round(timeout / 1000)} seconds`, 408, "TIMEOUT");
+      }
+
+      // Transient network or connection drops (e.g. socket reset, fetch failed)
+      if (attempt < this.maxRetries) {
+        const backoffMs = (attempt + 1) * 1500;
+        console.warn(
+          `[NvidiaModelsClient] Network error during request (attempt ${attempt + 1}/${this.maxRetries + 1}): ${
+            err instanceof Error ? err.message : String(err)
+          }. Retrying in ${backoffMs}ms...`
+        );
+        await new Promise((resolve) => setTimeout(resolve, backoffMs));
+        return this.callWithRetry(messages, model, attempt + 1, customTimeoutMs);
       }
 
       const message = err instanceof Error ? err.message : "Unknown error";
