@@ -36,15 +36,36 @@ export default function DataExportModal({
       // Filter by date range if specified
       let filteredTransactions = realData.transactions;
       if (dateRange !== "all") {
-        const days = parseInt(dateRange, 10);
-        if (!isNaN(days)) {
-          const cutoff = new Date();
-          cutoff.setDate(cutoff.getDate() - days);
-          filteredTransactions = filteredTransactions.filter((t) => {
-            const dateVal = (t.date || t.created_at) as string | undefined;
-            return dateVal ? new Date(dateVal) >= cutoff : true;
-          });
+        const now = new Date();
+        const cutoff = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+        if (dateRange === "1_year" || dateRange === "365") {
+          cutoff.setFullYear(cutoff.getFullYear() - 1);
+        } else if (dateRange === "6_months" || dateRange === "180") {
+          cutoff.setMonth(cutoff.getMonth() - 6);
+        } else if (dateRange === "1_month" || dateRange === "30") {
+          cutoff.setMonth(cutoff.getMonth() - 1);
+        } else if (dateRange === "1_week" || dateRange === "7") {
+          cutoff.setDate(cutoff.getDate() - 7);
+        } else {
+          const days = parseInt(dateRange, 10);
+          if (!isNaN(days)) {
+            cutoff.setDate(cutoff.getDate() - days);
+          }
         }
+
+        filteredTransactions = filteredTransactions.filter((t) => {
+          const dateVal = (t.date || t.created_at) as string | undefined;
+          if (!dateVal) return true;
+          let txDate: Date;
+          if (/^\d{4}-\d{2}-\d{2}$/.test(dateVal)) {
+            const [y, m, d] = dateVal.split("-").map(Number);
+            txDate = new Date(y, m - 1, d);
+          } else {
+            txDate = new Date(dateVal);
+          }
+          return !isNaN(txDate.getTime()) ? txDate >= cutoff : true;
+        });
       }
 
       const exportData: Record<string, unknown> = {};
@@ -99,10 +120,20 @@ export default function DataExportModal({
           .filter((t) => String(t.type) === "expense")
           .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
 
+        const rangeLabels: Record<string, string> = {
+          all: "Semua Waktu (Seluruh Riwayat)",
+          "1_year": "1 Tahun Terakhir",
+          "6_months": "6 Bulan Terakhir",
+          "1_month": "1 Bulan Terakhir",
+          "1_week": "1 Minggu Terakhir",
+        };
+        const rangeText = rangeLabels[dateRange] || dateRange;
+
         const summaryText = [
           "=========================================",
           "FINUSA - RINGKASAN ARSIP KEUANGAN",
           `Tanggal Ekspor: ${new Date().toLocaleDateString("id-ID")}`,
+          `Rentang Waktu: ${rangeText}`,
           "=========================================",
           `Total Transaksi: ${filteredTransactions.length}`,
           `Total Pemasukan: Rp ${totalIncome.toLocaleString("id-ID")}`,
@@ -251,12 +282,13 @@ export default function DataExportModal({
             <select
               value={dateRange}
               onChange={(e) => setDateRange(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-blue-500 cursor-pointer"
             >
               <option value="all">Semua Waktu (Seluruh Riwayat)</option>
-              <option value="this_year">Tahun 2024 Berjalan</option>
-              <option value="this_month">Bulan Ini</option>
-              <option value="last_30_days">30 Hari Terakhir</option>
+              <option value="1_year">1 Tahun Terakhir</option>
+              <option value="6_months">6 Bulan Terakhir</option>
+              <option value="1_month">1 Bulan Terakhir</option>
+              <option value="1_week">1 Minggu Terakhir</option>
             </select>
           </div>
         </div>
