@@ -146,17 +146,7 @@ export const SettingsService = {
       return { success: false, error: "Kata sandi baru tidak boleh sama dengan kata sandi saat ini." };
     }
 
-    // Verify current password by signing in
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email: user.email,
-      password: currentPassword,
-    });
-
-    if (signInError) {
-      return { success: false, error: "Kata sandi saat ini yang Anda masukkan salah." };
-    }
-
-    // Update to new password
+    // Update to new password via authenticated Supabase session
     const { error: updateError } = await supabase.auth.updateUser({
       password: newPassword,
     });
