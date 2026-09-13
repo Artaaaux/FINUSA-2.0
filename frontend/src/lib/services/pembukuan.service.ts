@@ -398,28 +398,33 @@ export const PembukuanService = {
       return [];
     }
 
-    return (data || []).map((t) => ({
-      id: t.id,
-      amount: Number(t.amount),
-      type: t.type,
-      categoryId: t.category_id || "",
-      categoryName: t.categories?.name || "Lainnya",
-      categoryIcon: t.categories?.icon || "Layers",
-      categoryColor: t.categories?.color || "#4B7BFF",
-      accountId: t.account_id || "",
-      accountName: (t.metadata as Record<string, any>)?.paymentMethod || t.accounts?.name || "Rekening Utama",
-      description: t.description || "",
-      merchant: t.merchant || "",
-      date: t.date,
-      time: formatTimeDisplay(t.time),
-      status: t.status,
-      source: t.source || "manual",
-      receiptPhotoId: t.receipt_photo_id,
-      tags: t.tags || [],
-      isReconciled: t.is_reconciled || false,
-      createdAt: t.created_at || new Date().toISOString(),
-      updatedAt: t.updated_at || new Date().toISOString(),
-    }));
+    return (data || []).map((t) => {
+      const meta = (t.metadata && typeof t.metadata === "object") ? (t.metadata as Record<string, unknown>) : null;
+      const paymentMethod = typeof meta?.paymentMethod === "string" ? meta.paymentMethod : null;
+
+      return {
+        id: t.id,
+        amount: Number(t.amount),
+        type: t.type,
+        categoryId: t.category_id || "",
+        categoryName: t.categories?.name || "Lainnya",
+        categoryIcon: t.categories?.icon || "Layers",
+        categoryColor: t.categories?.color || "#4B7BFF",
+        accountId: t.account_id || "",
+        accountName: paymentMethod || t.accounts?.name || "Rekening Utama",
+        description: t.description || "",
+        merchant: t.merchant || "",
+        date: t.date,
+        time: formatTimeDisplay(t.time),
+        status: t.status,
+        source: t.source || "manual",
+        receiptPhotoId: t.receipt_photo_id,
+        tags: t.tags || [],
+        isReconciled: t.is_reconciled || false,
+        createdAt: t.created_at || new Date().toISOString(),
+        updatedAt: t.updated_at || new Date().toISOString(),
+      };
+    });
   },
 
   async createTransaction(tx: Omit<PembukuanTransaction, "id">): Promise<PembukuanTransaction | null> {

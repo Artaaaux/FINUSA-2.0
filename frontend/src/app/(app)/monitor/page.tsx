@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { PeriodType, BudgetCategory, DashboardSummary, Transaction, CashflowPoint, CategoryBreakdownPoint } from "./types";
+import { PeriodType, DashboardSummary, Transaction, CashflowPoint, CategoryBreakdownPoint } from "./types";
 import MonitorHeader from "./components/MonitorHeader";
 import KpiCards from "./components/KpiCards";
 import IncomeExpenseChart from "./components/IncomeExpenseChart";
@@ -92,7 +92,6 @@ function MonitorFooter() {
 
 export default function MonitorPage() {
   const [selectedPeriod, setSelectedPeriod] = useState<PeriodType>("this_month");
-  const [budgets, setBudgets] = useState<BudgetCategory[]>([]);
   const [liveTransactions, setLiveTransactions] = useState<Transaction[]>([]);
   const [liveSummary, setLiveSummary] = useState<DashboardSummary>(INITIAL_EMPTY_SUMMARY);
   const [monthlyTrend, setMonthlyTrend] = useState<CashflowPoint[]>([]);
@@ -104,7 +103,7 @@ export default function MonitorPage() {
     async function loadData() {
       try {
         await PembukuanService.recalibrateAccountBalances();
-        const [dbTx, , dbCat, summaryData] = await Promise.all([
+        const [dbTx, , , summaryData] = await Promise.all([
           PembukuanService.getTransactions(),
           PembukuanService.getAccounts(),
           PembukuanService.getCategories(),
@@ -117,7 +116,7 @@ export default function MonitorPage() {
           const currentYear = now.getFullYear();
           const currentMonth = now.getMonth() + 1;
 
-          let periodMatch = (dateStr: string) => true;
+          let periodMatch: (d: string) => boolean = () => true;
           if (selectedPeriod === "this_month") {
             const curMonthStr = `${currentYear}-${pad(currentMonth)}`;
             periodMatch = (d) => d.startsWith(curMonthStr);
@@ -146,29 +145,6 @@ export default function MonitorPage() {
               merchant: t.merchant,
             }));
           setLiveTransactions(mappedTx);
-        }
-
-        if (dbCat) {
-          const mappedBudgets: BudgetCategory[] = dbCat
-            .filter((c) => c.type === "expense" && c.budgetLimit && c.budgetLimit > 0)
-            .map((c) => {
-              // Calculate spent amount from dbTx
-              const spent = (dbTx || [])
-                .filter((tx) => tx.categoryId === c.id && tx.type === "expense")
-                .reduce((acc, curr) => acc + curr.amount, 0);
-
-              return {
-                id: c.id,
-                categoryId: c.id,
-                categoryName: c.name,
-                budgetAmount: c.budgetLimit || 0,
-                spentAmount: spent,
-                iconName: c.iconName || "Briefcase",
-                color: c.color || "#4B7BFF",
-                period: "monthly",
-              };
-            });
-          setBudgets(mappedBudgets);
         }
 
         if (summaryData) {

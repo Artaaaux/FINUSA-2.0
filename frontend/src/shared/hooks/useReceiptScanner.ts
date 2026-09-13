@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect } from "react";
 import { supabase } from "@/lib/auth/supabase";
 import { useAuth } from "@/lib/auth/hooks";
 import type { ExtractedReceiptData, ReceiptItem } from "@/shared/lib/receipt/types";
-import { getCurrentScanTime } from "@/shared/lib/receipt/extract";
+import { getCurrentScanTime } from "@/shared/lib/receipt/utils";
 import { useImageOptimizer } from "./useImageOptimizer";
 
 export type ScannerStep =

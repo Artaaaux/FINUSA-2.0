@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Download, SlidersHorizontal } from "lucide-react";
+import { Download } from "lucide-react";
 import { PeriodType } from "../types";
 import { cn } from "@/shared/lib/utils";
 
