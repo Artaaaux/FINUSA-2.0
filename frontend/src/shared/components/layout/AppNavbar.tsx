@@ -13,6 +13,7 @@ import {
   Search,
   Calendar,
   ArrowRight,
+  ArrowUpRight,
   X,
   TrendingUp,
   ArrowDownLeft,
@@ -29,6 +30,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/lib/auth/supabase";
 import { useAuth } from "@/lib/auth/hooks";
 import { useUserProfile } from "@/lib/context/UserProfileContext";
+import { NotificationService, NotificationItem } from "@/lib/services/notification.service";
+import { formatCurrency } from "@/app/(app)/home/constants";
 import { cn } from "@/shared/lib/utils";
 
 // ─── Route Metadata ──────────────────────────────────────────────────────────
@@ -48,42 +51,6 @@ const routeMeta: Record<
   "/help": { label: "Bantuan", subtitle: "Panduan Penggunaan Finusa", icon: HelpCircle },
 };
 
-interface NotificationItem {
-  id: string;
-  title: string;
-  desc: string;
-  time: string;
-  type: "income" | "alert" | "info";
-  isRead: boolean;
-}
-
-const INITIAL_NOTIFICATIONS: NotificationItem[] = [
-  {
-    id: "notif-1",
-    title: "Pemasukan Berhasil Dicatat",
-    desc: "Honor Jasa Konsultasi & Proyek +Rp 5.000.000 masuk ke Kas Tunai.",
-    time: "Hari ini, 15:36",
-    type: "income",
-    isRead: false,
-  },
-  {
-    id: "notif-2",
-    title: "Kondisi Kas Sehat (Surplus)",
-    desc: "Arus kas Anda bulan ini mengalami surplus kas bertumbuh +5.0%.",
-    time: "Hari ini, 12:00",
-    type: "alert",
-    isRead: false,
-  },
-  {
-    id: "notif-3",
-    title: "Cloud Backup Tersinkron",
-    desc: "Seluruh pencatatan dan saldo terenkripsi aman di Cloud Supabase.",
-    time: "Kemarin",
-    type: "info",
-    isRead: true,
-  },
-];
-
 export default function AppNavbar({ isCollapsed }: { isCollapsed: boolean }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -96,7 +63,8 @@ export default function AppNavbar({ isCollapsed }: { isCollapsed: boolean }) {
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [notifications, setNotifications] = useState<NotificationItem[]>(INITIAL_NOTIFICATIONS);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [isNotifLoading, setIsNotifLoading] = useState(true);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
@@ -174,6 +142,69 @@ export default function AppNavbar({ isCollapsed }: { isCollapsed: boolean }) {
     }
   }, [searchModalOpen]);
 
+  // Load real notifications from database & live transaction events
+  useEffect(() => {
+    let isMounted = true;
+    const currentUserId = user?.id || "anonymous";
+
+    async function loadNotifs() {
+      try {
+        const items = await NotificationService.loadFinancialNotifications(currentUserId);
+        if (isMounted) {
+          setNotifications(items);
+        }
+      } catch (err) {
+        console.warn("Error loading financial notifications:", err);
+      } finally {
+        if (isMounted) setIsNotifLoading(false);
+      }
+    }
+
+    loadNotifs();
+
+    // Listen to live transaction events across app
+    const handleTransactionRecorded = (e: Event) => {
+      const customEvent = e as CustomEvent<{
+        type?: string;
+        amount?: number;
+        description?: string;
+        categoryName?: string;
+        accountName?: string;
+      }>;
+      const tx = customEvent.detail;
+      if (!tx) return;
+
+      const isIncome = tx.type === "income";
+      const label = tx.description || tx.categoryName || (isIncome ? "Pemasukan" : "Pengeluaran");
+      const account = tx.accountName || "Kas";
+
+      const liveItem: NotificationItem = {
+        id: `tx-live-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        title: isIncome ? "Pemasukan Berhasil Dicatat" : "Pengeluaran Berhasil Dicatat",
+        desc: isIncome
+          ? `${label} +${formatCurrency(Number(tx.amount || 0))} masuk ke ${account}.`
+          : `${label} -${formatCurrency(Number(tx.amount || 0))} via ${account}.`,
+        time: "Baru saja",
+        type: isIncome ? "income" : "expense",
+        isRead: false,
+      };
+
+      setNotifications((prev) => [liveItem, ...prev]);
+
+      // Refresh intelligence insights in background after recording
+      setTimeout(() => {
+        loadNotifs();
+      }, 2000);
+    };
+
+    window.addEventListener("finusa:transaction-recorded", handleTransactionRecorded);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener("finusa:transaction-recorded", handleTransactionRecorded);
+    };
+  }, [user?.id]);
+
   const handleLogout = async () => {
     setIsLoggingOut(true);
     await supabase.auth.signOut();
@@ -183,6 +214,19 @@ export default function AppNavbar({ isCollapsed }: { isCollapsed: boolean }) {
 
   const markAllNotifRead = () => {
     setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+    const currentUserId = user?.id || "anonymous";
+    NotificationService.markNotificationsAsRead(
+      currentUserId,
+      notifications.map((n) => n.id)
+    );
+  };
+
+  const markSingleNotifRead = (id: string) => {
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
+    );
+    const currentUserId = user?.id || "anonymous";
+    NotificationService.markNotificationsAsRead(currentUserId, [id]);
   };
 
   // Quick command searchable items
@@ -356,45 +400,66 @@ export default function AppNavbar({ isCollapsed }: { isCollapsed: boolean }) {
 
                     {/* Notification List */}
                     <div className="divide-y divide-slate-800/60 max-h-72 overflow-y-auto my-1">
-                      {notifications.map((item) => (
-                        <div
-                          key={item.id}
-                          className={cn(
-                            "p-2.5 rounded-xl transition-colors flex items-start gap-3",
-                            item.isRead ? "opacity-75 hover:bg-white/[0.02]" : "bg-blue-500/[0.04] hover:bg-blue-500/[0.08]"
-                          )}
-                        >
+                      {isNotifLoading ? (
+                        <div className="py-8 flex flex-col items-center justify-center gap-2 text-slate-500">
+                          <Loader2 className="w-4 h-4 animate-spin text-blue-400" />
+                          <p className="text-xs">Memuat notifikasi...</p>
+                        </div>
+                      ) : notifications.length === 0 ? (
+                        <div className="py-8 text-center text-xs text-slate-500">
+                          Belum ada notifikasi
+                        </div>
+                      ) : (
+                        notifications.map((item) => (
                           <div
+                            key={item.id}
+                            onClick={() => markSingleNotifRead(item.id)}
                             className={cn(
-                              "w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 border",
-                              item.type === "income"
-                                ? "bg-emerald-500/10 border-emerald-500/25 text-emerald-400"
-                                : item.type === "alert"
-                                ? "bg-blue-500/10 border-blue-500/25 text-blue-400"
-                                : "bg-teal-500/10 border-teal-500/25 text-teal-400"
+                              "p-2.5 rounded-xl transition-colors flex items-start gap-3 cursor-pointer",
+                              item.isRead ? "opacity-75 hover:bg-white/[0.02]" : "bg-blue-500/[0.04] hover:bg-blue-500/[0.08]"
                             )}
                           >
-                            {item.type === "income" ? (
-                              <ArrowDownLeft className="w-3.5 h-3.5" />
-                            ) : item.type === "alert" ? (
-                              <TrendingUp className="w-3.5 h-3.5" />
-                            ) : (
-                              <ShieldCheck className="w-3.5 h-3.5" />
-                            )}
+                            <div
+                              className={cn(
+                                "w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 border",
+                                item.type === "income"
+                                  ? "bg-emerald-500/10 border-emerald-500/25 text-emerald-400"
+                                  : item.type === "expense"
+                                  ? "bg-rose-500/10 border-rose-500/25 text-rose-400"
+                                  : item.type === "alert"
+                                  ? "bg-amber-500/10 border-amber-500/25 text-amber-400"
+                                  : "bg-blue-500/10 border-blue-500/25 text-blue-400"
+                              )}
+                            >
+                              {item.type === "income" ? (
+                                <ArrowDownLeft className="w-3.5 h-3.5" />
+                              ) : item.type === "expense" ? (
+                                <ArrowUpRight className="w-3.5 h-3.5" />
+                              ) : item.type === "alert" ? (
+                                <TrendingUp className="w-3.5 h-3.5" />
+                              ) : (
+                                <ShieldCheck className="w-3.5 h-3.5" />
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between gap-1">
+                                <p className="text-xs font-semibold text-white leading-tight">
+                                  {item.title}
+                                </p>
+                                {!item.isRead && (
+                                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0" />
+                                )}
+                              </div>
+                              <p className="text-[11px] text-slate-400 mt-0.5 line-clamp-2 leading-relaxed">
+                                {item.desc}
+                              </p>
+                              <span className="text-[9px] text-slate-500 mt-1 block font-mono">
+                                {item.time}
+                              </span>
+                            </div>
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-xs font-semibold text-white leading-tight">
-                              {item.title}
-                            </p>
-                            <p className="text-[11px] text-slate-400 mt-0.5 line-clamp-2 leading-relaxed">
-                              {item.desc}
-                            </p>
-                            <span className="text-[9px] text-slate-500 mt-1 block font-mono">
-                              {item.time}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
+                        ))
+                      )}
                     </div>
 
                     <div className="pt-2 border-t border-slate-800/80 text-center">

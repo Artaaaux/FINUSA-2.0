@@ -90,6 +90,14 @@ export const ReceiptService = {
       isReconciled: false,
     });
 
+    if (newTx && typeof window !== "undefined") {
+      window.dispatchEvent(
+        new CustomEvent("finusa:transaction-recorded", {
+          detail: newTx,
+        })
+      );
+    }
+
     return newTx;
   },
 };

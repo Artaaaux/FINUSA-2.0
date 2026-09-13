@@ -198,6 +198,14 @@ export function usePembukuan() {
     setTransactions((prev) => [newTx, ...prev]);
     showToast("Transaksi Berhasil Disimpan", `Tercatat Rp ${newTx.amount.toLocaleString("id-ID")}`, "success");
 
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(
+        new CustomEvent("finusa:transaction-recorded", {
+          detail: newTx,
+        })
+      );
+    }
+
     try {
       const savedTx = await PembukuanService.createTransaction(newTx);
       if (savedTx) {
