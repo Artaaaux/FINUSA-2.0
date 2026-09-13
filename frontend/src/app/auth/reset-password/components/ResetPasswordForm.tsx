@@ -18,6 +18,22 @@ export function ResetPasswordForm() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get("code");
+      const err = params.get("error_description") || params.get("error");
+
+      if (err) {
+        setError(err);
+      } else if (code) {
+        supabase.auth.exchangeCodeForSession(code).catch((e) => {
+          console.error("Code exchange failed:", e);
+        });
+      }
+    }
+  }, []);
+
   // Password Strength Calculation
   const getPasswordStrength = (pwd: string) => {
     if (!pwd) return { score: 0, label: "", color: "bg-slate-700" };
