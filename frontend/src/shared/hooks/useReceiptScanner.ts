@@ -162,6 +162,14 @@ export function useReceiptScanner() {
     setErrorMessage(null);
     setErrorType(null);
 
+    const clientTime = getCurrentScanTime();
+    let clientTimezone = "Asia/Jakarta";
+    try {
+      clientTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Jakarta";
+    } catch {
+      // fallback
+    }
+
     try {
       const res = await fetch("/api/receipt/scan", {
         method: "POST",
@@ -170,6 +178,8 @@ export function useReceiptScanner() {
         },
         body: JSON.stringify({
           image: capturedImage,
+          clientTime,
+          clientTimezone,
         }),
       });
 
@@ -189,7 +199,13 @@ export function useReceiptScanner() {
         return;
       }
 
-      setExtractedData(json.extractedData);
+      const resultData: ExtractedReceiptData = json.extractedData;
+      // Guarantee client local scan time if time is missing or blank
+      if (!resultData.time || !resultData.time.trim()) {
+        resultData.time = clientTime;
+      }
+
+      setExtractedData(resultData);
       setStep("confirm");
     } catch (err: unknown) {
       console.error("Scan processing error:", err);

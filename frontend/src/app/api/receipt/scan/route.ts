@@ -9,12 +9,18 @@ export async function POST(req: NextRequest) {
   try {
     let imageBuffer: Buffer | null = null;
     let mimeType = "image/jpeg";
+    let clientTime: string | undefined;
+    let clientTimezone: string | undefined;
 
     const contentType = req.headers.get("content-type") || "";
 
     if (contentType.includes("multipart/form-data")) {
       const formData = await req.formData();
       const file = formData.get("file") || formData.get("image");
+      const ct = formData.get("clientTime");
+      const ctz = formData.get("clientTimezone");
+      if (typeof ct === "string" && ct.trim()) clientTime = ct.trim();
+      if (typeof ctz === "string" && ctz.trim()) clientTimezone = ctz.trim();
 
       if (!file || !(file instanceof Blob)) {
         return NextResponse.json(
@@ -29,6 +35,8 @@ export async function POST(req: NextRequest) {
     } else if (contentType.includes("application/json")) {
       const body = await req.json();
       const base64Data = body.image || body.base64;
+      if (typeof body.clientTime === "string" && body.clientTime.trim()) clientTime = body.clientTime.trim();
+      if (typeof body.clientTimezone === "string" && body.clientTimezone.trim()) clientTimezone = body.clientTimezone.trim();
 
       if (!base64Data || typeof base64Data !== "string") {
         return NextResponse.json(
@@ -70,7 +78,9 @@ export async function POST(req: NextRequest) {
     // 2. Extract Receipt Data using NVIDIA Multimodal Vision AI Model
     const extractedData = await extractReceiptData(
       optimizedOcr.base64,
-      optimizedOcr.mimeType || mimeType
+      optimizedOcr.mimeType || mimeType,
+      clientTime,
+      clientTimezone
     );
 
     // 3. Validate if image is actually a valid receipt

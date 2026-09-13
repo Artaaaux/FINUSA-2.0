@@ -31,6 +31,7 @@ import type { ExtractedReceiptData, ReceiptItem } from "@/shared/lib/receipt/typ
 import { FINUSA_CATEGORIES } from "@/shared/lib/receipt/categorize";
 import { formatCurrency } from "@/app/(app)/home/constants";
 import { cn } from "@/shared/lib/utils";
+import { getCurrentScanTime } from "@/shared/lib/receipt/utils";
 
 interface ConfirmScreenProps {
   imageSrc: string | null;
@@ -244,10 +245,20 @@ export default function ConfirmScreen({
 
               {/* Time */}
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-slate-300 flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-slate-400" />
-                  Waktu / Jam
-                </label>
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-medium text-slate-300 flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5 text-slate-400" />
+                    Waktu / Jam
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => onUpdateData({ time: getCurrentScanTime() })}
+                    className="text-[11px] text-blue-400 hover:text-blue-300 hover:underline font-medium cursor-pointer transition-colors"
+                    title="Gunakan waktu saat ini"
+                  >
+                    Set Jam Sekarang
+                  </button>
+                </div>
                 <input
                   type="text"
                   value={data.time || ""}

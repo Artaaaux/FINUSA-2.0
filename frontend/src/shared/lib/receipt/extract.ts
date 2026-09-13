@@ -401,7 +401,11 @@ async function performOcr(imageInput: string): Promise<string> {
 /**
  * Helper to construct ExtractedReceiptData from parsed JSON
  */
-function buildExtractedData(parsed: Record<string, unknown>): ExtractedReceiptData {
+function buildExtractedData(
+  parsed: Record<string, unknown>,
+  clientTime?: string,
+  clientTimezone?: string
+): ExtractedReceiptData {
   const isReceiptExplicit = parsed.isReceipt !== false && parsed.is_receipt !== false;
   const rejectionReason = typeof parsed.rejectionReason === "string"
     ? parsed.rejectionReason
@@ -416,7 +420,7 @@ function buildExtractedData(parsed: Record<string, unknown>): ExtractedReceiptDa
       rejectionReason: rejectionReason || "Foto yang diambil bukan struk belanja atau bukti transaksi keuangan.",
       merchant: "",
       date: normalizeDate(),
-      time: getCurrentScanTime(),
+      time: clientTime || getCurrentScanTime(clientTimezone),
       category: "Lainnya",
       items: [],
       subtotal: 0,
@@ -501,7 +505,7 @@ function buildExtractedData(parsed: Record<string, unknown>): ExtractedReceiptDa
       rejectionReason: rejectionReason || "Tidak ditemukan rincian transaksi struk belanja yang valid.",
       merchant: rawMerchant,
       date: normalizeDate(typeof parsed.date === "string" ? parsed.date : undefined),
-      time: getCurrentScanTime(),
+      time: clientTime || getCurrentScanTime(clientTimezone),
       category: "Lainnya",
       items: [],
       subtotal: 0,
@@ -524,7 +528,7 @@ function buildExtractedData(parsed: Record<string, unknown>): ExtractedReceiptDa
       ? parsed.merchantAddress
       : undefined,
     date: normalizeDate(typeof data.transactionDate === "string" ? data.transactionDate : typeof data.date === "string" ? data.date : typeof parsed.date === "string" ? parsed.date : undefined),
-    time: normalizeTime(typeof data.transactionTime === "string" ? data.transactionTime : typeof data.time === "string" ? data.time : typeof parsed.time === "string" ? parsed.time : undefined),
+    time: normalizeTime(typeof data.transactionTime === "string" ? data.transactionTime : typeof data.time === "string" ? data.time : typeof parsed.time === "string" ? parsed.time : undefined, clientTime, clientTimezone),
     category,
     items,
     subtotal,
@@ -544,7 +548,9 @@ function buildExtractedData(parsed: Record<string, unknown>): ExtractedReceiptDa
  */
 export async function extractReceiptData(
   base64Image: string,
-  mimeType = "image/jpeg"
+  mimeType = "image/jpeg",
+  clientTime?: string,
+  clientTimezone?: string
 ): Promise<ExtractedReceiptData> {
   const client = new NvidiaModelsClient();
 
@@ -567,7 +573,7 @@ export async function extractReceiptData(
     );
 
     const parsed = extractJsonFromModelResponse(rawResponse);
-    return buildExtractedData(parsed);
+    return buildExtractedData(parsed, clientTime, clientTimezone);
   } catch (visionErr: unknown) {
     console.warn("Direct NVIDIA Vision extraction failed, attempting OCR fallback:", visionErr);
 
@@ -586,7 +592,7 @@ export async function extractReceiptData(
       );
 
       const parsed = extractJsonFromModelResponse(rawTextResponse);
-      return buildExtractedData(parsed);
+      return buildExtractedData(parsed, clientTime, clientTimezone);
     } catch (fallbackErr: unknown) {
       console.error("Both Vision and OCR fallback failed:", fallbackErr);
       const mainMessage = visionErr instanceof Error ? visionErr.message : "Kesalahan koneksi ke NVIDIA API";
