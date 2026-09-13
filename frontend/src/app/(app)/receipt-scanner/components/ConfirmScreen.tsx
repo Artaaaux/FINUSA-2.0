@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles,
+  Receipt,
   Plus,
   Trash2,
   Calendar,
@@ -15,7 +16,6 @@ import {
   X,
   Check,
   RotateCcw,
-  Receipt,
   Utensils,
   ShoppingCart,
   Car,
@@ -85,35 +85,24 @@ export default function ConfirmScreen({
     <div className="w-full max-w-6xl mx-auto space-y-6">
       {/* Top Header Card */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl bg-[#161c28] border border-slate-800 shadow-xl">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-md">
-            <Receipt className="w-5 h-5" />
-          </div>
-          <div>
-            <h1 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-              Konfirmasi Data Struk
-              {data.isSimulated && (
-                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300">
-                  Demo OCR
-                </span>
-              )}
-            </h1>
-            <p className="text-xs text-slate-400">
-              Periksa dan sesuaikan rincian sebelum disimpan ke pengeluaran
-            </p>
-          </div>
+        <div>
+          <h1 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+            Konfirmasi Data Struk
+            {data.isSimulated && (
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300">
+                Demo OCR
+              </span>
+            )}
+          </h1>
+          <p className="text-xs text-slate-400">
+            Periksa dan sesuaikan rincian sebelum disimpan ke pengeluaran
+          </p>
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Confidence Badge */}
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-500/10 border border-blue-500/25 text-blue-400 text-xs font-semibold">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            <span>Akurasi {data.confidence}%</span>
-          </div>
-
           <button
             onClick={onRetake}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white bg-slate-800/80 hover:bg-slate-700 transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white bg-slate-800/80 hover:bg-slate-700 transition-colors cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             Pindai Ulang
@@ -603,7 +592,7 @@ export default function ConfirmScreen({
               type="button"
               onClick={handleSave}
               disabled={isSaving}
-              className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30 transition-all transform active:scale-98 cursor-pointer disabled:opacity-50"
+              className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-blue-600/25 transition-all transform active:scale-98 cursor-pointer disabled:opacity-50"
             >
               {isSaving ? (
                 <>

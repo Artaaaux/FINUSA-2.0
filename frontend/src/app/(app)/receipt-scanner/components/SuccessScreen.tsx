@@ -65,8 +65,8 @@ export default function SuccessScreen({
         transition={{ duration: 0.4, delay: 0.15 }}
         className="relative rounded-2xl bg-[#161c28] border border-slate-800 shadow-2xl overflow-hidden"
       >
-        {/* Top Gradient Banner */}
-        <div className="h-2 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
+        {/* Top Banner */}
+        <div className="h-1.5 bg-blue-600" />
 
         <div className="p-6 space-y-5">
           {/* Merchant & Category */}
@@ -155,7 +155,7 @@ export default function SuccessScreen({
       <div className="flex flex-col sm:flex-row gap-3 pt-2">
         <button
           onClick={onScanAnother}
-          className="flex-1 px-6 py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-blue-600/25 transition-all cursor-pointer"
+          className="flex-1 px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-blue-600/25 transition-all cursor-pointer"
         >
           <ScanLine className="w-4 h-4" />
           Scan Struk Lainnya

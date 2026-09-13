@@ -240,14 +240,12 @@ export default function CameraView({
             onClick={handleShutter}
             disabled={permission !== "granted"}
             className={cn(
-              "relative w-18 h-18 rounded-full p-1 border-2 border-white/80 transition-all transform active:scale-95 cursor-pointer shadow-[0_0_25px_rgba(59,130,246,0.4)]",
+              "relative w-24 h-24 sm:w-28 sm:h-28 rounded-full p-2 border-4 border-white transition-all transform active:scale-95 cursor-pointer shadow-[0_0_25px_rgba(255,255,255,0.25)] flex items-center justify-center",
               permission !== "granted" && "opacity-50 cursor-not-allowed"
             )}
             aria-label="Ambil Foto Struk"
           >
-            <div className="w-full h-full rounded-full bg-gradient-to-tr from-blue-500 to-indigo-500 hover:from-blue-400 hover:to-indigo-400 flex items-center justify-center transition-all">
-              <Camera className="w-7 h-7 text-white" />
-            </div>
+            <div className="w-full h-full rounded-full bg-white hover:bg-slate-100 transition-all shadow-inner" />
           </button>
         </div>
 

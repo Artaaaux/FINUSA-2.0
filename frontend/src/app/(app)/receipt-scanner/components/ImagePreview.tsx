@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Sparkles, RefreshCw, ArrowLeft } from "lucide-react";
+import { RefreshCw, ArrowLeft } from "lucide-react";
 
 interface ImagePreviewProps {
   imageSrc: string;
@@ -68,10 +68,9 @@ export default function ImagePreview({
 
         <button
           onClick={onConfirm}
-          className="w-full sm:w-auto px-7 py-3 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30 transition-all transform active:scale-98 cursor-pointer"
+          className="w-full sm:w-auto px-7 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold flex items-center justify-center shadow-lg shadow-blue-600/25 transition-all transform active:scale-98 cursor-pointer"
         >
-          <Sparkles className="w-4 h-4 text-amber-300" />
-          Pindai & Ekstrak Data AI
+          Pindai Struk
         </button>
       </div>
     </div>
