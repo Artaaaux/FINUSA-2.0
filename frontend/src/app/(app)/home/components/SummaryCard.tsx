@@ -77,7 +77,7 @@ export function SummaryCard({
   return (
     <div
       className={cn(
-        "relative aspect-[1.62] w-full rounded-lg sm:rounded-2xl p-2.5 sm:p-3.5 lg:p-4 transition-all duration-300 group cursor-pointer overflow-hidden border shadow-md sm:shadow-lg hover:-translate-y-0.5 sm:hover:-translate-y-1 flex flex-col justify-between select-none",
+        "relative aspect-[1.58] min-h-[135px] sm:min-h-[145px] lg:min-h-[150px] w-full rounded-xl sm:rounded-2xl p-2.5 sm:p-3 lg:p-3.5 transition-all duration-300 group cursor-pointer overflow-hidden border shadow-md sm:shadow-lg hover:-translate-y-0.5 sm:hover:-translate-y-1 flex flex-col justify-between select-none",
         config.bgGradient,
         config.border,
         config.shadow,
@@ -99,7 +99,7 @@ export function SummaryCard({
 
       {/* Decorative Guilloche Wave SVG Accent */}
       <svg
-        className="absolute pointer-events-none -right-4 -bottom-4 sm:-right-6 sm:-bottom-6 w-24 h-24 sm:w-36 sm:h-36 opacity-10"
+        className="absolute pointer-events-none -right-4 -bottom-4 sm:-right-6 sm:-bottom-6 w-24 h-24 sm:w-32 sm:h-32 opacity-10"
         viewBox="0 0 100 100"
         fill="none"
       >
@@ -126,11 +126,11 @@ export function SummaryCard({
       {/* Card Content Wrapper */}
       <div className="relative z-10 flex flex-col justify-between h-full gap-0.5 sm:gap-1">
         {/* TOP ROW: Section Name (Left) & FINUSA Debit Brand (Right) */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1">
+        <div className="flex items-center justify-between gap-1">
+          <div className="flex items-center gap-1 min-w-0">
             <span
               className={cn(
-                "px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded text-[8px] sm:text-[10px] font-atm-card font-extrabold uppercase tracking-wider border flex items-center gap-1 shadow-xs",
+                "px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded text-[8px] sm:text-[9px] lg:text-[10px] font-atm-card font-extrabold uppercase tracking-wider border flex items-center gap-1 shadow-xs whitespace-nowrap shrink-0",
                 config.badgeBg
               )}
             >
@@ -138,39 +138,39 @@ export function SummaryCard({
             </span>
           </div>
 
-          <div className="flex items-center gap-1 sm:gap-1.5">
-            <span className={cn("text-[8px] sm:text-xs font-atm-card font-black tracking-tight opacity-90", config.textPrimary)}>
+          <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+            <span className={cn("text-[8px] sm:text-[10px] lg:text-xs font-atm-card font-black tracking-tight opacity-90", config.textPrimary)}>
               FINUSA
             </span>
             <span className={cn("text-[7px] sm:text-[8px] font-atm-card font-bold uppercase tracking-widest opacity-75 hidden sm:inline-block", config.textPrimary)}>
               DEBIT
             </span>
-            <Wifi className={cn("w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 rotate-90 opacity-80", config.textPrimary)} />
+            <Wifi className={cn("w-2.5 h-2.5 sm:w-3 sm:h-3 rotate-90 opacity-80", config.textPrimary)} />
           </div>
         </div>
 
         {/* MIDDLE ROW: Information / Main Value & Description */}
-        <div className="my-auto py-0.5">
-          <p className={cn("text-[7px] sm:text-[10px] font-atm-card uppercase tracking-wider mb-0.5 opacity-85 truncate", config.textSecondary)}>
+        <div className="my-auto py-0.5 min-w-0">
+          <p className={cn("text-[7px] sm:text-[9px] lg:text-[10px] font-atm-card uppercase tracking-wider mb-0.5 opacity-85 truncate", config.textSecondary)}>
             {description}
           </p>
           {isLongValue ? (
-            <p className={cn("text-[10px] sm:text-sm font-atm-card font-bold tracking-tight uppercase leading-tight line-clamp-2", config.textPrimary, config.textEmboss)}>
+            <p className={cn("text-[10px] sm:text-xs lg:text-sm font-atm-card font-bold tracking-tight uppercase leading-tight line-clamp-2", config.textPrimary, config.textEmboss)}>
               {value}
             </p>
           ) : (
-            <p className={cn("text-xs sm:text-lg lg:text-xl font-atm-card font-bold tracking-wider drop-shadow-sm", config.textPrimary, config.textEmboss)}>
+            <p className={cn("text-xs sm:text-base lg:text-lg font-atm-card font-bold tracking-wider drop-shadow-sm truncate", config.textPrimary, config.textEmboss)}>
               {value}
             </p>
           )}
         </div>
 
         {/* BOTTOM ROW: 3D EMV Smart Chip (Left) & Account / Expiry Details (Right) */}
-        <div className="flex items-end justify-between pt-0.5">
+        <div className="flex items-end justify-between pt-0.5 gap-1">
           {/* Authentic 3D EMV Gold Smart Chip */}
           <div
             className={cn(
-              "w-6 h-4 sm:w-9 sm:h-6 bg-gradient-to-br rounded border p-0.5 flex flex-col justify-between shadow-xs relative overflow-hidden shrink-0",
+              "w-5 h-3.5 sm:w-7 sm:h-5 lg:w-8 lg:h-5.5 bg-gradient-to-br rounded border p-0.5 flex flex-col justify-between shadow-xs relative overflow-hidden shrink-0",
               config.chipBg,
               config.chipBorder
             )}
@@ -184,12 +184,12 @@ export function SummaryCard({
           </div>
 
           {/* Masked Card Number & Expiry */}
-          <div className="text-right">
-            <div className="flex items-center justify-end gap-1 text-[6px] sm:text-[8px] font-atm-card uppercase tracking-wider opacity-85">
+          <div className="text-right min-w-0">
+            <div className="flex items-center justify-end gap-1 text-[6px] sm:text-[7.5px] lg:text-[8px] font-atm-card uppercase tracking-wider opacity-85">
               <span className={config.textSecondary}>EXP</span>
               <span className={cn("font-bold font-atm-card", config.textPrimary)}>{validThru}</span>
             </div>
-            <p className={cn("font-atm-card text-[8px] sm:text-xs font-bold tracking-widest mt-0.5 whitespace-nowrap", config.textPrimary, config.textEmboss)}>
+            <p className={cn("font-atm-card text-[7.5px] sm:text-[10px] lg:text-xs font-bold tracking-wider mt-0.5 whitespace-nowrap truncate", config.textPrimary, config.textEmboss)}>
               {cardNumber}
             </p>
           </div>

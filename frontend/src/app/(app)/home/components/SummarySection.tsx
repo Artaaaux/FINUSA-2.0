@@ -45,8 +45,8 @@ export function SummarySection() {
         </span>
       </div>
 
-      {/* 2-column on mobile, 4-column on desktop */}
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-2.5 sm:gap-4 lg:gap-6">
+      {/* 2-column on mobile/tablet, 4-column on desktop */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5 lg:gap-4">
         <SummaryCard
           title="Pemasukan"
           value={pemasukanFormatted}
