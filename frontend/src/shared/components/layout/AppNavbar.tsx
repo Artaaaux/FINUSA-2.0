@@ -252,12 +252,6 @@ export default function AppNavbar({ isCollapsed }: { isCollapsed: boolean }) {
                 <span className="text-sm sm:text-base font-extrabold text-white tracking-tight truncate">
                   {currentMeta.label}
                 </span>
-
-                {/* Live Sync Status Pill */}
-                <span className="inline-flex items-center gap-1 ml-1 sm:ml-2 px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 shrink-0">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="hidden xs:inline">Cloud</span> Sync
-                </span>
               </div>
 
               {/* Subtitle tag */}
