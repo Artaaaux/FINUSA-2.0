@@ -302,7 +302,7 @@ export function useReceiptScanner() {
     []
   );
 
-  // Save to Supabase (Expenses & Transactions per Category)
+  // Save to Supabase (Transactions primary, Expenses as backup history)
   const saveExpense = useCallback(async () => {
     if (!extractedData) return;
 
@@ -362,6 +362,8 @@ export function useReceiptScanner() {
 
       const scanTime = extractedData.time || getCurrentScanTime();
 
+      let transactionInsertSuccess = false;
+
       for (const [categoryName, group] of Object.entries(categoryGroups)) {
         const groupAmount = group.total > 0 ? group.total : extractedData.total;
         const itemNames =
@@ -370,6 +372,53 @@ export function useReceiptScanner() {
             : `Belanja di ${extractedData.merchant}`;
         const description = `${itemNames} (${extractedData.merchant})`;
 
+        // PRIMARY: Insert into transactions table (read by Home, Monitor, Catat, Pembukuan)
+        if (userId) {
+          // Fuzzy category matching: exact match first, then partial/case-insensitive match
+          const catLower = categoryName.toLowerCase();
+          let matchedCategory = userCategories.find(
+            (c) => c.name.toLowerCase() === catLower
+          );
+          if (!matchedCategory) {
+            matchedCategory = userCategories.find(
+              (c) => c.name.toLowerCase().includes(catLower) || catLower.includes(c.name.toLowerCase())
+            );
+          }
+
+          const { data: txData, error: txError } = await supabase.from("transactions").insert({
+            user_id: userId,
+            account_id: matchedAccountId,
+            amount: groupAmount,
+            type: "expense",
+            category_id: matchedCategory?.id || null,
+            description,
+            merchant: extractedData.merchant,
+            date: extractedData.date,
+            time: scanTime,
+            status: "completed",
+            source: "receipt_scan",
+            tags: ["ocr-receipt", categoryName.toLowerCase().replace(/\s+/g, "-")],
+            metadata: {
+              items: group.items,
+              merchant: extractedData.merchant,
+              paymentMethod: extractedData.paymentMethod,
+              categoryName,
+            },
+          }).select("id").single();
+
+          if (txError) {
+            console.error("Failed to insert scan transaction:", txError.message, txError.details);
+            throw new Error(`Gagal menyimpan transaksi: ${txError.message}`);
+          }
+
+          transactionInsertSuccess = true;
+
+          if (!primaryExpenseId && txData?.id) {
+            primaryExpenseId = txData.id;
+          }
+        }
+
+        // SECONDARY: Also insert into expenses table as backup/history
         const expensePayload: Record<string, unknown> = {
           amount: groupAmount,
           category: categoryName,
@@ -385,54 +434,31 @@ export function useReceiptScanner() {
           expensePayload.user_id = userId;
         }
 
-        const { data: expenseData } = await supabase
-          .from("expenses")
-          .insert(expensePayload)
-          .select("id")
-          .single();
-
-        if (!primaryExpenseId && expenseData?.id) {
-          primaryExpenseId = expenseData.id;
+        try {
+          await supabase
+            .from("expenses")
+            .insert(expensePayload)
+            .select("id")
+            .single();
+        } catch (expErr) {
+          // Expenses table is backup only — log but don't fail
+          console.warn("Could not insert into expenses table (non-critical):", expErr);
         }
+      }
 
-        // Also create entry in transactions table so it instantly shows in Pembukuan & Monitor
-        if (userId) {
-          try {
-            const matchedCategory = userCategories.find(
-              (c) => c.name.toLowerCase() === categoryName.toLowerCase()
-            );
-            await supabase.from("transactions").insert({
-              user_id: userId,
-              account_id: matchedAccountId,
-              amount: groupAmount,
-              type: "expense",
-              category_id: matchedCategory?.id || null,
-              description,
-              merchant: extractedData.merchant,
-              date: extractedData.date,
-              time: scanTime,
-              status: "completed",
-              source: "receipt_scan",
-              tags: ["ocr-receipt", categoryName.toLowerCase().replace(/\s+/g, "-")],
-              metadata: {
-                items: group.items,
-                merchant: extractedData.merchant,
-                paymentMethod: extractedData.paymentMethod,
-                categoryName,
-              },
-            });
-          } catch (e) {
-            console.warn("Could not insert into transactions table:", e);
-          }
-        }
+      if (!transactionInsertSuccess && !userId) {
+        // No user ID available — fallback to local success
+        console.warn("No userId available, transaction saved to expenses only");
       }
 
       setSavedExpenseId(primaryExpenseId || `exp-${Date.now()}`);
       setStep("success");
     } catch (err: unknown) {
-      console.warn("Save expense failed, falling back to local success:", err);
-      setSavedExpenseId(`exp-${Date.now()}`);
-      setStep("success");
+      const errorObj = err as Error;
+      console.error("Save expense failed:", errorObj);
+      setErrorMessage(errorObj.message || "Gagal menyimpan transaksi. Silakan coba lagi.");
+      setErrorType("general");
+      setStep("error");
     } finally {
       setIsSaving(false);
     }

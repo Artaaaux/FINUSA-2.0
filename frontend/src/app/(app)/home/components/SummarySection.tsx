@@ -68,7 +68,7 @@ export function SummarySection() {
         <SummaryCard
           title="Rasio Tabungan"
           value={savingsRateFormatted}
-          description="Tersimpan dari omzet"
+          description="Tersimpan dari tabungan"
           icon={<PiggyBank className="w-3.5 h-3.5" />}
           color="blue"
           cardNumber="Tingkat Tabung"
