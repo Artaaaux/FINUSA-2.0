@@ -336,6 +336,205 @@ export const HELP_CATEGORIES: HelpCategory[] = [
     ]
   },
   {
+    id: "scan-ai",
+    title: "Scan Struk AI (AI Scan)",
+    articles: [
+      {
+        id: "cara-pakai-scan-ai",
+        categoryId: "scan-ai",
+        categoryTitle: "Scan Struk AI (AI Scan)",
+        title: "Cara Menggunakan Scan Struk AI",
+        description: "Panduan memindai nota dan struk belanja secara instan menggunakan kamera HP atau unggahan file gambar.",
+        readTime: "3 menit",
+        purpose: "Mengekstrak data transaksi belanja (nama toko, tanggal, total nominal, pos kategori, dan rincian belanja) secara otomatis tanpa mengetik angka satu per satu.",
+        steps: [
+          {
+            stepNumber: 1,
+            title: "Buka Menu Scan di Navigasi Utama",
+            instruction: "Klik menu 'Scan' berlogo AI pada bilah navigasi utama (atau akses langsung /receipt-scanner).",
+            details: [
+              "Layar pemindai kamera interaktif akan langsung terbuka."
+            ]
+          },
+          {
+            stepNumber: 2,
+            title: "Pilih Metode Foto Kamera atau Unggah File",
+            instruction: "Tekan tombol 'Ambil Foto' untuk memotret langsung dengan kamera perangkat, atau 'Unggah Gambar' untuk memilih foto struk dari galeri HP/laptop.",
+            details: [
+              "Mendukung format gambar populer: JPG, JPEG, PNG, dan WEBP.",
+              "Izinkan akses kamera pada browser Anda jika menggunakan webcam atau kamera HP."
+            ]
+          },
+          {
+            stepNumber: 3,
+            title: "Pratinjau Foto & Jalankan Pemrosesan AI",
+            instruction: "Periksa foto struk pada layar pratinjau. Pastikan teks harga dan nama toko terbaca jelas, lalu klik 'Proses Scan Struk'.",
+            details: [
+              "Mesin AI Vision OCR FINUSA akan memproses teks struk dalam hitungan detik.",
+              "Sistem mengekstrak nama merchant, tanggal transaksi, rincian barang, pajak, diskon, dan grand total."
+            ]
+          },
+          {
+            stepNumber: 4,
+            title: "Verifikasi Data pada Layar Konfirmasi",
+            instruction: "Tinjau data yang berhasil diekstrak pada layar konfirmasi. Anda dapat mengoreksi nama merchant, mengubah kategori, atau menambah dan menghapus item.",
+            details: [
+              "Sistem menampilkan indikator skor akurasi (confidence score).",
+              "Tersedia tombol '+ Tambah Item' atau ikon hapus untuk setiap baris barang."
+            ]
+          },
+          {
+            stepNumber: 5,
+            title: "Simpan Pengeluaran ke Catatan Kas",
+            instruction: "Klik tombol 'Simpan Pengeluaran'. Data transaksi akan langsung tercatat ke menu Monitor dan tersinkron ke Google Sheets.",
+            details: [
+              "Layar sukses akan muncul dan Anda dapat langsung memindai struk berikutnya."
+            ]
+          }
+        ],
+        formFields: [
+          {
+            name: "Nama Merchant / Toko",
+            required: true,
+            type: "Teks",
+            description: "Nama tempat berbelanja yang terdeteksi otomatis (contoh: Indomaret, Alfamart, Starbucks)."
+          },
+          {
+            name: "Tanggal Struk",
+            required: true,
+            type: "Tanggal",
+            description: "Waktu transaksi yang tertera pada kertas struk."
+          },
+          {
+            name: "Total Pengeluaran (Rp)",
+            required: true,
+            type: "Angka / Rupiah",
+            description: "Nominal total pembayaran akhir setelah pajak dan diskon."
+          },
+          {
+            name: "Kategori Pengeluaran",
+            required: true,
+            type: "Pilihan Dropdown",
+            description: "Klasifikasi pos anggaran (Makan & Minum, Belanja Bulanan, Transportasi, Kesehatan, dll)."
+          },
+          {
+            name: "Rincian Item Belanja",
+            required: false,
+            type: "Daftar Item (Nama, Qty, Harga)",
+            description: "Daftar rincian barang per baris beserta jumlah dan harga satuan."
+          }
+        ],
+        screenshotPlaceholder: {
+          title: "Layar Pemindai Scan Struk AI",
+          caption: "Antarmuka kamera pemindai struk dengan tombol ambil foto dan unggah file gambar."
+        },
+        bestPractices: [
+          "Letakkan struk di atas permukaan datar berlatar gelap agar kontras teks kertas putih terlihat tajam.",
+          "Hindari bayangan tangan atau pantulan cahaya flash langsung yang menutupi deretan angka nominal."
+        ],
+        troubleshooting: [
+          {
+            issue: "Kamera tidak menyala atau muncul peringatan 'Permission Denied'",
+            solution: "Buka pengaturan izin browser Anda (ikon gembok di sebelah URL) dan ubah izin Kamera menjadi 'Izinkan' (Allow), lalu muat ulang halaman."
+          },
+          {
+            issue: "Struk panjang atau terlipat tidak terbaca penuh",
+            solution: "Lipat struk menjadi 2 bagian jika terlalu panjang dan ambil foto per bagian, atau gunakan opsi input manual cepat pada tombol yang tersedia."
+          }
+        ]
+      },
+      {
+        id: "tips-akurasi-scan-ai",
+        categoryId: "scan-ai",
+        categoryTitle: "Scan Struk AI (AI Scan)",
+        title: "Tips Memotret Struk agar Akurat",
+        description: "Pedoman teknik pengambilan gambar struk kertas thermal dan kasir ritel di Indonesia.",
+        readTime: "3 menit",
+        purpose: "Memaksimalkan akurasi pembacaan AI OCR hingga 98%+ sehingga tidak perlu banyak melakukan koreksi manual.",
+        steps: [
+          {
+            stepNumber: 1,
+            title: "Ratakan Kertas Struk yang Kusut",
+            instruction: "Kertas kasir thermal seringkali tergulung atau kusut di dalam kantong saku. Bentangkan kertas struk sebelum difoto.",
+            details: [
+              "Fokuskan lensa terutama pada bagian Nama Toko, Tanggal, dan Total Paling Bawah (Grand Total)."
+            ]
+          },
+          {
+            stepNumber: 2,
+            title: "Gunakan Pencahayaan Merata",
+            instruction: "Pastikan cahaya ruangan terang merata dan tidak ada bayangan gelap yang melintang di atas baris harga.",
+            details: [
+              "Jika memotret di malam hari, nyalakan lampu ruangan atau gunakan mode unggah foto dengan pencahayaan cukup."
+            ]
+          },
+          {
+            stepNumber: 3,
+            title: "Posisikan Kamera Sejajar Tegak Lurus",
+            instruction: "Ambil foto dari atas secara tegak lurus (bird-eye view), bukan dari sudut miring atau perspektif menyamping.",
+            details: [
+              "Posisi tegak lurus membantu algoritma OCR membaca baris teks per baris tanpa distorsi optik."
+            ]
+          }
+        ],
+        bestPractices: [
+          "Segera foto struk belanjaan baru di hari yang sama sebelum tinta thermal memudar terpapar panas.",
+          "Struk minimarket (Alfamart, Indomaret, Superindo), SPBU, dan struk mesin EDC perbankan memiliki format standar yang sangat optimal dipindai."
+        ],
+        troubleshooting: [
+          {
+            issue: "Tinta struk sudah pudar atau berwarna abu-abu sangat tipis",
+            solution: "Gunakan tombol 'Input Manual' di bawah layar kamera untuk langsung mengisi formulir tanpa menunggu proses pemindaian."
+          }
+        ]
+      },
+      {
+        id: "koreksi-data-scan-ai",
+        categoryId: "scan-ai",
+        categoryTitle: "Scan Struk AI (AI Scan)",
+        title: "Koreksi Data & Penyesuaian Item Hasil Scan",
+        description: "Cara mengedit rincian barang, diskon belanja, dan pos kategori pada layar konfirmasi sebelum disimpan.",
+        readTime: "2 menit",
+        purpose: "Memberikan kontrol penuh kepada pengguna untuk memvalidasi dan menyempurnakan hasil pembacaan AI.",
+        steps: [
+          {
+            stepNumber: 1,
+            title: "Periksa Ringkasan Total",
+            instruction: "Setelah AI selesai memproses struk, halaman akan masuk ke layar 'Konfirmasi Data Struk'.",
+            details: [
+              "Cek apakah nominal Grand Total cocok dengan yang Anda bayarkan di kasir."
+            ]
+          },
+          {
+            stepNumber: 2,
+            title: "Edit Kolom yang Perlu Penyesuaian",
+            instruction: "Klik langsung pada kotak teks nama toko, tanggal, atau kategori untuk mengubah isinya jika diperlukan.",
+            details: [
+              "Setiap baris barang memiliki input Nama Barang, Jumlah (Qty), dan Harga Satuan."
+            ]
+          },
+          {
+            stepNumber: 3,
+            title: "Hapus Item yang Tidak Perlu",
+            instruction: "Klik ikon tong sampah merah pada baris item yang salah terbaca atau tidak ingin dicatat terpisah.",
+            details: [
+              "Klik '+ Tambah Item' jika ada barang di struk yang terlewat oleh pemindai."
+            ]
+          }
+        ],
+        bestPractices: [
+          "Gunakan fitur pemilihan kategori yang tepat (misal: 'Belanja Bulanan' untuk kebutuhan dapur, 'Snack / Jajan' untuk camilan)."
+        ],
+        troubleshooting: [
+          {
+            issue: "Total struk tidak sama dengan jumlah subtotal item",
+            solution: "Periksa kolom Pajak (PB1/PPN) atau Diskon Promo. Sistem menyediakan kolom penyesuaian khusus untuk selisih pajak atau diskon kasir."
+          }
+        ]
+      }
+    ]
+  },
+  {
     id: "catat",
     title: "Pencatatan Transaksi (Catat Kas)",
     articles: [
@@ -346,91 +545,35 @@ export const HELP_CATEGORIES: HelpCategory[] = [
         title: "Panduan Alur Pencatatan Kas Harian",
         description: "Prinsip dasar pencatatan mutasi keuangan harian di FINUSA untuk menghasilkan data analisa yang akurat.",
         readTime: "3 menit",
-        purpose: "Menjaga konsistensi pencatatan pemasukan, pengeluaran, dan perpindahan dana dengan hambatan seminimal mungkin.",
+        purpose: "Menjaga konsistensi pencatatan pemasukan, pengeluaran, dan perpindahan dana non-struk dengan hambatan seminimal mungkin.",
         steps: [
           {
             stepNumber: 1,
-            title: "Pilih Metode Pencatatan",
-            instruction: "FINUSA menyediakan dua jalur pencatatan: Scan Struk Otomatis (OCR) untuk struk belanja fisik, atau Formulir Manual untuk transaksi non-struk (QRIS, transfer, parkir tunai).",
+            title: "Buka Halaman Catat",
+            instruction: "Akses menu Catat dari sidebar navigasi samping.",
             details: [
-              "Gunakan Scan Struk saat berbelanja di supermarket, kafe, apotek, atau restoran yang mengeluarkan struk cetak.",
-              "Gunakan Form Cepat saat bertransaksi via QRIS, e-wallet, atau kas kecil."
+              "Halaman akan menampilkan tab utama: Pengeluaran, Pemasukan, dan Transfer."
             ]
           },
           {
             stepNumber: 2,
-            title: "Buka Halaman Catat",
-            instruction: "Akses menu Catat dari sidebar atau tekan tombol cepat '+' pada bilah navigasi.",
+            title: "Pilih Jenis Transaksi",
+            instruction: "Pilih tab yang sesuai dengan transaksi yang baru saja Anda lakukan.",
             details: [
-              "Halaman akan menampilkan tab: Pengeluaran, Pemasukan, dan Transfer."
+              "Gunakan Pengeluaran saat membeli makanan via QRIS, membayar bensin tunai, atau bayar parkir.",
+              "Gunakan Pemasukan saat menerima transfer gaji, uang saku, atau omzet harian.",
+              "Gunakan Transfer saat memindahkan uang antar rekening bank atau top-up dompet digital."
             ]
           }
         ],
         bestPractices: [
-          "Catat transaksi seketika setelah bertransaksi atau kumpulkan struk belanja untuk dipindai bersamaan di malam hari.",
-          "Jangan gabungkan beberapa pengeluaran berbeda ke dalam satu pos acak."
+          "Catat transaksi seketika setelah bertransaksi di kasir agar tidak menumpuk di ingatan.",
+          "Gunakan Scan Struk AI jika transaksi mengeluarkan nota/struk fisik."
         ],
         troubleshooting: [
           {
             issue: "Lupa mencatat transaksi beberapa hari yang lalu",
             solution: "Gunakan tanggal transaksi masa lalu pada pemilih kalender saat memasukkan data agar laporan arus kas bulanan tetap proporsional."
-          }
-        ]
-      },
-      {
-        id: "scan-struk-ai",
-        categoryId: "catat",
-        categoryTitle: "Pencatatan Transaksi (Catat Kas)",
-        title: "Scan Struk Belanja Otomatis (AI OCR)",
-        description: "Cara memindai struk fisik menggunakan kamera atau file gambar dengan ekstraksi data otomatis.",
-        readTime: "4 menit",
-        purpose: "Menghilangkan keharusan mengetik manual total belanja, nama toko, tanggal transaksi, dan kategori pengeluaran.",
-        steps: [
-          {
-            stepNumber: 1,
-            title: "Akses Menu Scan",
-            instruction: "Klik menu 'Scan' pada navigasi utama atau ikon kamera di halaman Catat.",
-            details: [
-              "Pastikan pencahayaan cukup terang saat memotret struk kertas."
-            ]
-          },
-          {
-            stepNumber: 2,
-            title: "Unggah atau Ambil Foto Struk",
-            instruction: "Seret dan letakkan gambar struk ke area unggah, atau klik untuk memilih file foto (format JPG, PNG, WEBP).",
-            details: [
-              "Posisikan struk tegak lurus, tidak terlipat, dan bagian total harga terlihat kontras."
-            ]
-          },
-          {
-            stepNumber: 3,
-            title: "Proses Ekstraksi Otomatis",
-            instruction: "Sistem OCR FINUSA akan memindai teks pada struk dalam waktu 2 sampai 4 detik.",
-            details: [
-              "Nama toko/merchant, tanggal transaksi, total nominal, dan prediksi kategori akan terisi otomatis ke dalam formulir verifikasi."
-            ]
-          },
-          {
-            stepNumber: 4,
-            title: "Verifikasi & Simpan Transaksi",
-            instruction: "Tinjau kembali data hasil ekstraksi. Jika ada rincian yang perlu disesuaikan, edit kolom terkait lalu klik 'Simpan ke Buku Kas'.",
-            details: [
-              "Data langsung tersinkron ke dashboard Monitor dan Google Sheets (jika integrasi aktif)."
-            ]
-          }
-        ],
-        screenshotPlaceholder: {
-          title: "Area Pindai Struk AI",
-          caption: "Antarmuka pemindaian struk dengan kotak pratinjau gambar dan formulir verifikasi data otomatis di sisi kanan."
-        },
-        bestPractices: [
-          "Hindari memotret struk yang buram, robek pada bagian nominal, atau terkena pantulan cahaya flash berlebih.",
-          "Struk dari minimarket populer di Indonesia (Indomaret, Alfamart) dan struk EDC memiliki tingkat akurasi ekstraksi tertinggi."
-        ],
-        troubleshooting: [
-          {
-            issue: "Nominal harga pada struk terbaca keliru oleh sistem",
-            solution: "Pada formulir verifikasi hasil pindai, Anda dapat langsung mengetikkan koreksi nominal yang benar sebelum menekan tombol Simpan."
           }
         ]
       },
@@ -838,57 +981,6 @@ export const HELP_CATEGORIES: HelpCategory[] = [
           {
             issue: "Pelanggan melunasi sebagian hutangnya",
             solution: "Gunakan fitur 'Pelunasan Sebagian' (Cicilan), masukkan nominal yang dibayarkan, dan sistem akan otomatis memperbarui sisa piutang yang belum terbayar."
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: "ai",
-    title: "Finusa AI Advisor",
-    articles: [
-      {
-        id: "konsultasi-ai-finansial",
-        categoryId: "ai",
-        categoryTitle: "Finusa AI Advisor",
-        title: "Cara Konsultasi dengan Finusa AI Advisor",
-        description: "Memanfaatkan asisten kecerdasan buatan untuk menganalisis kebiasaan belanja dan meminta rekomendasi penghematan.",
-        readTime: "3 menit",
-        purpose: "Mendapatkan saran objektif dan strategi keuangan personal tanpa biaya konsultasi finansial mahal.",
-        steps: [
-          {
-            stepNumber: 1,
-            title: "Buka Halaman AI",
-            instruction: "Akses menu AI pada navigasi utama.",
-            details: [
-              "AI Finusa telah membaca ringkasan data transaksi dan anggaran Anda secara aman dalam lingkungan terenkripsi."
-            ]
-          },
-          {
-            stepNumber: 2,
-            title: "Ajukan Pertanyaan Finansial",
-            instruction: "Ketik pertanyaan atau pilih salah satu prompt cepat yang tersedia.",
-            details: [
-              "Contoh: 'Di pos mana pengeluaran terbesar saya bulan ini dan bagaimana cara memotongnya?'",
-              "Contoh: 'Dengan gaji Rp 6.000.000, berapa lama saya bisa mengumpulkan dana darurat Rp 18.000.000?'"
-            ]
-          },
-          {
-            stepNumber: 3,
-            title: "Dapatkan Strategi Tindakan",
-            instruction: "AI akan memberikan rincian matematis, rekomendasi batas anggaran harian, dan simulasi penghematan.",
-            details: [
-              "Rekomendasi disesuaikan dengan konteks gaya hidup dan pola pengeluaran di Indonesia."
-            ]
-          }
-        ],
-        bestPractices: [
-          "Semakin konsisten Anda mencatat transaksi harian, semakin akurat dan tajam analisis yang diberikan oleh AI."
-        ],
-        troubleshooting: [
-          {
-            issue: "Respon AI menyatakan 'Data transaksi belum mencukupi'",
-            solution: "AI membutuhkan minimal 5 transaksi tercatat pada bulan berjalan agar dapat menyimpulkan pola dan memberikan saran yang relevan."
           }
         ]
       }

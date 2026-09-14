@@ -38,11 +38,11 @@ export function HelpCenterLayout({ isAppShell = false }: HelpCenterLayoutProps) 
   // State for expanded categories
   const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({
     nabung: true,
+    "scan-ai": true,
     catat: true,
     monitor: true,
     sheets: false,
     pembukuan: false,
-    ai: false,
     pengaturan: false,
   });
 

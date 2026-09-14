@@ -3,7 +3,7 @@
 import * as React from "react";
 import {
   ArrowRight,
-  Bot,
+  ScanLine,
   Calculator,
   LineChart,
   ShieldCheck,
@@ -15,9 +15,9 @@ import { GlassButton } from "@/shared/components/ui/glass-button";
 const titleWords = ["Kelola", "Keuangan", "Dengan", "Mudah"];
 
 const labels = [
-  { icon: Bot, label: "AI Advisor" },
-  { icon: LineChart, label: "Monitor Pasar" },
-  { icon: Calculator, label: "Budget Tools" },
+  { icon: ScanLine, label: "Scan Struk AI" },
+  { icon: LineChart, label: "Monitor Kas" },
+  { icon: Calculator, label: "Target Celengan" },
 ];
 
 export function MynaHero() {
