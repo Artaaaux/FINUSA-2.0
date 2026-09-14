@@ -2,18 +2,19 @@ const footerColumns = [
   {
     title: "FITUR",
     links: [
-      { label: "Scan Struk AI", href: "#features" },
-      { label: "Catat Transaksi", href: "#features" },
-      { label: "Target Tabungan", href: "#features" },
-      { label: "Monitor Kas", href: "#features" },
+      { label: "Scan Struk AI", href: "/#features" },
+      { label: "Catat Transaksi", href: "/#features" },
+      { label: "Target Tabungan", href: "/#features" },
+      { label: "Monitor Kas", href: "/#features" },
+      { label: "Perbandingan Finusa", href: "/perbandingan" },
     ],
   },
   {
     title: "RESOURCE",
     links: [
-      { label: "Blog", href: "#" },
-      { label: "Panduan", href: "#" },
-      { label: "FAQ", href: "#" },
+      { label: "Pusat Bantuan & Panduan", href: "/bantuan" },
+      { label: "Analisis Finansial Indonesia", href: "/perbandingan" },
+      { label: "FAQ Tabungan", href: "/bantuan?article=tambah-target-tabungan" },
     ],
   },
   {

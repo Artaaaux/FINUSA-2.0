@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Menu, X, Home, Blocks , Info, LogIn  } from "lucide-react";
+import { Menu, X, Home, Blocks, Info, Scale, BookOpen } from "lucide-react";
 
 import { GlassButton } from "@/shared/components/ui/glass-button";
 import { MenuBar } from "@/shared/components/ui/glow-menu";
@@ -25,20 +25,28 @@ const menuItems = [
     iconColor: "text-accent-cyan",
   },
   {
+    icon: Scale,
+    label: "Bedanya?",
+    href: "#comparison",
+    gradient:
+      "radial-gradient(circle, rgba(234,179,8,0.15) 0%, rgba(202,138,4,0.06) 50%, rgba(161,98,7,0) 100%)",
+    iconColor: "text-amber-400",
+  },
+  {
+    icon: BookOpen,
+    label: "Bantuan",
+    href: "/bantuan",
+    gradient:
+      "radial-gradient(circle, rgba(168,85,247,0.15) 0%, rgba(147,51,234,0.06) 50%, rgba(126,34,206,0) 100%)",
+    iconColor: "text-purple-400",
+  },
+  {
     icon: Info,
     label: "Tentang",
     href: "#about",
     gradient:
       "radial-gradient(circle, rgba(34,197,94,0.15) 0%, rgba(22,163,74,0.06) 50%, rgba(21,128,61,0) 100%)",
     iconColor: "text-accent-green",
-  },
-  {
-    icon: LogIn,
-    label: "Mulai",
-    href: "#trust",
-    gradient:
-      "radial-gradient(circle, rgba(167,139,250,0.15) 0%, rgba(167,139,250,0.06) 50%, rgba(167,139,250,0) 100%)",
-    iconColor: "text-accent-purple",
   },
 ];
 
@@ -60,9 +68,9 @@ export function Navbar() {
 
   // Scrollspy feature to set active MenuBar item dynamically
   React.useEffect(() => {
-    const sections = menuItems.map((item) =>
-      document.getElementById(item.href.substring(1))
-    );
+    const sections = menuItems
+      .filter((item) => item.href.startsWith("#"))
+      .map((item) => document.getElementById(item.href.substring(1)));
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -96,9 +104,15 @@ export function Navbar() {
     setIsOpen(false);
     const item = menuItems.find((m) => m.label === label);
     if (item) {
-      const element = document.getElementById(item.href.substring(1));
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
+      if (item.href.startsWith("#")) {
+        const element = document.getElementById(item.href.substring(1));
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        } else {
+          window.location.href = "/" + item.href;
+        }
+      } else {
+        window.location.href = item.href;
       }
     }
   };
