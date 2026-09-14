@@ -42,7 +42,6 @@ export function HelpCenterLayout({ isAppShell = false }: HelpCenterLayoutProps) 
     catat: true,
     monitor: true,
     sheets: false,
-    pembukuan: false,
     pengaturan: false,
   });
 

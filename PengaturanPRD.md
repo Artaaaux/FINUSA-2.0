@@ -26,7 +26,7 @@ Purpose: Menyediakan interface lengkap untuk mengelola profil pengguna, preferen
 
 Target Users:
 
-* Semua pengguna Finusa (mahasiswa, UMKM, individuals)
+* Semua pengguna Finusa (mahasiswa, fresh graduates, profesional muda, individuals)
 * Admin users (untuk admin panel - future)
 
 Core Goals:
@@ -1337,12 +1337,12 @@ Fiscal Year:
 * Affects annual reports \& budgets
 * Common: January (default) or April
 
-Business Mode:
+Advanced Mode:
 
-* Toggle between personal \& business mode
-* Changes available categories
-* Different reporting/taxation features
-* Recommended for UMKM owners
+* Toggle between standard & advanced budgeting mode
+* Changes available categories & granularity
+* Advanced cashflow forecasting features
+* Recommended for power users & detailed tracking
 
 Transaction Settings:
 

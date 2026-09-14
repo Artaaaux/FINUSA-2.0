@@ -192,7 +192,7 @@ async function generateRumahRamaiTemplate() {
     [1, "Gaji Pokok / Uang Saku Utama", "Gaji Utama", 0],
     [2, "Tunjangan / Insentif / Bonus", "Gaji Utama", 0],
     [3, "Freelance / Side Project", "Freelance", 0],
-    [4, "Bisnis / Jualan / UMKM", "Bisnis", 0],
+    [4, "Bisnis / Jualan / Sampingan", "Bisnis", 0],
     [5, "Passive Income (Dividen/Bunga/Sewa)", "Passive Income", 0],
     [6, "Lain-lain / Hadiah / Transfer", "Lainnya", 0],
   ];

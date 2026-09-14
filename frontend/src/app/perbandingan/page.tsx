@@ -31,10 +31,10 @@ const DETAILED_PROBLEMS = [
     impact: "Retensi pencatatan mandiri hanya bertahan rata-rata 11 hari.",
   },
   {
-    title: "4. Percampuran Kas Usaha UMKM dan Konsumsi Pribadi",
+    title: "4. Jebakan Cicilan & Tagihan Langganan Tersembunyi (Subscription Creep)",
     description:
-      "Di Indonesia, jutaan pelaku usaha kecil dan freelancer mencampur penerimaan omzet usaha ke dalam rekening pribadi. Tanpa pemisahan pos 'Gaji Pemilik' (*owner's draw*) dan pencatatan utang-piutang jatuh tempo, uang modal terpakai untuk belanja konsumtif hingga usaha mengalami krisis likuiditas.",
-    impact: "Penyebab nomor satu kebangkrutan usaha mikro dalam 2 tahun pertama.",
+      "Dalam gaya hidup modern, tagihan berulang bernilai menengah seperti paylater, cicilan gadget, biaya langganan aplikasi hiburan, dan cloud storage sering kali tidak tercatat dalam anggaran harian. Saat jatuh tempo bersamaan di awal bulan, kas langsung tergerus hingga memaksa pemakaian tabungan.",
+    impact: "Beban utang konsumtif dan denda keterlambatan yang terus mengikis sisa gaji.",
   },
 ];
 
@@ -46,17 +46,21 @@ export default function PerbandinganPage() {
       <main className="min-h-screen bg-[#0A0E17] text-slate-200 pt-24 pb-20">
         {/* Page Hero Header */}
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pt-10 pb-16">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors mb-6"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Kembali ke Beranda
-          </Link>
+          <div className="mb-6">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors px-3 py-1.5 rounded-lg bg-slate-900/80 border border-slate-800 hover:border-slate-700"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              Kembali ke Beranda
+            </Link>
+          </div>
 
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 mb-4">
-            Laporan Analisis Komparatif
-          </span>
+          <div className="mb-4">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+              Laporan Analisis Komparatif
+            </span>
+          </div>
 
           <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white mb-6 leading-tight">
             Mengapa Pendekatan Konvensional Gagal, dan Bagaimana FINUSA Mengubahnya
@@ -137,10 +141,10 @@ export default function PerbandinganPage() {
             <div className="rounded-xl border border-slate-800 bg-[#101622] p-6 sm:p-8">
               <div className="flex items-center gap-3 text-purple-400 mb-3 font-semibold text-sm">
                 <TrendingUp className="h-5 w-5" />
-                <span>4. Pembukuan Ganda: Pribadi & Usaha UMKM</span>
+                <span>4. Alokasi Kebutuhan Pokok vs Keinginan (Metode 50/30/20)</span>
               </div>
               <p className="text-sm text-slate-300 leading-relaxed">
-                Dirancang khusus bagi freelancer dan wirausahawan mandiri. FINUSA memfasilitasi pencatatan kas bisnis yang terpisah dari kas rumah tangga dengan modul khusus untuk mencatat &apos;Gaji Pemilik&apos; serta melacak piutang pelanggan dan utang jatuh tempo.
+                FINUSA membantu Anda membagi pengeluaran ke dalam proporsi yang sehat: kebutuhan pokok harian (50%), gaya hidup dan hiburan (30%), serta investasi tabungan masa depan (20%). Anda dapat menikmati hasil kerja keras tanpa rasa bersalah dan tanpa khawatir tabungan tergerus.
               </p>
             </div>
           </div>

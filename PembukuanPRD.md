@@ -26,8 +26,8 @@ Purpose: Menyediakan sistem pembukuan yang mudah digunakan untuk mencatat semua 
 
 Target Users:
 
-* Mahasiswa (track daily expenses \& income)
-* UMKM Owners (business accounting, invoice tracking)
+* Mahasiswa & Pelajar (track daily expenses & pocket money)
+* Fresh Graduates & Profesional Muda (track monthly salary, debt tracking, personal budgeting)
 * Individu yang ingin organized financial records
 
 Core Goals:
@@ -146,7 +146,7 @@ AC:
 
 
 US-6: Bulk Transaction Import
-"As a user (especially UMKM), I want to import multiple transactions
+"As an active personal finance user, I want to import multiple transactions
 from CSV or bank statements to avoid manual entry"
 
 AC:
@@ -181,7 +181,7 @@ AC:
 
 
 US-8: Bank Reconciliation
-"As a user/UMKM, I want to reconcile my recorded transactions
+"As a user, I want to reconcile my recorded transactions
 with actual bank statements to ensure accuracy"
 
 AC:
