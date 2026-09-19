@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Menu, X, Home, Blocks, Info, Scale, BookOpen } from "lucide-react";
+import { Menu, X, Home, Blocks, Info, ArrowLeftRight, BookOpen } from "lucide-react";
 
 import { GlassButton } from "@/shared/components/ui/glass-button";
 import { MenuBar } from "@/shared/components/ui/glow-menu";
@@ -25,8 +25,8 @@ const menuItems = [
     iconColor: "text-accent-cyan",
   },
   {
-    icon: Scale,
-    label: "Bedanya?",
+    icon: ArrowLeftRight,
+    label: "Komparasi",
     href: "#comparison",
     gradient:
       "radial-gradient(circle, rgba(234,179,8,0.15) 0%, rgba(202,138,4,0.06) 50%, rgba(161,98,7,0) 100%)",
