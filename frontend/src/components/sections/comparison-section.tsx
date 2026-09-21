@@ -112,10 +112,10 @@ function AmountDisplay({
 
   return (
     <div className="inline-flex items-baseline gap-1 font-mono">
-      <span className="text-[11px] sm:text-xs font-semibold tracking-wider text-slate-400 select-none">
+      <span className="text-[11px] sm:text-xs font-medium tracking-wider text-slate-500 select-none">
         Rp
       </span>
-      <span className={`font-bold tabular-nums tracking-tight ${colorMap[color]} ${sizeMap[size]}`}>
+      <span className={`font-semibold tabular-nums tracking-tight ${colorMap[color]} ${sizeMap[size]}`}>
         {formatted}
       </span>
     </div>
@@ -133,349 +133,254 @@ export function ComparisonSection() {
   const breakdownTotal = selectedProfile.leakageBreakdown.reduce((sum, item) => sum + item.amount, 0);
 
   return (
-    <section id="comparison" className="relative overflow-hidden bg-gradient-to-b from-[#080D1E] via-[#0C1126] to-[#090E1C] py-24 px-4 sm:px-6 lg:px-8">
-      {/* Background — matching other sections: radial glows + subtle dot grid */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_30%_20%,rgba(37,99,235,0.06)_0%,transparent_70%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_55%_45%_at_70%_80%,rgba(16,185,129,0.05)_0%,transparent_65%)]" />
-      <div className="pointer-events-none absolute inset-0" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize: '36px 36px', maskImage: 'radial-gradient(ellipse 80% 60% at 50% 40%, black 20%, transparent 80%)', WebkitMaskImage: 'radial-gradient(ellipse 80% 60% at 50% 40%, black 20%, transparent 80%)' }} />
-      <div className="pointer-events-none absolute -left-24 top-1/4 h-[420px] w-[420px] rounded-full bg-blue-600/[0.06] blur-[100px]" />
-      <div className="pointer-events-none absolute -right-16 bottom-0 h-64 w-64 rounded-full bg-emerald-500/[0.04] blur-[80px]" />
+    <section id="comparison" className="relative overflow-hidden bg-slate-950 py-24 px-4 sm:px-6 lg:px-8">
+      {/* Background — extremely minimal */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(37,99,235,0.03)_0%,transparent_100%)]" />
 
       <div className="relative z-10 mx-auto max-w-6xl">
-        {/* Section Header — no badge, more honest copy */}
+        {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight mb-5 bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
-            Kenapa FINUSA, Bukan yang Lain?
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4 text-white">
+            Kenapa FINUSA?
           </h2>
-          <p className="text-base text-slate-400 leading-relaxed">
-            Transaksi kecil yang tidak tercatat dan tabungan yang tidak dipisahkan dari saldo harian adalah dua penyebab utama kebocoran keuangan. Berikut simulasi dampaknya berdasarkan profil penghasilan.
+          <p className="text-sm sm:text-base text-slate-400">
+            Transaksi kecil yang tidak tercatat dan tabungan yang tidak dipisahkan dari saldo harian adalah dua penyebab utama kebocoran keuangan.
           </p>
         </div>
 
-        {/* Side by Side Core Comparison: Left = FINUSA, Right = Tanpa FINUSA */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-16">
+        {/* Side by Side Core Comparison */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
           {/* SISI KIRI: Menggunakan FINUSA */}
-          <div className="rounded-2xl border border-blue-500/20 bg-gradient-to-b from-blue-950/15 via-[#0D1225]/60 to-[#0B1020]/80 p-6 sm:p-8 backdrop-blur-sm shadow-[0_8px_24px_rgba(0,0,0,0.2)]">
-            <div className="flex items-center justify-between pb-5 border-b border-blue-500/15 mb-6">
-              <div>
-                <span className="text-xs font-semibold tracking-wider text-blue-400 uppercase">
-                  Metode Modern & Terukur
-                </span>
-                <h3 className="text-2xl font-bold text-white mt-1">Dengan FINUSA</h3>
-              </div>
-              <div className="px-3 py-1 rounded-md bg-blue-500/15 border border-blue-500/20 text-xs font-semibold text-blue-300">
-                Terkontrol & Efisien
-              </div>
+          <div className="rounded-2xl border border-slate-800/80 bg-slate-900/40 p-6 sm:p-8">
+            <div className="pb-5 border-b border-slate-800/80 mb-6">
+              <h3 className="text-xl font-semibold text-white">Dengan FINUSA</h3>
             </div>
-
-            <ul className="space-y-4 text-sm text-slate-300">
+            <ul className="space-y-5">
               <li className="flex items-start gap-3">
-                <div className="h-5 w-5 rounded-full bg-emerald-500/15 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5 border border-emerald-500/20">
-                  <Check className="h-3 w-3" />
-                </div>
-                <div>
-                  <strong className="text-white block mb-0.5">Scan Struk AI 3 Detik</strong>
+                <Check className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" strokeWidth={3} />
+                <p className="text-sm text-slate-300 leading-relaxed">
+                  <strong className="text-white font-medium">Scan Struk AI 3 Detik — </strong>
                   Foto struk minimarket atau resto, sistem otomatis mengekstrak nominal, toko, dan kategori tanpa perlu mengetik manual.
-                </div>
+                </p>
               </li>
               <li className="flex items-start gap-3">
-                <div className="h-5 w-5 rounded-full bg-emerald-500/15 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5 border border-emerald-500/20">
-                  <Check className="h-3 w-3" />
-                </div>
-                <div>
-                  <strong className="text-white block mb-0.5">Kantong Tabungan Terisolasi</strong>
+                <Check className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" strokeWidth={3} />
+                <p className="text-sm text-slate-300 leading-relaxed">
+                  <strong className="text-white font-medium">Kantong Tabungan Terisolasi — </strong>
                   Uang tabungan dipisahkan secara psikologis dan visual dalam celengan digital berprogres, terhindar dari pemakaian konsumtif harian.
-                </div>
+                </p>
               </li>
               <li className="flex items-start gap-3">
-                <div className="h-5 w-5 rounded-full bg-emerald-500/15 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5 border border-emerald-500/20">
-                  <Check className="h-3 w-3" />
-                </div>
-                <div>
-                  <strong className="text-white block mb-0.5">Integrasi Mandiri Google Sheets</strong>
-                  Sinkronisasi dua arah otomatis ke spreadsheet Google Drive pribadi. Data sepenuhnya milik Anda dan tidak bergantung pada vendor.
-                </div>
+                <Check className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" strokeWidth={3} />
+                <p className="text-sm text-slate-300 leading-relaxed">
+                  <strong className="text-white font-medium">Integrasi Mandiri Google Sheets — </strong>
+                  Sinkronisasi dua arah otomatis ke spreadsheet Google Drive pribadi. Data sepenuhnya milik Anda.
+                </p>
               </li>
               <li className="flex items-start gap-3">
-                <div className="h-5 w-5 rounded-full bg-emerald-500/15 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5 border border-emerald-500/20">
-                  <Check className="h-3 w-3" />
-                </div>
-                <div>
-                  <strong className="text-white block mb-0.5">Bebas Iklan & Tanpa Pelacak Komersial</strong>
-                  Antarmuka bersih tanpa gangguan iklan video maupun pop-up banner saat Anda sedang konsentrasi mengelola keuangan.
-                </div>
+                <Check className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" strokeWidth={3} />
+                <p className="text-sm text-slate-300 leading-relaxed">
+                  <strong className="text-white font-medium">Bebas Iklan & Pelacak — </strong>
+                  Antarmuka bersih tanpa gangguan iklan video maupun pop-up banner saat Anda mengelola keuangan.
+                </p>
               </li>
               <li className="flex items-start gap-3">
-                <div className="h-5 w-5 rounded-full bg-emerald-500/15 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5 border border-emerald-500/20">
-                  <Check className="h-3 w-3" />
-                </div>
-                <div>
-                  <strong className="text-white block mb-0.5">Pemisahan Pos 50/30/20 Otomatis</strong>
-                  Otomatis membagi pengeluaran untuk kebutuhan pokok harian, pos gaya hidup, dan investasi masa depan agar kas seimbang.
-                </div>
+                <Check className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" strokeWidth={3} />
+                <p className="text-sm text-slate-300 leading-relaxed">
+                  <strong className="text-white font-medium">Pemisahan Pos 50/30/20 Otomatis — </strong>
+                  Otomatis membagi pengeluaran untuk kebutuhan pokok harian, pos gaya hidup, dan investasi masa depan.
+                </p>
               </li>
             </ul>
           </div>
 
           {/* SISI KANAN: Tanpa FINUSA */}
-          <div className="rounded-2xl border border-rose-950/30 bg-gradient-to-b from-rose-950/10 via-[#0D1225]/60 to-[#0B1020]/80 p-6 sm:p-8 backdrop-blur-sm shadow-[0_8px_24px_rgba(0,0,0,0.2)]">
-            <div className="flex items-center justify-between pb-5 border-b border-rose-900/15 mb-6">
-              <div>
-                <span className="text-xs font-semibold tracking-wider text-rose-400 uppercase">
-                  Metode Konvensional / Tanpa Sistem
-                </span>
-                <h3 className="text-2xl font-bold text-white mt-1">Tanpa FINUSA</h3>
-              </div>
-              <div className="px-3 py-1 rounded-md bg-rose-500/10 border border-rose-500/15 text-xs font-semibold text-rose-300">
-                Rentan Bocor & Melelahkan
-              </div>
+          <div className="rounded-2xl border border-slate-800/80 bg-slate-900/40 p-6 sm:p-8">
+            <div className="pb-5 border-b border-slate-800/80 mb-6">
+              <h3 className="text-xl font-semibold text-white">Tanpa FINUSA</h3>
             </div>
-
-            <ul className="space-y-4 text-sm text-slate-300">
+            <ul className="space-y-5">
               <li className="flex items-start gap-3">
-                <div className="h-5 w-5 rounded-full bg-rose-500/15 text-rose-400 flex items-center justify-center shrink-0 mt-0.5 border border-rose-500/20">
-                  <X className="h-3 w-3" />
-                </div>
-                <div>
-                  <strong className="text-white block mb-0.5">Pencatatan Manual Melelahkan</strong>
-                  Harus membuka aplikasi dan mengetik nominal setiap kali selesai jajan. Kebanyakan orang menyerah mencatat setelah beberapa minggu pertama.
-                </div>
+                <X className="h-4 w-4 text-rose-400 shrink-0 mt-0.5" strokeWidth={3} />
+                <p className="text-sm text-slate-300 leading-relaxed">
+                  <strong className="text-white font-medium">Pencatatan Manual Melelahkan — </strong>
+                  Harus membuka aplikasi dan mengetik nominal setiap kali selesai jajan. Kebanyakan orang menyerah mencatat.
+                </p>
               </li>
               <li className="flex items-start gap-3">
-                <div className="h-5 w-5 rounded-full bg-rose-500/15 text-rose-400 flex items-center justify-center shrink-0 mt-0.5 border border-rose-500/20">
-                  <X className="h-3 w-3" />
-                </div>
-                <div>
-                  <strong className="text-white block mb-0.5">Uang Tabungan Menumpuk di Rekening Belanja</strong>
-                  Gaji, tabungan, dan uang jajan berada di kartu ATM yang sama. Target tabungan sering tergerus untuk belanja sebelum akhir bulan.
-                </div>
+                <X className="h-4 w-4 text-rose-400 shrink-0 mt-0.5" strokeWidth={3} />
+                <p className="text-sm text-slate-300 leading-relaxed">
+                  <strong className="text-white font-medium">Uang Tabungan Tercampur — </strong>
+                  Gaji, tabungan, dan jajan berada di kartu ATM yang sama. Target tabungan sering tergerus untuk belanja.
+                </p>
               </li>
               <li className="flex items-start gap-3">
-                <div className="h-5 w-5 rounded-full bg-rose-500/15 text-rose-400 flex items-center justify-center shrink-0 mt-0.5 border border-rose-500/20">
-                  <X className="h-3 w-3" />
-                </div>
-                <div>
-                  <strong className="text-white block mb-0.5">Spreadsheet Rumit & Rawan Formula Rusak</strong>
-                  Mengedit spreadsheet di ponsel saat belanja sangat lambat. Rumus mudah terhapus dan mutasi tidak otomatis tercatat.
-                </div>
+                <X className="h-4 w-4 text-rose-400 shrink-0 mt-0.5" strokeWidth={3} />
+                <p className="text-sm text-slate-300 leading-relaxed">
+                  <strong className="text-white font-medium">Spreadsheet Rumit di HP — </strong>
+                  Mengedit spreadsheet di ponsel saat belanja sangat lambat. Rumus mudah terhapus dan mutasi tidak otomatis.
+                </p>
               </li>
               <li className="flex items-start gap-3">
-                <div className="h-5 w-5 rounded-full bg-rose-500/15 text-rose-400 flex items-center justify-center shrink-0 mt-0.5 border border-rose-500/20">
-                  <X className="h-3 w-3" />
-                </div>
-                <div>
-                  <strong className="text-white block mb-0.5">Aplikasi Konvensional Dipenuhi Iklan</strong>
-                  Aplikasi offline di Play Store sering menampilkan iklan video 15 detik yang mengunci layar saat ingin mencatat cepat.
-                </div>
+                <X className="h-4 w-4 text-rose-400 shrink-0 mt-0.5" strokeWidth={3} />
+                <p className="text-sm text-slate-300 leading-relaxed">
+                  <strong className="text-white font-medium">Aplikasi Dipenuhi Iklan — </strong>
+                  Aplikasi offline di Play Store sering menampilkan iklan video yang mengunci layar saat ingin mencatat.
+                </p>
               </li>
               <li className="flex items-start gap-3">
-                <div className="h-5 w-5 rounded-full bg-rose-500/15 text-rose-400 flex items-center justify-center shrink-0 mt-0.5 border border-rose-500/20">
-                  <X className="h-3 w-3" />
-                </div>
-                <div>
-                  <strong className="text-white block mb-0.5">Jebakan Cicilan & Subscription Tersembunyi</strong>
-                  Biaya langganan aplikasi dan cicilan paylater tidak terpantau, menyebabkan saldo terpotong tiba-tiba tanpa disadari.
-                </div>
+                <X className="h-4 w-4 text-rose-400 shrink-0 mt-0.5" strokeWidth={3} />
+                <p className="text-sm text-slate-300 leading-relaxed">
+                  <strong className="text-white font-medium">Jebakan Biaya Tersembunyi — </strong>
+                  Biaya langganan aplikasi dan cicilan paylater tidak terpantau, menyebabkan saldo terpotong tiba-tiba.
+                </p>
               </li>
             </ul>
           </div>
         </div>
 
         {/* ── Simulation Card ── */}
-        <div className="rounded-3xl border border-slate-800/60 bg-gradient-to-b from-[#101724]/80 via-[#0C1019]/90 to-[#0A0D15] p-6 sm:p-10 shadow-xl relative overflow-hidden">
-          {/* Subtle background glow */}
-          <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-blue-600/[0.08] blur-[90px]" />
-          <div className="pointer-events-none absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-emerald-500/[0.08] blur-[90px]" />
-
+        <div className="rounded-2xl border border-slate-800/80 bg-slate-900/40 p-6 sm:p-8">
           {/* Header & Profile Switcher */}
-          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-8 border-b border-slate-800/60">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-6 border-b border-slate-800/80">
             <div>
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-blue-500/10 text-blue-400 text-xs font-semibold mb-2 border border-blue-500/15">
-                <Sparkles className="h-3 w-3" />
+              <h3 className="text-xl font-semibold text-white tracking-tight mb-1">
                 Simulasi Dampak Finansial
-              </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-                Perhitungan Berdasarkan Profil Penghasilan
               </h3>
-              <p className="text-xs sm:text-sm text-slate-400 mt-1">
-                Pilih profil yang mendekati kondisi Anda. Semua angka dihitung dari rincian pos di bawah.
+              <p className="text-xs sm:text-sm text-slate-400">
+                Pilih profil untuk melihat perbandingan angka nyata.
               </p>
             </div>
 
             {/* Profile Tabs */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-              <div className="inline-flex rounded-xl bg-slate-950/60 p-1.5 border border-slate-800/80">
+              <div className="inline-flex rounded-lg bg-slate-950 p-1 border border-slate-800 w-full sm:w-auto overflow-x-auto">
                 {PROFILES.map((p) => (
                   <button
                     key={p.id}
                     onClick={() => setSelectedProfile(p)}
-                    className={`px-3 sm:px-4 py-2 text-xs font-semibold rounded-lg transition-all ${
+                    className={`px-3 py-1.5 text-xs font-medium rounded-md whitespace-nowrap transition-colors ${
                       selectedProfile.id === p.id
-                        ? "bg-blue-600 text-white shadow-md shadow-blue-500/20"
+                        ? "bg-slate-800 text-white"
                         : "text-slate-400 hover:text-slate-200"
                     }`}
                   >
-                    {p.name.split("&")[0]}
+                    {p.name.split("&")[0].trim()}
                   </button>
                 ))}
               </div>
-
-              <div className="px-3 py-1.5 rounded-lg bg-slate-900/80 border border-slate-800/80 text-xs font-mono text-slate-300 self-stretch sm:self-auto flex items-center justify-center">
+              <div className="px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300 self-stretch sm:self-auto flex items-center justify-center">
                 Penghasilan: {selectedProfile.monthlyIncomeText}
               </div>
             </div>
           </div>
 
           {/* 3 Cards Grid */}
-          <div className="relative z-10 mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Card 1: Kebocoran Kas Mikro (Tanpa Finusa) */}
-            <div className="rounded-2xl border border-slate-800/80 bg-gradient-to-b from-[#111724]/60 to-[#0C1019]/80 p-6 flex flex-col justify-between hover:border-rose-500/20 transition-all duration-300">
+          <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Card 1: Kebocoran Kas Mikro */}
+            <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-5 flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between text-xs mb-3">
-                  <span className="text-slate-400 font-medium">Kebocoran Mikro Bulanan</span>
-                  <span className="px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-400 text-[11px] font-semibold border border-rose-500/15">
-                    Tanpa Sistem
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Kebocoran Bulanan</span>
+                </div>
+
+                <div className="mb-4">
+                  <AmountDisplay amount={selectedProfile.leakageWithout} color="white" size="lg" />
+                  <span className="text-[11px] text-slate-500 font-mono block mt-1">
+                    {leakagePercent}% dari penghasilan
                   </span>
                 </div>
 
-                <div className="mb-2">
-                  <AmountDisplay amount={selectedProfile.leakageWithout} color="rose" size="xl" />
-                  <span className="text-xs text-slate-500 block mt-1">
-                    = {leakagePercent}% dari penghasilan ({selectedProfile.leakageWithout.toLocaleString("id-ID")} ÷ {selectedProfile.monthlyIncome.toLocaleString("id-ID")})
-                  </span>
-                </div>
-
-                {/* Micro Progress Bar */}
-                <div className="w-full bg-slate-800/60 rounded-full h-1.5 my-4 overflow-hidden">
-                  <div
-                    className="bg-rose-500 h-1.5 rounded-full"
-                    style={{ width: `${leakagePercent}%` }}
-                  />
-                </div>
-
-                {/* Breakdown List — these items sum to the total above */}
-                <div className="space-y-2 mt-4">
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block">
-                    Rincian Pos (total = angka di atas):
-                  </span>
+                {/* Breakdown List */}
+                <div className="space-y-2 mt-4 pt-4 border-t border-slate-800/80">
                   {selectedProfile.leakageBreakdown.map((item, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg bg-slate-900/40 border border-slate-800/40"
-                    >
-                      <span className="text-slate-300 truncate mr-2 text-[11px]">{item.item}</span>
-                      <span className="font-mono text-rose-300 font-medium shrink-0 text-xs tabular-nums">
-                        -Rp {item.amount.toLocaleString("id-ID")}
+                    <div key={idx} className="flex justify-between items-baseline gap-2">
+                      <span className="text-[11px] text-slate-400 truncate">{item.item}</span>
+                      <span className="text-[11px] font-mono text-slate-300 shrink-0">
+                        {item.amount.toLocaleString("id-ID")}
                       </span>
                     </div>
                   ))}
-                  {/* Verification: show sum matches */}
-                  <div className="flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg bg-rose-950/20 border border-rose-500/10 mt-1">
-                    <span className="text-slate-400 text-[11px] font-medium">Total rincian</span>
-                    <span className="font-mono text-rose-400 font-bold text-xs tabular-nums">
-                      Rp {breakdownTotal.toLocaleString("id-ID")}
+                  <div className="flex justify-between items-baseline gap-2 pt-2 border-t border-slate-800/80">
+                    <span className="text-[11px] text-slate-500">Total rincian</span>
+                    <span className="text-[11px] font-mono text-slate-400">
+                      {breakdownTotal.toLocaleString("id-ID")}
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-6 pt-3 border-t border-slate-800/60 text-[11px] text-slate-400 flex items-center justify-between">
-                <span>Estimasi waktu catat manual:</span>
-                <span className="text-rose-400 font-mono font-medium">{selectedProfile.timeSpentWithout}</span>
+              <div className="mt-6 text-[11px] text-slate-500 font-mono flex justify-between">
+                <span>Waktu harian:</span>
+                <span className="text-slate-300">{selectedProfile.timeSpentWithout}</span>
               </div>
             </div>
 
-            {/* Card 2: Disiplin Menabung */}
-            <div className="rounded-2xl border border-slate-800/80 bg-gradient-to-b from-[#111724]/60 to-[#0C1019]/80 p-6 flex flex-col justify-between hover:border-emerald-500/20 transition-all duration-300">
+            {/* Card 2: Perbandingan Tabungan */}
+            <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-5 flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between text-xs mb-3">
-                  <span className="text-slate-400 font-medium">Potensi Tabungan Bulanan</span>
-                  <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 text-[11px] font-semibold border border-blue-500/15">
-                    Perbandingan
-                  </span>
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Potensi Tabungan</span>
                 </div>
 
                 {/* Row 1: Dengan FINUSA */}
-                <div className="rounded-xl p-3.5 bg-emerald-950/15 border border-emerald-500/15 mb-3">
+                <div className="mb-4">
                   <div className="flex items-center justify-between text-xs mb-1">
-                    <span className="text-emerald-400 font-semibold">Dengan FINUSA</span>
-                    <span className="text-[10px] text-emerald-400/70 font-mono bg-emerald-500/10 px-1.5 py-0.5 rounded">
-                      {savingsRateWith}% dari penghasilan
+                    <span className="text-emerald-400 font-medium">Dengan FINUSA</span>
+                    <span className="text-[10px] text-slate-500 font-mono">
+                      {savingsRateWith}% dari gaji
                     </span>
                   </div>
                   <AmountDisplay amount={selectedProfile.savingsWith} color="emerald" size="lg" />
                 </div>
 
                 {/* Row 2: Tanpa FINUSA */}
-                <div className="rounded-xl p-3.5 bg-slate-900/60 border border-slate-800/80 mb-4">
+                <div className="mb-4 pt-4 border-t border-slate-800/80">
                   <div className="flex items-center justify-between text-xs mb-1">
                     <span className="text-slate-400">Tanpa FINUSA</span>
-                    <span className="text-[10px] text-slate-500 font-mono bg-slate-800/80 px-1.5 py-0.5 rounded">
-                      {savingsRateWithout}% dari penghasilan
+                    <span className="text-[10px] text-slate-500 font-mono">
+                      {savingsRateWithout}% dari gaji
                     </span>
                   </div>
                   <AmountDisplay amount={selectedProfile.savingsWithout} color="white" size="md" />
                 </div>
-
-                {/* Explanation instead of unverifiable percentages */}
-                <div className="rounded-xl p-3 bg-slate-900/40 border border-slate-800/60 text-[11px] text-slate-400 leading-relaxed">
-                  <div className="flex items-start gap-1.5">
-                    <Info className="h-3.5 w-3.5 text-slate-500 shrink-0 mt-0.5" />
-                    <span>
-                      Selisih tabungan dihitung dari: pencatatan otomatis mengurangi kebocoran mikro, dan isolasi kantong mencegah tabungan terpakai untuk belanja harian.
-                    </span>
-                  </div>
-                </div>
               </div>
 
-              <div className="mt-6 pt-3 border-t border-slate-800/60 text-[11px] text-slate-400 flex items-center justify-between">
-                <span>Waktu pencatatan dengan FINUSA:</span>
-                <span className="text-emerald-400 font-mono font-medium">{selectedProfile.timeSpentWith}</span>
+              <div className="mt-6 text-[11px] text-slate-500 font-mono flex justify-between">
+                <span>Waktu dengan FINUSA:</span>
+                <span className="text-emerald-400">{selectedProfile.timeSpentWith}</span>
               </div>
             </div>
 
             {/* Card 3: Proyeksi 1 Tahun */}
-            <div className="rounded-2xl border border-blue-500/20 bg-gradient-to-br from-blue-950/20 via-[#0E1524]/80 to-[#0C1019] p-6 flex flex-col justify-between shadow-lg relative overflow-hidden">
-              <div className="pointer-events-none absolute -right-10 -bottom-10 h-32 w-32 rounded-full bg-blue-500/10 blur-2xl" />
-
+            <div className="rounded-xl border border-slate-800/80 bg-slate-950/50 p-5 flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between text-xs mb-3">
-                  <span className="text-blue-400 font-semibold tracking-wide uppercase text-[11px]">
-                    Proyeksi Tabungan 1 Tahun
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-xs font-medium text-blue-400 uppercase tracking-wider">
+                    Proyeksi 1 Tahun
                   </span>
                 </div>
 
-                <div className="my-2">
-                  <AmountDisplay amount={selectedProfile.yearlyAccumulationWith} color="white" size="xl" />
+                <div className="mb-3">
+                  <AmountDisplay amount={selectedProfile.yearlyAccumulationWith} color="blue" size="lg" />
                 </div>
 
-                {/* Delta Badge */}
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/15 text-emerald-400 text-xs font-semibold mt-1">
-                  <TrendingUp className="h-3.5 w-3.5 shrink-0" />
-                  <span>+Rp {savingsDelta.toLocaleString("id-ID")} vs tanpa sistem</span>
-                </div>
-
-                <div className="mt-5 space-y-2.5 text-xs text-slate-300">
-                  <div className="flex items-start gap-2">
-                    <Shield className="h-4 w-4 text-blue-400 shrink-0 mt-0.5" />
-                    <span>Dana darurat 3-6 bulan terbentuk secara bertahap tanpa utang.</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <Clock className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
-                    <span>Hanya butuh {selectedProfile.timeSpentWith} dengan fitur Scan Struk AI.</span>
-                  </div>
+                <div className="inline-flex items-center gap-1.5 text-[11px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded">
+                  <TrendingUp className="h-3 w-3" />
+                  +Rp {savingsDelta.toLocaleString("id-ID")}
                 </div>
 
                 {/* Calculation transparency */}
-                <div className="mt-4 rounded-lg p-2.5 bg-slate-900/40 border border-slate-800/40 text-[10px] text-slate-500 font-mono">
-                  = Rp {selectedProfile.savingsWith.toLocaleString("id-ID")} × 12 bulan = Rp {selectedProfile.yearlyAccumulationWith.toLocaleString("id-ID")}
+                <div className="mt-5 text-[10px] text-slate-500 font-mono border-t border-slate-800/80 pt-4">
+                  Rp {selectedProfile.savingsWith.toLocaleString("id-ID")} × 12 bln
+                  <br />= Rp {selectedProfile.yearlyAccumulationWith.toLocaleString("id-ID")}
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-blue-500/15">
+              <div className="mt-6">
                 <Link
                   href="/auth/signup"
-                  className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs transition-all shadow-md"
+                  className="flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs transition-colors w-full"
                 >
                   Mulai Amankan Tabungan
                   <ArrowRight className="h-3.5 w-3.5" />

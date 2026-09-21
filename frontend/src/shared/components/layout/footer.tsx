@@ -6,14 +6,12 @@ const footerColumns = [
       { label: "Catat Transaksi", href: "/#features" },
       { label: "Target Tabungan", href: "/#features" },
       { label: "Monitor Kas", href: "/#features" },
-      { label: "Perbandingan Finusa", href: "/perbandingan" },
     ],
   },
   {
     title: "RESOURCE",
     links: [
       { label: "Pusat Bantuan & Panduan", href: "/bantuan" },
-      { label: "Analisis Finansial Indonesia", href: "/perbandingan" },
       { label: "FAQ Tabungan", href: "/bantuan?article=tambah-target-tabungan" },
     ],
   },
@@ -22,7 +20,6 @@ const footerColumns = [
     links: [
       { label: "Tentang Kami", href: "#about" },
       { label: "Kontak", href: "#" },
-      { label: "Karir", href: "#" },
     ],
   },
   {
@@ -38,20 +35,20 @@ export function Footer() {
   return (
     <footer
       id="footer"
-      className="border-t border-slate-800 bg-slate-950 text-white"
+      className="border-t border-slate-800/60 bg-slate-950 text-white"
     >
-      <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
         {/* Brand + Columns */}
-        <div className="mb-12 grid grid-cols-2 gap-8 md:grid-cols-5">
+        <div className="mb-10 grid grid-cols-2 gap-8 md:grid-cols-5">
           {/* Brand column */}
           <div className="col-span-2 md:col-span-1">
             <a
               href="#home"
-              className="text-lg font-bold tracking-tight text-white"
+              className="text-xl font-bold tracking-tight text-white"
             >
               FINUSA
             </a>
-            <p className="mt-3 text-sm leading-relaxed text-gray-400">
+            <p className="mt-3 max-w-xs text-sm leading-relaxed text-slate-400">
               Solusi pengelolaan keuangan praktis untuk pelajar &amp;
               generasi muda Indonesia.
             </p>
@@ -60,7 +57,7 @@ export function Footer() {
           {/* Link columns */}
           {footerColumns.map((col) => (
             <div key={col.title}>
-              <h4 className="mb-4 text-xs font-bold tracking-wider text-gray-300">
+              <h4 className="mb-4 text-xs font-semibold tracking-wider text-slate-300">
                 {col.title}
               </h4>
               <ul className="space-y-2.5">
@@ -68,7 +65,7 @@ export function Footer() {
                   <li key={link.label}>
                     <a
                       href={link.href}
-                      className="text-sm text-gray-400 transition-colors duration-200 hover:text-accent-cyan"
+                      className="text-sm text-slate-400 transition-colors duration-200 hover:text-white"
                     >
                       {link.label}
                     </a>
@@ -80,16 +77,16 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="flex flex-col items-center justify-between gap-4 border-t border-slate-800 pt-8 sm:flex-row">
-          <p className="flex items-center gap-1 text-sm text-gray-500">
-            © {new Date().getFullYear()} FINUSA.
+        <div className="flex flex-col items-center justify-between gap-4 border-t border-slate-800/60 pt-8 sm:flex-row">
+          <p className="text-sm text-slate-500">
+            &copy; {new Date().getFullYear()} FINUSA. Hak cipta dilindungi.
           </p>
           <div className="flex gap-6">
             {["GitHub", "Twitter", "Email"].map((social) => (
               <a
                 key={social}
                 href="#"
-                className="text-sm text-gray-500 transition-colors duration-200 hover:text-accent-cyan"
+                className="text-sm text-slate-500 transition-colors duration-200 hover:text-white"
                 aria-label={`Kunjungi ${social} FINUSA`}
               >
                 {social}

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Menu, X, Home, Blocks, Info, ArrowLeftRight, BookOpen } from "lucide-react";
+import { Menu, X, Home, Blocks, Info, BookOpen } from "lucide-react";
 
 import { GlassButton } from "@/shared/components/ui/glass-button";
 import { MenuBar } from "@/shared/components/ui/glow-menu";
@@ -25,12 +25,12 @@ const menuItems = [
     iconColor: "text-accent-cyan",
   },
   {
-    icon: ArrowLeftRight,
-    label: "Komparasi",
-    href: "#comparison",
+    icon: Info,
+    label: "Tentang",
+    href: "#about",
     gradient:
-      "radial-gradient(circle, rgba(234,179,8,0.15) 0%, rgba(202,138,4,0.06) 50%, rgba(161,98,7,0) 100%)",
-    iconColor: "text-amber-400",
+      "radial-gradient(circle, rgba(34,197,94,0.15) 0%, rgba(22,163,74,0.06) 50%, rgba(21,128,61,0) 100%)",
+    iconColor: "text-accent-green",
   },
   {
     icon: BookOpen,
@@ -39,14 +39,6 @@ const menuItems = [
     gradient:
       "radial-gradient(circle, rgba(168,85,247,0.15) 0%, rgba(147,51,234,0.06) 50%, rgba(126,34,206,0) 100%)",
     iconColor: "text-purple-400",
-  },
-  {
-    icon: Info,
-    label: "Tentang",
-    href: "#about",
-    gradient:
-      "radial-gradient(circle, rgba(34,197,94,0.15) 0%, rgba(22,163,74,0.06) 50%, rgba(21,128,61,0) 100%)",
-    iconColor: "text-accent-green",
   },
 ];
 
@@ -120,34 +112,34 @@ export function Navbar() {
   return (
     <header className="fixed inset-x-0 top-0 z-50">
       <nav
-        className="border-b border-slate-800 bg-slate-950/80 backdrop-blur-md"
+        className="border-b border-slate-800/50 bg-slate-950/70 backdrop-blur-xl"
         aria-label="Navigasi utama"
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
           {/* Logo */}
-
           <a
             href="#home"
-              onClick={(e) => {
-                e.preventDefault();
-                handleItemClick("Home");
-              }}
-              className="flex min-h-11 items-center gap-2 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              aria-label="FINUSA beranda"
-            >
-              <img 
-                src={logoImg.src} 
-                alt="FINUSA Logo"
-                className="h-9 w-auto object-contain ml-1 sm:ml-2"
-              />
-            </a>
+            onClick={(e) => {
+              e.preventDefault();
+              handleItemClick("Home");
+            }}
+            className="flex min-h-11 items-center gap-2 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            aria-label="FINUSA beranda"
+          >
+            <img 
+              src={logoImg.src} 
+              alt="FINUSA Logo"
+              className="h-9 w-auto object-contain ml-1 sm:ml-2"
+            />
+          </a>
+
           {/* Desktop Nav using the MenuBar (glow-menu) component */}
           <div className="hidden items-center md:flex">
             <MenuBar
               items={menuItems}
               activeItem={activeItem}
               onItemClick={handleItemClick}
-              className="border-slate-800 bg-slate-900/40"
+              className="border-slate-800/50 bg-slate-900/40"
             />
           </div>
 
@@ -155,22 +147,22 @@ export function Navbar() {
           <div className="flex items-center gap-4">
             <a
               href="/auth/login"
-              className="hidden text-sm font-semibold text-gray-400 transition-colors duration-200 hover:text-accent-cyan sm:inline"
+              className="hidden text-sm font-medium text-gray-400 transition-colors duration-200 hover:text-white sm:inline"
             >
-              Login
+              Log in
             </a>
             <GlassButton asChild size="default" className="hidden sm:inline-flex">
               <a href="/auth/signup">Mulai Gratis</a>
             </GlassButton>
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="rounded-lg p-2 transition-colors hover:bg-slate-800 md:hidden"
+              className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-white/5 hover:text-white md:hidden"
               aria-label={isOpen ? "Tutup menu" : "Buka menu"}
             >
               {isOpen ? (
-                <X size={24} className="text-white" />
+                <X size={24} />
               ) : (
-                <Menu size={24} className="text-white" />
+                <Menu size={24} />
               )}
             </button>
           </div>
@@ -184,23 +176,23 @@ export function Navbar() {
       >
         {/* Backdrop overlay */}
         <div
-          className={`absolute inset-0 bg-black/60 transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0"}`}
+          className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0"}`}
           onClick={() => setIsOpen(false)}
         />
 
         {/* Drawer panel */}
         <aside
-          className={`absolute right-0 top-0 flex h-full w-72 flex-col border-l border-slate-800 bg-slate-950/95 backdrop-blur-xl transition-transform duration-300 ease-out ${isOpen ? "translate-x-0" : "translate-x-full"}`}
+          className={`absolute right-0 top-0 flex h-full w-[280px] flex-col border-l border-slate-800/50 bg-slate-950/95 backdrop-blur-xl transition-transform duration-300 ease-out ${isOpen ? "translate-x-0" : "translate-x-full"}`}
         >
           {/* Drawer header */}
-          <div className="flex items-center justify-between border-b border-slate-800 px-5 py-4">
-            <span className="text-sm font-semibold tracking-wide text-white/70 uppercase">Menu</span>
+          <div className="flex items-center justify-between border-b border-slate-800/50 px-5 py-4">
+            <span className="text-xs font-semibold tracking-wider text-gray-500 uppercase">Menu</span>
             <button
               onClick={() => setIsOpen(false)}
-              className="rounded-lg p-2 transition-colors hover:bg-slate-800"
+              className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/5 hover:text-white"
               aria-label="Tutup menu"
             >
-              <X size={20} className="text-white/70" />
+              <X size={20} />
             </button>
           </div>
 
@@ -216,28 +208,25 @@ export function Navbar() {
                     : "text-gray-400 hover:bg-white/5 hover:text-white"
                 }`}
                 style={{
-                  transitionDelay: isOpen ? `${75 + i * 50}ms` : "0ms",
+                  transitionDelay: isOpen ? `${75 + i * 40}ms` : "0ms",
                   opacity: isOpen ? 1 : 0,
                   transform: isOpen ? "translateX(0)" : "translateX(20px)",
-                  transition: `opacity 300ms ease ${isOpen ? 75 + i * 50 : 0}ms, transform 300ms ease ${isOpen ? 75 + i * 50 : 0}ms, background-color 200ms, color 200ms`,
+                  transition: `opacity 300ms ease ${isOpen ? 75 + i * 40 : 0}ms, transform 300ms ease ${isOpen ? 75 + i * 40 : 0}ms, background-color 200ms, color 200ms`,
                 }}
               >
-                <item.icon className={`h-5 w-5 ${activeItem === item.label ? item.iconColor : "text-gray-500 group-hover:text-gray-300"} transition-colors duration-200`} />
+                <item.icon className={`h-4 w-4 ${activeItem === item.label ? item.iconColor : "text-gray-500 group-hover:text-gray-300"} transition-colors duration-200`} />
                 {item.label}
-                {activeItem === item.label && (
-                  <div className="ml-auto h-1.5 w-1.5 rounded-full bg-accent-cyan" />
-                )}
               </button>
             ))}
           </nav>
 
           {/* Drawer footer */}
-          <div className="border-t border-slate-800 px-4 py-5 space-y-3">
+          <div className="border-t border-slate-800/50 p-4 space-y-3">
             <a
               href="/auth/login"
-              className="flex items-center justify-center rounded-lg border border-slate-700 py-2.5 text-sm font-semibold text-gray-300 transition-colors hover:border-slate-600 hover:text-white"
+              className="flex items-center justify-center rounded-lg border border-slate-800 bg-slate-900/50 py-2.5 text-sm font-medium text-gray-300 transition-colors hover:bg-slate-800 hover:text-white"
             >
-              Login
+              Log in
             </a>
             <GlassButton asChild size="default" className="w-full">
               <a href="/auth/signup">Mulai Gratis</a>

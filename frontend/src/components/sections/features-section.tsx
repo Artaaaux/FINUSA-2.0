@@ -1,232 +1,194 @@
-"use client";
+"use client"
 
-import { ScanLine, TrendingUp, Wrench, ArrowRight, Goal, ChartColumn } from "lucide-react";
-import { motion, useReducedMotion } from "framer-motion";
+import React from 'react'
+import { ScanLine, TrendingUp, Wrench, ArrowRight, Goal, ChartColumn } from 'lucide-react'
+import { motion, useReducedMotion } from 'framer-motion'
 
 export function FeaturesSection() {
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useReducedMotion()
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+  }
 
   return (
-    <section
-      id="features"
-      className="relative overflow-hidden bg-gradient-to-br from-[#060B1D] via-[#0A1128] to-[#0D0F25] px-4 py-24 sm:px-6 lg:px-8"
-    >
-      {/* Unique BG: diagonal blue radial glow + grid dots */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_75%_30%,rgba(37,99,235,0.08)_0%,transparent_70%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_60%_at_20%_80%,rgba(16,185,129,0.06)_0%,transparent_65%)]" />
-      <div className="pointer-events-none absolute inset-0" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px)', backgroundSize: '32px 32px', maskImage: 'radial-gradient(ellipse 80% 60% at 50% 40%, black 20%, transparent 80%)', WebkitMaskImage: 'radial-gradient(ellipse 80% 60% at 50% 40%, black 20%, transparent 80%)' }} />
-      <div className="pointer-events-none absolute -left-32 top-1/3 h-[500px] w-[500px] rounded-full bg-blue-600/[0.07] blur-[100px]" />
-      <div className="pointer-events-none absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-emerald-500/[0.05] blur-[80px]" />
+    <section id="features" className="relative py-24 bg-bg-dark overflow-hidden text-slate-200">
+      {/* Background with single subtle radial gradient */}
+      <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,rgba(37,99,235,0.05),transparent_60%)]" />
+      <div className="pointer-events-none absolute inset-0 z-0" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize: '32px 32px', maskImage: 'radial-gradient(ellipse 80% 60% at 50% 40%, black 20%, transparent 80%)', WebkitMaskImage: 'radial-gradient(ellipse 80% 60% at 50% 40%, black 20%, transparent 80%)' }} />
 
-      <div className="relative z-10 mx-auto max-w-6xl">
-        {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.1 }}
-          transition={{ duration: 0.5 }}
-          className="mb-16 text-center"
-        >
-          <h2 className="mb-4 text-4xl font-bold tracking-tight sm:text-5xl bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
-            Satu tempat untuk mencatat, memantau, dan mencapai target finansial
-          </h2>
-          <p className="mx-auto max-w-2xl text-base text-gray-400 leading-relaxed">
-            Setiap fitur dirancang praktis agar pengelolaan keuangan harian jadi
-            mudah dan menyenangkan untuk siapa saja.
-          </p>
-        </motion.div>
-
-        {/* Bento Grid */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          {/* Card 1: Scan Struk AI (md:col-span-2) */}
-          <motion.div
-            initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.1 }}
-            transition={{ duration: 0.5, delay: shouldReduceMotion ? 0 : 0.1 }}
-            whileHover={shouldReduceMotion ? {} : { y: -6 }}
-            className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-blue-500/25 bg-gradient-to-b from-blue-500/10 to-blue-600/5 p-8 backdrop-blur-md transition-all duration-300 hover:border-blue-400/50 hover:shadow-[0_8px_30px_rgba(37,99,235,0.1)] md:col-span-2"
+      <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+        <div className="mb-16 md:mb-24 max-w-2xl">
+          <motion.h2 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={cardVariants}
+            className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-4"
           >
-            {/* Header info */}
-            <div>
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-blue-500/25 bg-blue-500/15 text-blue-400">
-                  <ScanLine size={22} aria-hidden="true" />
-                </div>
-                <span className="rounded-full border border-blue-500/20 bg-blue-500/10 px-4 py-0.5 text-[11px] font-bold tracking-wider text-blue-300">
-                  01 . SCAN AI
-                </span>
-              </div>
-              <h3 className="mb-2 text-2xl font-bold text-white">Scan Struk AI Otomatis</h3>
-              <p className="mb-6 text-sm leading-relaxed text-gray-400 max-w-md">
-                Foto atau unggah struk belanja fisik Anda. AI Vision otomatis mengekstrak total nominal, nama merchant, tanggal, hingga pos kategori pengeluaran secara instan.
-              </p>
-            </div>
-
-            {/* Visual Preview: OCR Scan Result Preview */}
-            <div className="mt-2 rounded-xl border border-blue-500/15 bg-slate-950/60 p-4 font-sans text-xs text-gray-300 shadow-inner">
-              <div className="flex items-center justify-between border-b border-white/5 pb-2 text-[10px] text-gray-500">
-                <div className="flex items-center gap-1.5">
-                  <div className="h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
-                  <span className="font-semibold text-gray-400">OCR AI Vision Scanner</span>
-                </div>
-                <span className="text-blue-400 font-semibold bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">Auto Extracted</span>
-              </div>
-              <div className="mt-3 space-y-2">
-                <div className="flex items-center justify-between rounded-lg bg-slate-900/80 px-3 py-2 border border-slate-800">
-                  <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-emerald-400" />
-                    <span className="text-xs text-white font-medium">Kantin Kampus / Minimarket</span>
-                  </div>
-                  <span className="text-xs font-bold text-white">Rp 25.000</span>
-                </div>
-                <div className="flex items-center justify-between text-[11px] text-slate-400 px-1">
-                  <span>Kategori: Makan &amp; Minum</span>
-                  <span>13 Sep 2026</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6 pt-4 border-t border-white/5">
-              <p className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-400 transition-all duration-200 group-hover:gap-2.5">
-                Pindai struk otomatis sekarang
-              </p>
-            </div>
-          </motion.div>
-
-          {/* Card 2: Monitor & Tracking (md:col-span-1) */}
-          <motion.div
-            initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.1 }}
-            transition={{ duration: 0.5, delay: shouldReduceMotion ? 0 : 0.2 }}
-            whileHover={shouldReduceMotion ? {} : { y: -6 }}
-            className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-accent-green/25 bg-gradient-to-b from-emerald-500/10 to-emerald-600/5 p-8 backdrop-blur-md transition-all duration-300 hover:border-accent-green/50 hover:shadow-[0_8px_30px_rgba(0,255,136,0.1)] md:col-span-1"
+            Tiga pilar pengelolaan keuangan
+          </motion.h2>
+          <motion.p 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={cardVariants}
+            className="text-lg text-slate-400"
           >
-            {/* Header info */}
-            <div>
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-accent-green/25 bg-accent-green/15 text-accent-green">
-                  <TrendingUp size={22} aria-hidden="true" />
-                </div>
-                <span className="rounded-full border border-accent-green/20 bg-accent-green/10 px-4 py-0.5 text-[11px] font-bold tracking-wider text-accent-green">
-                  02 . MONITOR KAS
-                </span>
-              </div>
-              <h3 className="mb-2 text-2xl font-bold text-white">Monitor Arus Kas</h3>
-              <p className="mb-6 text-sm leading-relaxed text-gray-400">
-                Pantau pengeluaran harian, alokasi anggaran, dan analisis likuiditas finansial secara visual dan real-time.
-              </p>
-            </div>
+            Dari mencatat pengeluaran otomatis hingga mencapai target impianmu. Semua dalam satu ekosistem yang rapi dan terukur.
+          </motion.p>
+        </div>
 
-            {/* Visual Preview: Interactive Budget Progress Card */}
-            <div className="mt-2 rounded-xl border border-accent-green/15 bg-slate-950/60 p-4 font-sans text-xs shadow-inner">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-400">Budget Makan & Jajan</span>
-                <span className="font-semibold text-accent-green">Rp 120k / Rp 500k</span>
-              </div>
-              <div className="h-2 w-full rounded-full bg-slate-900 border border-slate-800 overflow-hidden mb-3">
-                <div className="h-full bg-gradient-to-r from-emerald-500 to-accent-green" style={{ width: '24%' }} />
-              </div>
-              <div className="flex items-center justify-between text-[10px] text-gray-500 border-t border-white/5 pt-2">
-                <span>Sisa Budget: Rp 380k</span>
-                <span className="text-emerald-400 font-semibold bg-emerald-500/10 px-1.5 py-0.2 rounded border border-emerald-500/20">Aman</span>
-              </div>
-            </div>
-
-            <div className="mt-6 pt-4 border-t border-white/5">
-              <p className="inline-flex items-center gap-1.5 text-sm font-medium text-accent-green transition-all duration-200 group-hover:gap-2.5">
-                Pantau pengeluaranmu
-              </p>
-            </div>
-          </motion.div>
-
-          {/* Card 3: Tools Lengkap (md:col-span-3) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Card 1: Scan Struk AI */}
           <motion.div
-            initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.1 }}
-            transition={{ duration: 0.5, delay: shouldReduceMotion ? 0 : 0.3 }}
-            whileHover={shouldReduceMotion ? {} : { y: -6 }}
-            className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-accent-purple/25 bg-gradient-to-b from-violet-500/10 to-violet-600/5 p-8 backdrop-blur-md transition-all duration-300 hover:border-accent-purple/50 hover:shadow-[0_8px_30px_rgba(167,139,250,0.1)] md:col-span-3"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={cardVariants}
+            className="md:col-span-2 group relative overflow-hidden rounded-2xl border border-slate-700/30 bg-slate-900/50 backdrop-blur-sm hover:-translate-y-1 hover:border-slate-600/50 transition-all duration-300"
           >
-            {/* Inner row layout for split content */}
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
-              <div className="md:col-span-5 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between mb-6 md:justify-start">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-accent-purple/25 bg-accent-purple/15 text-accent-purple">
-                      <Wrench size={22} aria-hidden="true" />
+            <div className="p-8 h-full flex flex-col">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                  <ScanLine className="w-6 h-6" />
+                </div>
+                <span className="text-xs font-semibold tracking-wider text-blue-400 uppercase">Pilar 01</span>
+              </div>
+              <h3 className="text-2xl font-semibold text-white mb-3">Scan Struk AI</h3>
+              <p className="text-slate-400 mb-8 max-w-md">
+                Teknologi OCR canggih untuk mengubah struk belanjamu menjadi data terstruktur dalam hitungan detik. Bebas ribet input manual.
+              </p>
+              
+              <div className="mt-auto bg-slate-950/50 rounded-xl p-4 border border-slate-800/50">
+                <div className="flex items-center justify-between mb-3 text-sm">
+                  <span className="text-slate-300">Hasil Scan Terakhir</span>
+                  <span className="text-blue-400 text-xs">Otomatis Terkategori</span>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center py-2 border-b border-slate-800/50">
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-2 rounded-full bg-blue-400" />
+                      <span className="text-sm">Kopi Senja</span>
                     </div>
-                    <span className="rounded-full border border-accent-purple/20 bg-accent-purple/10 px-4 py-0.5 text-[11px] font-bold tracking-wider text-accent-purple md:ml-4">
-                      03 . GOALS & TEMPLATE
-                    </span>
+                    <span className="text-sm font-medium font-mono">Rp 35.000</span>
                   </div>
-                  <h3 className="mb-2 text-2xl font-bold text-white">Target Tabungan & Template</h3>
-                  <p className="mb-4 text-sm leading-relaxed text-gray-400">
-                    Rencanakan tabungan impian dengan sistem milestone terarah dan unduh template spreadsheet keuangan siap pakai.
-                  </p>
-                </div>
-
-                <div className="mt-auto hidden pt-4 md:block">
-                  <p className="inline-flex items-center gap-1.5 text-sm font-medium text-accent-purple transition-all duration-200 group-hover:gap-2.5">
-                    Lihat semua modul tools
-                  </p>
-                </div>
-              </div>
-
-              {/* Bento Inner Items (Grid layout inside) */}
-              <div className="md:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Savings Goal Preview */}
-                <div className="rounded-xl border border-accent-purple/15 bg-slate-950/60 p-5 shadow-sm">
-                  <div className="flex items-center justify-between mb-3">
-                    <h4 className="text-xs font-semibold text-white flex items-center gap-1.5">
-                      <span><Goal size={17} className="text-accent-purple" /></span> Target Tabungan
-                    </h4>
-                    <span className="text-[10px] font-bold text-accent-purple bg-accent-purple/10 border border-accent-purple/20 px-2 py-0.5 rounded-full">
-                      75% Selesai
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-gray-400 mb-2">Beli Laptop Baru (Pelajar &amp; Belajar)</p>
-                  <div className="h-1.5 w-full rounded-full bg-slate-900 overflow-hidden mb-2">
-                    <div className="h-full bg-gradient-to-r from-violet-500 to-accent-purple" style={{ width: '75%' }} />
-                  </div>
-                  <span className="text-[10px] text-gray-500">Kumpul Rp 6.0M dari Rp 8.0M</span>
-                </div>
-
-                {/* Template Spreadsheet */}
-                <div className="rounded-xl border border-accent-purple/15 bg-slate-950/60 p-5 shadow-sm flex flex-col justify-between">
-                  <div>
-                    <h4 className="text-xs font-semibold text-white flex items-center gap-1.5 mb-2">
-                      <span><ChartColumn size={17} className="text-accent-purple" /></span> Template Spreadsheet
-                    </h4>
-                    <p className="text-[11px] text-gray-400 leading-relaxed">
-                      Download template spreadsheet keuangan, pencatatan kas mandiri, dan format anggaran siap pakai langsung dalam format .xlsx.
-                    </p>
-                  </div>
-                  <div className="flex gap-2 mt-3">
-                    <span className="text-[9px] font-medium text-gray-400 bg-slate-900 border border-slate-800 px-2 py-0.5 rounded">
-                      Fast Export
-                    </span>
-                    <span className="text-[9px] font-medium text-gray-400 bg-slate-900 border border-slate-800 px-2 py-0.5 rounded">
-                      Real-time Sync
-                    </span>
+                  <div className="flex justify-between items-center py-2">
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-2 rounded-full bg-emerald-400" />
+                      <span className="text-sm">Supermarket</span>
+                    </div>
+                    <span className="text-sm font-medium font-mono">Rp 120.000</span>
                   </div>
                 </div>
               </div>
             </div>
+          </motion.div>
 
-            <div className="mt-6 pt-4 border-t border-white/5 md:hidden">
-              <a href="#about" className="inline-flex items-center gap-1.5 text-sm font-medium text-accent-purple transition-all duration-200 group-hover:gap-2.5">
-                Lihat semua modul tools
-                <ArrowRight className="h-4 w-4" />
-              </a>
+          {/* Card 2: Monitor Arus Kas */}
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={cardVariants}
+            className="md:col-span-1 group relative overflow-hidden rounded-2xl border border-slate-700/30 bg-slate-900/50 backdrop-blur-sm hover:-translate-y-1 hover:border-slate-600/50 transition-all duration-300"
+          >
+            <div className="p-8 h-full flex flex-col">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-green-500/10 text-green-400 border border-green-500/20">
+                  <TrendingUp className="w-6 h-6" />
+                </div>
+                <span className="text-xs font-semibold tracking-wider text-green-400 uppercase">Pilar 02</span>
+              </div>
+              <h3 className="text-2xl font-semibold text-white mb-3">Monitor Arus Kas</h3>
+              <p className="text-slate-400 mb-8">
+                Visualisasi jernih untuk tahu persis kemana uangmu mengalir setiap bulannya.
+              </p>
+              
+              <div className="mt-auto space-y-4 bg-slate-950/50 rounded-xl p-4 border border-slate-800/50">
+                <div>
+                  <div className="flex justify-between text-xs mb-2">
+                    <span className="text-slate-400">Anggaran Makan</span>
+                    <span className="text-slate-300">75%</span>
+                  </div>
+                  <div className="w-full bg-slate-800 rounded-full h-1.5">
+                    <div className="bg-green-400 h-1.5 rounded-full" style={{ width: '75%' }}></div>
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-xs mb-2">
+                    <span className="text-slate-400">Transportasi</span>
+                    <span className="text-slate-300">40%</span>
+                  </div>
+                  <div className="w-full bg-slate-800 rounded-full h-1.5">
+                    <div className="bg-blue-400 h-1.5 rounded-full" style={{ width: '40%' }}></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Card 3: Target Tabungan & Template */}
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={cardVariants}
+            className="md:col-span-3 group relative overflow-hidden rounded-2xl border border-slate-700/30 bg-slate-900/50 backdrop-blur-sm hover:-translate-y-1 hover:border-slate-600/50 transition-all duration-300"
+          >
+            <div className="flex flex-col md:flex-row h-full">
+              <div className="p-8 md:w-1/2 flex flex-col justify-center">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                    <Goal className="w-6 h-6" />
+                  </div>
+                  <span className="text-xs font-semibold tracking-wider text-purple-400 uppercase">Pilar 03</span>
+                </div>
+                <h3 className="text-2xl font-semibold text-white mb-3">Target Tabungan & Template</h3>
+                <p className="text-slate-400 mb-6">
+                  Rencanakan masa depan dengan fitur target tabungan dan akses puluhan template gratis untuk manajemen aset, hutang, hingga portofolio investasi.
+                </p>
+                <div className="flex items-center gap-2 text-sm text-purple-400 font-medium cursor-pointer group-hover:text-purple-300 transition-colors">
+                  Eksplorasi Template <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+              
+              <div className="p-8 md:w-1/2 bg-slate-950/30 flex items-center justify-center">
+                <div className="w-full max-w-sm space-y-3">
+                  {/* Goal Preview */}
+                  <div className="bg-slate-900 rounded-xl p-4 border border-slate-800/50 flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400">
+                      <ChartColumn className="w-5 h-5" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-sm font-medium text-white">Dana Darurat</span>
+                        <span className="text-xs text-slate-400">Rp 10Jt</span>
+                      </div>
+                      <div className="w-full bg-slate-800 rounded-full h-1.5">
+                        <div className="bg-purple-400 h-1.5 rounded-full" style={{ width: '60%' }}></div>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Template Info */}
+                  <div className="bg-slate-900 rounded-xl p-4 border border-slate-800/50 flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400">
+                      <Wrench className="w-5 h-5" />
+                    </div>
+                    <div className="flex-1">
+                      <span className="block text-sm font-medium text-white">Template Budget 50/30/20</span>
+                      <span className="block text-xs text-slate-400">Format Notion & Excel</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </motion.div>
         </div>
       </div>
     </section>
-  );
+  )
 }
 
-export default FeaturesSection;
+export default FeaturesSection
