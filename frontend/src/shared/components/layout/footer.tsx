@@ -1,100 +1,123 @@
-const footerColumns = [
-  {
-    title: "FITUR",
-    links: [
-      { label: "Scan Struk AI", href: "/#features" },
-      { label: "Catat Transaksi", href: "/#features" },
-      { label: "Target Tabungan", href: "/#features" },
-      { label: "Monitor Kas", href: "/#features" },
-    ],
-  },
-  {
-    title: "RESOURCE",
-    links: [
-      { label: "Pusat Bantuan & Panduan", href: "/bantuan" },
-      { label: "FAQ Tabungan", href: "/bantuan?article=tambah-target-tabungan" },
-    ],
-  },
-  {
-    title: "TENTANG",
-    links: [
-      { label: "Tentang Kami", href: "#about" },
-      { label: "Kontak", href: "#" },
-    ],
-  },
-  {
-    title: "LEGAL",
-    links: [
-      { label: "Kebijakan Privasi", href: "#" },
-      { label: "Syarat & Ketentuan", href: "#" },
-    ],
-  },
-];
+'use client';
+
+import React from 'react';
+import Link from 'next/link';
 
 export function Footer() {
   return (
-    <footer
-      id="footer"
-      className="border-t border-slate-800/60 bg-slate-950 text-white"
-    >
-      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-        {/* Brand + Columns */}
-        <div className="mb-10 grid grid-cols-2 gap-8 md:grid-cols-5">
-          {/* Brand column */}
-          <div className="col-span-2 md:col-span-1">
-            <a
-              href="#home"
-              className="text-xl font-bold tracking-tight text-white"
-            >
-              FINUSA
-            </a>
-            <p className="mt-3 max-w-xs text-sm leading-relaxed text-slate-400">
-              Solusi pengelolaan keuangan praktis untuk pelajar &amp;
-              generasi muda Indonesia.
+    <footer className="border-t border-white/[0.08] bg-[#020716] py-16 relative z-10 font-sans">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-10 pb-12 border-b border-white/[0.06]">
+          
+          {/* Brand Column */}
+          <div className="md:col-span-2 space-y-4">
+            <Link href="/" className="inline-block">
+              <img 
+                src="/Assets/logo-full.png" 
+                alt="FINUSA Finance Nusantara" 
+                className="h-10 w-auto object-contain brightness-110" 
+              />
+            </Link>
+            <p className="text-sm text-slate-400 max-w-sm leading-relaxed">
+              Platform manajemen finansial pintar bertenaga AI untuk generasi muda Indonesia. Mencatat pengeluaran otomatis, menabung impian, dan membangun masa depan yang stabil.
             </p>
-          </div>
-
-          {/* Link columns */}
-          {footerColumns.map((col) => (
-            <div key={col.title}>
-              <h4 className="mb-4 text-xs font-semibold tracking-wider text-slate-300">
-                {col.title}
-              </h4>
-              <ul className="space-y-2.5">
-                {col.links.map((link) => (
-                  <li key={link.label}>
-                    <a
-                      href={link.href}
-                      className="text-sm text-slate-400 transition-colors duration-200 hover:text-white"
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
+            <div className="pt-2">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-950/60 border border-blue-500/20 text-xs font-mono text-cyan-300">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                FINUSA v2.0 • 100% Gratis
+              </span>
             </div>
-          ))}
+          </div>
+
+          {/* Links 1 - Produk */}
+          <div className="space-y-3.5">
+            <p className="text-xs font-bold text-white uppercase tracking-wider font-sans">Produk</p>
+            <ul className="space-y-2.5 text-sm text-slate-400">
+              <li>
+                <Link href="/receipt-scanner" className="hover:text-cyan-400 transition-colors">
+                  AI Scan Struk
+                </Link>
+              </li>
+              <li>
+                <Link href="/home" className="hover:text-cyan-400 transition-colors">
+                  Dashboard Keuangan
+                </Link>
+              </li>
+              <li>
+                <Link href="/nabung" className="hover:text-cyan-400 transition-colors">
+                  Target Nabung
+                </Link>
+              </li>
+              <li>
+                <Link href="/monitor" className="hover:text-cyan-400 transition-colors">
+                  Monitor Likuiditas
+                </Link>
+              </li>
+              <li>
+                <Link href="/catat" className="hover:text-cyan-400 transition-colors">
+                  Buku Catat Kas
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Links 2 - Bantuan */}
+          <div className="space-y-3.5">
+            <p className="text-xs font-bold text-white uppercase tracking-wider font-sans">Bantuan</p>
+            <ul className="space-y-2.5 text-sm text-slate-400">
+              <li>
+                <Link href="/bantuan" className="hover:text-cyan-400 transition-colors">
+                  Pusat Bantuan
+                </Link>
+              </li>
+              <li>
+                <Link href="/help" className="hover:text-cyan-400 transition-colors">
+                  Panduan Pengguna
+                </Link>
+              </li>
+              <li>
+                <Link href="/template" className="hover:text-cyan-400 transition-colors">
+                  Template Spreadsheet
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Links 3 - Legalitas */}
+          <div className="space-y-3.5">
+            <p className="text-xs font-bold text-white uppercase tracking-wider font-sans">Legalitas</p>
+            <ul className="space-y-2.5 text-sm text-slate-400">
+              <li>
+                <Link href="/privacy" className="hover:text-cyan-400 transition-colors">
+                  Kebijakan Privasi
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacy" className="hover:text-cyan-400 transition-colors">
+                  Syarat &amp; Ketentuan
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacy" className="hover:text-cyan-400 transition-colors">
+                  Keamanan &amp; Enkripsi
+                </Link>
+              </li>
+            </ul>
+          </div>
+
         </div>
 
-        {/* Bottom bar */}
-        <div className="flex flex-col items-center justify-between gap-4 border-t border-slate-800/60 pt-8 sm:flex-row">
-          <p className="text-sm text-slate-500">
-            &copy; {new Date().getFullYear()} FINUSA. Hak cipta dilindungi.
-          </p>
-          <div className="flex gap-6">
-            {["GitHub", "Twitter", "Email"].map((social) => (
-              <a
-                key={social}
-                href="#"
-                className="text-sm text-slate-500 transition-colors duration-200 hover:text-white"
-                aria-label={`Kunjungi ${social} FINUSA`}
-              >
-                {social}
-              </a>
-            ))}
+        {/* Copyright Bar */}
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+          <p>© 2026 Finusa (Finance Nusantara). Hak Cipta Dilindungi Undang-Undang.</p>
+          <div className="flex items-center gap-6">
+            <span className="text-slate-400">Dibuat dengan ❤️ untuk kemandirian finansial generasi muda Indonesia</span>
           </div>
         </div>
+
       </div>
     </footer>
   );
 }
+
+export default Footer;

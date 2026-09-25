@@ -1,191 +1,122 @@
-"use client"
+'use client'
 
 import React from 'react'
-import { ScanLine, TrendingUp, Wrench, ArrowRight, Goal, ChartColumn } from 'lucide-react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion } from 'framer-motion'
+import { ScanLine, BarChart3, PiggyBank, Sparkles, ArrowRight } from 'lucide-react'
+import Link from 'next/link'
+
+const coreFeatures = [
+  {
+    icon: ScanLine,
+    title: 'AI Scan Struk',
+    desc: 'Cukup foto struk belanja, AI Finusa akan otomatis membaca item, nominal, tanggal, dan mencatat pengeluaran tanpa repot mengetik manual.',
+    badge: 'SCAN OTOMATIS',
+    color: 'text-cyan-300',
+    bg: 'from-cyan-500/20 to-emerald-500/20 border-cyan-400/30',
+    hoverBorder: 'hover:border-cyan-500/40',
+    link: '/receipt-scanner',
+    actionText: 'Coba Scan Struk'
+  },
+  {
+    icon: BarChart3,
+    title: 'Manajemen Keuangan',
+    desc: 'Pantau arus kas harian, mingguan, dan bulanan. Pahami kemana uangmu pergi dengan visualisasi grafik interaktif yang jernih.',
+    badge: 'ARUS KAS REALTIME',
+    color: 'text-blue-400',
+    bg: 'from-blue-600/20 to-cyan-500/20 border-blue-400/30',
+    hoverBorder: 'hover:border-blue-500/40',
+    link: '/home',
+    actionText: 'Buka Dashboard'
+  },
+  {
+    icon: PiggyBank,
+    title: 'Nabung untuk Tujuan',
+    desc: 'Buat target tabungan spesifik sesuai mimpimu — beli laptop kuliah, dana darurat, tiket konser, hingga rencana traveling impian.',
+    badge: 'TARGET CERDAS',
+    color: 'text-amber-400',
+    bg: 'from-amber-500/20 to-amber-600/20 border-amber-400/30',
+    hoverBorder: 'hover:border-amber-500/40',
+    link: '/nabung',
+    actionText: 'Atur Target'
+  },
+  {
+    icon: Sparkles,
+    title: 'Laporan & Insight AI',
+    desc: 'Dapatkan evaluasi kebiasaan belanja dan rekomendasi cerdas dari AI untuk menghemat pengeluaran tanpa mengurangi kenyamanan hidupmu.',
+    badge: 'ANALISIS CERDAS',
+    color: 'text-emerald-400',
+    bg: 'from-emerald-500/20 to-teal-500/20 border-emerald-400/30',
+    hoverBorder: 'hover:border-emerald-500/40',
+    link: '/monitor',
+    actionText: 'Lihat Analisis'
+  }
+]
 
 export function FeaturesSection() {
-  const shouldReduceMotion = useReducedMotion()
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
-  }
-
   return (
-    <section id="features" className="relative py-24 bg-bg-dark overflow-hidden text-slate-200">
-      {/* Background with single subtle radial gradient */}
-      <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,rgba(37,99,235,0.05),transparent_60%)]" />
-      <div className="pointer-events-none absolute inset-0 z-0" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize: '32px 32px', maskImage: 'radial-gradient(ellipse 80% 60% at 50% 40%, black 20%, transparent 80%)', WebkitMaskImage: 'radial-gradient(ellipse 80% 60% at 50% 40%, black 20%, transparent 80%)' }} />
-
-      <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-        <div className="mb-16 md:mb-24 max-w-2xl">
-          <motion.h2 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={cardVariants}
-            className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-4"
-          >
-            Tiga pilar pengelolaan keuangan
-          </motion.h2>
-          <motion.p 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={cardVariants}
-            className="text-lg text-slate-400"
-          >
-            Dari mencatat pengeluaran otomatis hingga mencapai target impianmu. Semua dalam satu ekosistem yang rapi dan terukur.
-          </motion.p>
+    <section className="py-24 lg:py-32 relative overflow-hidden" id="fitur">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12 relative z-10">
+        
+        {/* Section Header */}
+        <div className="max-w-3xl mb-16">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-blue-500/10 border border-blue-400/20 text-blue-400 text-xs font-semibold tracking-wider uppercase mb-3">
+            Fitur Unggulan
+          </div>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
+            Semua yang Kamu Butuhkan dalam Satu Tempat
+          </h2>
+          <p className="mt-4 text-slate-300 text-base sm:text-lg leading-relaxed">
+            Finusa bukan sekadar pencatat keuangan biasa, melainkan partner cerdas yang membantu menjaga kesehatan finansialmu setiap hari.
+          </p>
+          <div className="w-16 h-1 bg-gradient-to-r from-blue-500 via-cyan-400 to-indigo-500 rounded-full mt-5"></div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Card 1: Scan Struk AI */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
-            variants={cardVariants}
-            className="md:col-span-2 group relative overflow-hidden rounded-2xl border border-slate-700/30 bg-slate-900/50 backdrop-blur-sm hover:-translate-y-1 hover:border-slate-600/50 transition-all duration-300"
-          >
-            <div className="p-8 h-full flex flex-col">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                  <ScanLine className="w-6 h-6" />
-                </div>
-                <span className="text-xs font-semibold tracking-wider text-blue-400 uppercase">Pilar 01</span>
-              </div>
-              <h3 className="text-2xl font-semibold text-white mb-3">Scan Struk AI</h3>
-              <p className="text-slate-400 mb-8 max-w-md">
-                Teknologi OCR canggih untuk mengubah struk belanjamu menjadi data terstruktur dalam hitungan detik. Bebas ribet input manual.
-              </p>
-              
-              <div className="mt-auto bg-slate-950/50 rounded-xl p-4 border border-slate-800/50">
-                <div className="flex items-center justify-between mb-3 text-sm">
-                  <span className="text-slate-300">Hasil Scan Terakhir</span>
-                  <span className="text-blue-400 text-xs">Otomatis Terkategori</span>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center py-2 border-b border-slate-800/50">
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 rounded-full bg-blue-400" />
-                      <span className="text-sm">Kopi Senja</span>
-                    </div>
-                    <span className="text-sm font-medium font-mono">Rp 35.000</span>
-                  </div>
-                  <div className="flex justify-between items-center py-2">
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 rounded-full bg-emerald-400" />
-                      <span className="text-sm">Supermarket</span>
-                    </div>
-                    <span className="text-sm font-medium font-mono">Rp 120.000</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Card 2: Monitor Arus Kas */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
-            variants={cardVariants}
-            className="md:col-span-1 group relative overflow-hidden rounded-2xl border border-slate-700/30 bg-slate-900/50 backdrop-blur-sm hover:-translate-y-1 hover:border-slate-600/50 transition-all duration-300"
-          >
-            <div className="p-8 h-full flex flex-col">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-green-500/10 text-green-400 border border-green-500/20">
-                  <TrendingUp className="w-6 h-6" />
-                </div>
-                <span className="text-xs font-semibold tracking-wider text-green-400 uppercase">Pilar 02</span>
-              </div>
-              <h3 className="text-2xl font-semibold text-white mb-3">Monitor Arus Kas</h3>
-              <p className="text-slate-400 mb-8">
-                Visualisasi jernih untuk tahu persis kemana uangmu mengalir setiap bulannya.
-              </p>
-              
-              <div className="mt-auto space-y-4 bg-slate-950/50 rounded-xl p-4 border border-slate-800/50">
+        {/* 4 Grid Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {coreFeatures.map((feature, idx) => {
+            const Icon = feature.icon
+            return (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                className={`group relative rounded-2xl p-6 bg-[#0a1835]/80 hover:bg-[#0d1e42] border border-white/[0.08] ${feature.hoverBorder} transition-all duration-300 shadow-glass-card hover:-translate-y-1.5 flex flex-col justify-between`}
+              >
                 <div>
-                  <div className="flex justify-between text-xs mb-2">
-                    <span className="text-slate-400">Anggaran Makan</span>
-                    <span className="text-slate-300">75%</span>
+                  <div className="flex items-center justify-between mb-5">
+                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-tr ${feature.bg} border flex items-center justify-center ${feature.color} group-hover:scale-110 transition-transform duration-300 shadow-sm`}>
+                      <Icon className="w-6 h-6" />
+                    </div>
+                    <span className="text-[10px] font-semibold text-slate-400 tracking-wider bg-white/[0.04] px-2.5 py-1 rounded-full border border-white/5">
+                      {feature.badge}
+                    </span>
                   </div>
-                  <div className="w-full bg-slate-800 rounded-full h-1.5">
-                    <div className="bg-green-400 h-1.5 rounded-full" style={{ width: '75%' }}></div>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between text-xs mb-2">
-                    <span className="text-slate-400">Transportasi</span>
-                    <span className="text-slate-300">40%</span>
-                  </div>
-                  <div className="w-full bg-slate-800 rounded-full h-1.5">
-                    <div className="bg-blue-400 h-1.5 rounded-full" style={{ width: '40%' }}></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
 
-          {/* Card 3: Target Tabungan & Template */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
-            variants={cardVariants}
-            className="md:col-span-3 group relative overflow-hidden rounded-2xl border border-slate-700/30 bg-slate-900/50 backdrop-blur-sm hover:-translate-y-1 hover:border-slate-600/50 transition-all duration-300"
-          >
-            <div className="flex flex-col md:flex-row h-full">
-              <div className="p-8 md:w-1/2 flex flex-col justify-center">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
-                    <Goal className="w-6 h-6" />
-                  </div>
-                  <span className="text-xs font-semibold tracking-wider text-purple-400 uppercase">Pilar 03</span>
+                  <h3 className="text-xl font-bold text-white mb-2.5 group-hover:text-cyan-300 transition-colors">
+                    {feature.title}
+                  </h3>
+                  
+                  <p className="text-sm text-slate-300/80 leading-relaxed font-normal">
+                    {feature.desc}
+                  </p>
                 </div>
-                <h3 className="text-2xl font-semibold text-white mb-3">Target Tabungan & Template</h3>
-                <p className="text-slate-400 mb-6">
-                  Rencanakan masa depan dengan fitur target tabungan dan akses puluhan template gratis untuk manajemen aset, hutang, hingga portofolio investasi.
-                </p>
-                <div className="flex items-center gap-2 text-sm text-purple-400 font-medium cursor-pointer group-hover:text-purple-300 transition-colors">
-                  Eksplorasi Template <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+
+                <div className="pt-6 mt-4 border-t border-white/[0.06]">
+                  <Link 
+                    href={feature.link}
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-cyan-300 hover:text-white transition-colors group-hover:translate-x-0.5 duration-200"
+                  >
+                    <span>{feature.actionText}</span>
+                    <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+                  </Link>
                 </div>
-              </div>
-              
-              <div className="p-8 md:w-1/2 bg-slate-950/30 flex items-center justify-center">
-                <div className="w-full max-w-sm space-y-3">
-                  {/* Goal Preview */}
-                  <div className="bg-slate-900 rounded-xl p-4 border border-slate-800/50 flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400">
-                      <ChartColumn className="w-5 h-5" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="text-sm font-medium text-white">Dana Darurat</span>
-                        <span className="text-xs text-slate-400">Rp 10Jt</span>
-                      </div>
-                      <div className="w-full bg-slate-800 rounded-full h-1.5">
-                        <div className="bg-purple-400 h-1.5 rounded-full" style={{ width: '60%' }}></div>
-                      </div>
-                    </div>
-                  </div>
-                  {/* Template Info */}
-                  <div className="bg-slate-900 rounded-xl p-4 border border-slate-800/50 flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400">
-                      <Wrench className="w-5 h-5" />
-                    </div>
-                    <div className="flex-1">
-                      <span className="block text-sm font-medium text-white">Template Budget 50/30/20</span>
-                      <span className="block text-xs text-slate-400">Format Notion & Excel</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
+              </motion.div>
+            )
+          })}
         </div>
+
       </div>
     </section>
   )

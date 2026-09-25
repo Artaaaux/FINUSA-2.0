@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -58,13 +57,8 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
+  html {
     scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
   }
 }
 
@@ -75,6 +69,83 @@ body {
   backface-visibility: hidden;
   transform: translateZ(0);
   will-change: transform, opacity;
+}
+
+/* ───── Premium Floating & Levitating Animations ───── */
+@keyframes floatDashboard {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -8px, 0);
+  }
+}
+
+@keyframes floatCardLeft {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(0, -14px, 0) rotate(0.8deg);
+  }
+}
+
+@keyframes floatCardRight {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(0, 12px, 0) rotate(-1deg);
+  }
+}
+
+@keyframes laserScanBeam {
+  0% {
+    top: 6%;
+    opacity: 0.2;
+  }
+  15% {
+    opacity: 1;
+  }
+  48% {
+    top: 92%;
+    opacity: 1;
+  }
+  52% {
+    top: 92%;
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  98% {
+    top: 6%;
+    opacity: 0.4;
+  }
+  100% {
+    top: 6%;
+    opacity: 0.2;
+  }
+}
+
+.animate-float-dashboard {
+  animation: floatDashboard 7.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  will-change: transform;
+}
+
+.animate-float-card-left {
+  animation: floatCardLeft 5.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  will-change: transform;
+}
+
+.animate-float-card-right {
+  animation: floatCardRight 6.4s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  will-change: transform;
+}
+
+.animate-laser-scan {
+  animation: laserScanBeam 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: top, opacity;
 }
 
 /* ───── Hero Section Entrance Animations ───── */
@@ -192,4 +263,29 @@ body {
     transform: none !important;
   }
 }
+
+/* ─────── Stitch Midnight Financial Glow Utilities ─────── */
+.bg-finusa-radial {
+  background: 
+    radial-gradient(ellipse 90% 60% at 75% 15%, rgba(22, 135, 255, 0.22) 0%, transparent 60%),
+    radial-gradient(circle 500px at 15% 35%, rgba(0, 210, 255, 0.12) 0%, transparent 60%),
+    radial-gradient(circle 600px at 50% 85%, rgba(139, 92, 246, 0.1) 0%, transparent 65%),
+    linear-gradient(180deg, #020b24 0%, #03112d 35%, #051638 70%, #020817 100%);
+}
+
+.marquee-mask {
+  mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+}
+
+.receipt-paper {
+  background: repeating-linear-gradient(
+    0deg,
+    #f8fafc,
+    #f8fafc 18px,
+    #f1f5f9 18px,
+    #f1f5f9 20px
+  );
+}
+
 

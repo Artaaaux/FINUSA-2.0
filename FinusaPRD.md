@@ -1,1 +1,149 @@
-PROJECT NAME: FINUSA (Finance Nusantara)VERSION: 2.0 - Frontend PhaseDATE: 2024STATUS: In Development═══════════════════════════════════════════════════════════1\. PROJECT OVERVIEW═══════════════════════════════════════════════════════════Project Name: FINUSA - Financial Literacy Web ApplicationTarget Users: Mahasiswa (College Students) + Fresh Graduates + Young Professionals (Fokus Personal Finance)Primary Goal: Educate Indonesians about financial literacy and help manage financesDevelopment Approach: Solo project, vibe coding, intended for public useDeployment: Vercel (frontend free) + Railway (backend \~$5/month, future phase)Project Scope:\- Web-first development (desktop responsive + mobile responsive)\- Full Frontend Development Phase (current priority)\- Backend Integration Phase (future)\- Mobile App Phase (future - React Native)Database: Supabase (Free Tier) - Already set up with 10 tables and RLS policiesTechnology Stack: Node.js + React + TypeScript + Tailwind CSS + Shadcn/UI + Framer Motion═══════════════════════════════════════════════════════════2\. TECH STACK CONFIRMATION═══════════════════════════════════════════════════════════Frontend:✓ Framework: Next.js 15 (App Router) with TypeScript✓ Build Tool: Next.js (Turbopack)✓ Styling: Tailwind CSS✓ Component Library: Shadcn/UI✓ Animation: Framer Motion✓ Icons: Lucide React✓ State Management: Zustand (for future)✓ HTTP Client: TanStack Query / Axios (for future)Dev Tools:✓ Code Editor: Cursor / Codex / Antigravity✓ Type Checking: TypeScript✓ Linting: ESLint✓ Formatting: PrettierBackend (FUTURE):\- Node.js + Express + TypeScript\- Supabase PostgreSQL\- JWT Authentication\- Groq API (AI)\- Finnhub API (Market Data)\- Google Sheets API═══════════════════════════════════════════════════════════3\. PROJECT PHASES (WATERFALL APPROACH)═══════════════════════════════════════════════════════════PHASE 1: LANDING PAGE (CURRENT PRIORITY)Status: In DevelopmentDeliverables:&#x20; ├─ Navbar with animated menu&#x20; ├─ Hero section with animations&#x20; ├─ Features showcase (3 pillars)&#x20; ├─ Trust signals section&#x20; ├─ CTA buttons&#x20; ├─ Footer&#x20; └─ Full responsive (desktop + mobile)Timeline: THIS WEEKTools: Myna Hero (21st.dev) + Glow Menu (21st.dev) + Custom AnimationsPHASE 2: LOGIN / SIGNUP PAGESStatus: PendingDeliverables:&#x20; ├─ Login page&#x20; ├─ Signup page&#x20; ├─ Password recovery&#x20; ├─ Form validation UI&#x20; └─ Responsive designTimeline: AFTER Phase 1 CompletePHASE 3: MAIN APP PAGES (One by One)Status: PendingDeliverables (in order):&#x20; ├─ 3.1 Home/Onboarding page&#x20; ├─ 3.2 AI Chat page&#x20; ├─ 3.3 Keuangan page&#x20; ├─ 3.4 Save Money page&#x20; ├─ 3.5 Financial Management/Bookkeeping page&#x20; ├─ 3.6 Google Sheets page&#x20; ├─ 3.7 Settings page&#x20; └─ 3.8 Admin Panel (if time permits)Timeline: AFTER Phase 2 CompletePHASE 4: BACKEND INTEGRATION (SEPARATE PROJECT)Status: Design Phase Complete (waiting for frontend)Deliverables:&#x20; ├─ API Endpoints&#x20; ├─ Authentication&#x20; ├─ Database Queries&#x20; ├─ Business Logic&#x20; └─ Third-party API IntegrationTimeline: AFTER All Frontend CompletePHASE 5: MOBILE APP (REACT NATIVE)Status: Future - Not in scope yetTimeline: After backend stable═══════════════════════════════════════════════════════════4\. DESIGN SYSTEM (ALREADY DESIGNED)═══════════════════════════════════════════════════════════COLOR PALETTE:&#x20; Primary: #2563EB (Blue)&#x20; Accent: #9333EA (Purple)&#x20; Success: #10B981 (Green)&#x20; Warning: #F59E0B (Orange)&#x20; Danger: #EF4444 (Red)&#x20; Background: #FAFAF9 (Light)&#x20; Dark BG: #0F172A (Dark)&#x20; Text: #1F2937 (Dark text)&#x20; Light Text: #6B7280&#x20; Border: #E5E7EB&#x20; White: #FFFFFFTYPOGRAPHY (Nunito Font Family):&#x20; H1: 40px, Weight 700&#x20; H2: 28px, Weight 700&#x20; H3: 20px, Weight 700&#x20; Body Large: 18px, Weight 400, Line-height 1.7&#x20; Body: 15px, Weight 400, Line-height 1.6&#x20; Small: 13px, Weight 400, Line-height 1.5SPACING SYSTEM:&#x20; 4px, 8px, 12px, 16px, 20px, 24px, 32px, 40px, 48pxBORDER RADIUS:&#x20; Buttons: 8px&#x20; Cards: 12px&#x20; Inputs: 8px&#x20; Small elements: 4pxRESPONSIVE BREAKPOINTS:&#x20; Desktop: 1440px (primary design target)&#x20; Tablet: 768px&#x20; Mobile: 375px (iPhone SE size)COMPONENTS AVAILABLE (Shadcn/UI):&#x20; ✓ Button&#x20; ✓ Input&#x20; ✓ Label&#x20; ✓ Sheet (Mobile menu)&#x20; ✓ Card&#x20; ✓ And more as needed═══════════════════════════════════════════════════════════5\. CODE STANDARDS \& GUIDELINES═══════════════════════════════════════════════════════════Project Structure:&#x20; frontend/src/&#x20; ├── app/                      # Next.js app router (pages \& layouts)&#x20; │   ├── auth/&#x20; │   │   ├── login/            # Login page&#x20; │   │   └── signup/           # Signup page&#x20; │   ├── layout.tsx            # Root layout&#x20; │   ├── page.tsx              # Home/landing page&#x20; │   └── globals.css           # Global styles&#x20; ├── components/sections/      # Landing section components&#x20; ├── shared/&#x20; │   ├── components/&#x20; │   │   ├── layout/           # Navbar, Footer&#x20; │   │   ├── providers/        # Context providers&#x20; │   │   └── ui/               # Reusable UI components&#x20; │   ├── context/              # React context&#x20; │   ├── hooks/                # Custom hooks&#x20; │   └── lib/                  # Utilities (cn)&#x20; └── lib/auth/                 # Supabase auth client \& hooks&#x20;&#x20; shared/                       # Shared between frontend \& backend&#x20; ├── types/                    # TypeScript types&#x20; ├── constants/                # Shared constants&#x20; └── enums/                    # Shared enums&#x20;&#x20; backend/                      # Future Express API (WIP)TypeScript:&#x20; ✓ Strict mode enabled&#x20; ✓ Type all props&#x20; ✓ Type all state&#x20; ✓ Use interfaces for component propsReact Best Practices:&#x20; ✓ Use functional components&#x20; ✓ Use hooks (useState, useEffect, useContext, etc)&#x20; ✓ Component composition over inheritance&#x20; ✓ Memoization where performance matters&#x20; ✓ Proper key usage in lists&#x20; ✓ Avoid prop drilling (use context/zustand if needed)Naming Conventions:&#x20; ✓ Components: PascalCase (e.g., MyComponent)&#x20; ✓ Functions: camelCase (e.g., myFunction)&#x20; ✓ Files: kebab-case for files (e.g., my-component.tsx)&#x20; ✓ Constants: UPPER\_SNAKE\_CASE&#x20; ✓ CSS classes: lowercase with hyphensTailwind CSS:&#x20; ✓ Use Tailwind classes (no custom CSS if possible)&#x20; ✓ Mobile-first approach&#x20; ✓ Use @apply for reusable styles only&#x20; ✓ Keep responsive modifiers cleanFramer Motion:&#x20; ✓ Use for animations only&#x20; ✓ Smooth transitions (200-500ms)&#x20; ✓ Performance-optimized animations&#x20; ✓ useInView for scroll animations═══════════════════════════════════════════════════════════6\. EXTERNAL COMPONENTS \& RESOURCES═══════════════════════════════════════════════════════════Myna Hero (21st.dev):Command: npx shadcn@latest add https://21st.dev/r/bankkroll/myna-heroLocation: src/components/ui/myna-hero.tsxPurpose: Landing page hero section with animationsFeatures:&#x20; ✓ Animated title with staggered words&#x20; ✓ Feature showcase cards&#x20; ✓ Smooth transitions&#x20; ✓ Mobile responsiveGlow Menu (21st.dev):Command: npx shadcn@latest add https://21st.dev/r/spoonyvu/glow-menuLocation: src/components/ui/glow-menu.tsxPurpose: Animated navigation menuFeatures:&#x20; ✓ 3D flip animation on hover&#x20; ✓ Glow effect&#x20; ✓ Active state indicator&#x20; ✓ Customizable menu items&#x20; ✓ Light/Dark theme supportDependencies to Install:&#x20; npm install lucide-react framer-motion @radix-ui/react-slot class-variance-authority @radix-ui/react-dialog @radix-ui/react-label next-themes═══════════════════════════════════════════════════════════7\. PROJECT CONSTRAINTS \& RULES═══════════════════════════════════════════════════════════Supabase Free Tier Limitations:&#x20; ✓ 2GB/month bandwidth&#x20; ✓ 50MB/day API limit&#x20; ✓ Sufficient for MVP (up to 5K users)&#x20; ✓ Monitor usage - upgrade if neededFree Tools Used:&#x20; ✓ Cursor / Codex / Antigravity (AI coding)&#x20; ✓ Shadcn/UI components (free, open source)&#x20; ✓ Framer Motion (free tier)&#x20; ✓ Lucide Icons (free)&#x20; ✓ Vercel deployment (free tier)DO's:&#x20; ✓ Keep animations smooth and purposeful&#x20; ✓ Mobile-first responsive design&#x20; ✓ Accessibility in mind (WCAG AAA)&#x20; ✓ Performance optimized (Lighthouse score 90+)&#x20; ✓ Proper error handling&#x20; ✓ User-friendly feedback (loading, error states)&#x20; ✓ Document code with comments for clarityDON'Ts:&#x20; ✗ Don't use custom CSS if Tailwind can do it&#x20; ✗ Don't create duplicate components&#x20; ✗ Don't hardcode values (use constants)&#x20; ✗ Don't skip TypeScript types&#x20; ✗ Don't create over-complex animations&#x20; ✗ Don't forget mobile responsiveness&#x20; ✗ Don't commit without testing═══════════════════════════════════════════════════════════8\. DEVELOPMENT WORKFLOW═══════════════════════════════════════════════════════════Step 1: Create new page/componentStep 2: Design on paper or Figma (optional)Step 3: Implement with TypeScriptStep 4: Add Tailwind CSS stylingStep 5: Add Framer Motion animationsStep 6: Test responsiveness (1440px, 768px, 375px)Step 7: Test on real devicesStep 8: Code review / self-checkStep 9: Commit with clear messageGit Commit Messages:&#x20; ✓ feat: Add landing page hero section&#x20; ✓ fix: Fix navbar mobile menu bug&#x20; ✓ style: Update color scheme for better contrast&#x20; ✓ refactor: Extract button component&#x20; ✓ chore: Update dependencies═══════════════════════════════════════════════════════════9\. SUCCESS METRICS═══════════════════════════════════════════════════════════Landing Page Success:&#x20; ✓ Page loads in <3 seconds&#x20; ✓ Lighthouse score 90+ (Performance)&#x20; ✓ Mobile responsive (375px-1440px)&#x20; ✓ All animations smooth (60 FPS)&#x20; ✓ All links functional&#x20; ✓ Proper error handlingOverall Frontend Success:&#x20; ✓ All 7 pages built + responsive&#x20; ✓ Consistent design system&#x20; ✓ No console errors&#x20; ✓ Accessibility compliant&#x20; ✓ Performance optimized&#x20; ✓ Code well-documented═══════════════════════════════════════════════════════════10\. IMPORTANT NOTES FOR AI CODING ASSISTANTS═══════════════════════════════════════════════════════════When implementing features:&#x20; 1. Always check existing components before creating new ones&#x20; 2. Use the design system colors and typography exactly&#x20; 3. Implement mobile responsiveness from start (not afterthought)&#x20; 4. Add loading states for all interactive elements&#x20; 5. Add error boundaries for better UX&#x20; 6. Test all animations on mobile (they should be smooth)&#x20; 7. Follow TypeScript strict mode&#x20; 8. Use semantic HTML&#x20; 9. Add ARIA labels for accessibility&#x20; 10. Optimize images (use Next.js Image component)When unsure:&#x20; 1. Check the design system first&#x20; 2. Reference existing components&#x20; 3. Ask for clarification in comments&#x20; 4. Keep it simple before making it complex&#x20; 5. Mobile-first always══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+# PRODUCT REQUIREMENTS DOCUMENT (PRD)
+# FINUSA (Finance Nusantara) — Versi 2.0 (Live Context)
+
+**Status:** Aktif / In Active Development  
+**Kategori:** Personal Finance & Cashflow Management Web Application  
+**Fokus Utama:** Manajemen Keuangan Pribadi, Smart OCR Receipt Scanner, & Target Tabungan  
+**Target Pengguna:** Mahasiswa, Fresh Graduate, & Young Professional Indonesia  
+
+---
+
+## 1. Ringkasan Eksekutif & Identitas Produk
+
+### 1.1 Apa itu FINUSA?
+**FINUSA (Finance Nusantara)** adalah platform web manajemen keuangan pribadi yang dirancang khusus untuk generasi muda Indonesia. FINUSA memadukan kemudahan pencatatan transaksi harian, automasi pemindaian struk berbasis AI OCR, monitoring likuiditas visual, serta sistem target tabungan interaktif agar pengguna dapat mengelola arus kas dan mencapai kemandirian finansial tanpa merasa terbebani (*financial anxiety*).
+
+### 1.2 Masalah yang Diselesaikan
+1. **Malas Mencatat Manual:** Kebanyakan orang enggan mencatat pengeluaran karena repot mengetik satu per satu setiap habis belanja.
+2. **Uang Habis Tanpa Jejak:** Sulit melihat ke mana larinya pengeluaran bulanan dan berapa rasio tabungan yang sehat.
+3. **Tabungan Tanpa Arah:** Menabung tanpa target spesifik dan tanpa visual progress sering kali berakhir dengan tabungan terpakai untuk konsumsi impulsif.
+4. **Jargon Keuangan Kaku:** Aplikasi perbankan konvensional cenderung kaku, formal, dan rumit untuk pemula.
+
+### 1.3 Value Proposition & Diferensiasi Utama
+- **Smart OCR Scanner (MVP Core):** Cukup foto struk belanja (minimarket, resto, kafe), AI FINUSA otomatis mengekstrak merchant, daftar item, pajak, dan nominal total ke pembukuan dalam hitungan detik.
+- **Visual ATM-Card Summary:** Visualisasi ringkasan kas bergaya kartu debit fisik yang intuitif dan menarik secara estetika.
+- **Milestone Tabungan:** Gamifikasi progres tabungan dengan perayaan pencapaian target (25%, 50%, 75%, 100%).
+- **Ekosistem Template Terbuka:** Opsi integrasi template Google Sheets untuk pengguna yang membutuhkan laporan tahunan komprehensif.
+
+---
+
+## 2. Profil Pengguna & Tone of Voice
+
+### 2.1 Persona Pengguna
+1. **Mahasiswa (18–22 tahun):** Mengelola uang saku bulanan, anak kos, butuh kontrol ketat agar tidak defisit di akhir bulan.
+2. **Fresh Graduate / First Jobber (22–26 tahun):** Baru memiliki penghasilan sendiri, mulai membangun dana darurat, dan belajar alokasi anggaran (50/30/20).
+3. **Young Professional & Freelancer (25–32 tahun):** Memiliki arus kas dinamis, butuh memisahkan pos tabungan dan mencatat pengeluaran operasional secara cepat.
+
+### 2.2 Tone of Voice & Copywriting
+- **Bersahabat & Memberdayakan:** Menggunakan sapaan ramah ("Halo, kamu", "Santai dan istirahat yang cukup"), bukan bahasa korporat yang kaku.
+- **Solutif & Bebas Jargon:** Menggunakan istilah yang dipahami umum (Pemasukan, Pengeluaran, Saldo Kas, Rasio Tabungan).
+- **Anti-Overhyped AI:** Memposisikan AI sebagai asisten praktis ("Scan Struk Otomatis"), bukan sekadar jargon teknologi futuristik atau spekulasi ekonomi makro.
+
+---
+
+## 3. Arsitektur Fitur Utama (Live Application Mapping)
+
+Berdasarkan implementasi kode pada direktori aplikasi (`src/app/(app)/`):
+
+### 3.1 Home / Dashboard Ringkasan (`/home`)
+- **Header Sambutan:** Personalisasi nama pengguna, sapaan dinamis waktu, status keaktifan akun.
+- **Summary Cards (ATM Credit Card Style):**
+  - *Kartu Hijau:* Total Pemasukan bulan berjalan.
+  - *Kartu Merah:* Total Pengeluaran kas keluar.
+  - *Kartu Biru:* Rasio Tabungan (% tersimpan dari total pemasukan).
+  - *Kartu Kuning:* Pos Kategori Terbesar (fokus efisiensi belanja).
+- **Akses Cepat Modul:** Tombol pintas ke Scan Struk AI, Monitor Keuangan, Target Tabungan, Catat Transaksi, dan Template Sheets.
+- **Glance Target Tabungan & Aktivitas Terakhir:** Ringkasan progres celengan impian dan riwayat mutasi terbaru.
+- **Tips Finansial Harian:** Edukasi mikro literasi keuangan yang berganti setiap hari.
+
+### 3.2 Scan Struk AI (`/receipt-scanner` & `/ai`) — *Core MVP*
+- **Kamera & Upload File:** Dukungan pengambilan foto langsung via kamera HP/laptop atau unggah file gambar struk (.jpg, .png, .webp).
+- **Smart OCR Engine:** Pemrosesan visual untuk mendeteksi:
+  - Nama Toko / Merchant
+  - Tanggal & Waktu transaksi
+  - Daftar Item Belanja (nama produk, kuantitas, harga satuan, subtotal)
+  - Pajak (PPN), diskon, dan total akhir
+- **Layar Konfirmasi & Koreksi:** Pengguna dapat mengoreksi item jika diperlukan sebelum data disimpan.
+- **One-Click Simpan ke Pembukuan:** Transaksi langsung masuk ke buku kas pengeluaran dengan kategori yang sesuai.
+
+### 3.3 Monitor Keuangan & Analisis Kas (`/monitor`)
+- **KPI Metrics:** Total Saldo Kas Terkonsolidasi, Net Cashflow, Total Pemasukan, Total Pengeluaran, Rasio Tabungan dengan indikator tren perbandingan periode sebelumnya.
+- **Grafik Arus Kas (Bar Chart):** Visualisasi perbandingan pemasukan vs pengeluaran antar bulan.
+- **Breakdown Kategori (Donut Chart):** Distribusi pengeluaran per kategori belanja.
+- **Filter Fleksibel:** Opsi filter waktu (Bulan Ini, Bulan Lalu, Tahun Berjalan).
+- **Ekspor Laporan:** Unduh riwayat laporan keuangan untuk dokumentasi personal.
+
+### 3.4 Target Tabungan (Nabung) (`/nabung`)
+- **Goal Management:** Membuat pos tabungan terencana (contoh: Dana Darurat, Liburan, Beli Laptop, Investasi).
+- **Detail Target:** Nominal impian, batas waktu (*deadline*), akumulasi saldo saat ini, sisa nominal yang harus dikumpulkan.
+- **Setor Dana Manual & Simulasi Auto-Save:** Menambah saldo tabungan secara berkala.
+- **Milestone Celebration:** Modal selebrasi interaktif ketika tabungan mencapai progres 25%, 50%, 75%, dan 100% untuk memotivasi pengguna.
+
+### 3.5 Catat & Pembukuan Transaksi (`/catat` & `/pembukuan`)
+- **Quick Add Bar:** Form pencatatan cepat satu baris untuk mencatat mutasi spontan.
+- **Buku Kas Lengkap:** Tabel & kartu riwayat transaksi dengan penyaringan berdasarkan kategori, tanggal, tipe (pemasukan/pengeluaran), serta pencarian kata kunci.
+- **Kategori Kustom:** Kelola kategori pengeluaran dan pemasukan sesuai gaya hidup pengguna.
+- **Transaksi Berulang (Recurring):** Otomasi pencatatan tagihan bulanan (kos, internet, langganan streaming).
+- **Bulk Import CSV:** Mendukung migrasi data riwayat transaksi lama.
+
+### 3.6 Template Spreadsheet (`/template`)
+- **Template Google Sheets Resmi:** Master template spreadsheet *Financial Freedom Management* yang siap di-*copy* ke Google Drive pribadi pengguna untuk budgeting tahunan.
+- **Panduan 3 Langkah:** Instruksi visual sederhana untuk menyalin dan menggunakan template.
+
+### 3.7 Pengaturan & Akun (`/settings`)
+- Profil pengguna, ganti kata sandi, pengaturan zona waktu lokal, serta opsi kontrol data (*Export Data* & *Reset Account*).
+
+---
+
+## 4. Strategi Landing Page & Benchmark Industri
+
+### 4.1 Pelajaran dari Fintech & Bank Digital Indonesia (Jago, Jenius, Livin')
+1. **Hero yang Menjual Manfaat Riil:** Tidak menjual jargon teknis rumit. Fokus pada *benefit*: *"Kelola Keuanganmu, Lebih Cerdas & Teratur"*.
+2. **Pratinjau Mockup Nyata:** Menampilkan antarmuka aplikasi sebenarnya (Kartu ATM Ringkasan Saldo, Scan Struk, Progres Tabungan) agar calon pengguna langsung paham apa yang akan didapatkan.
+3. **Pemberian Panggung Khusus untuk Fitur Unggulan:** Fitur **Scan Struk AI** disorot secara khusus dengan visual alur foto → ekstraksi → otomatis tercatat.
+4. **Trust Signals Terukur:** Keamanan data pengguna, privasi terjamin, gratis digunakan tanpa embel-embel kartu kredit.
+5. **Navigasi Presisi:** Navbar intuitif dengan *glow-menu* terintegrasi yang memudahkan berpindah ke seksi fitur, login, dan signup gratis.
+
+### 4.2 Struktur Alur Landing Page FINUSA
+```
+[1] Navbar (Brand Logo + Glow Menu + CTA Masuk/Mulai Gratis)
+[2] Hero Section (Headline Tegas + Mockup Dashboard Finusa Asli + CTA Utama)
+[3] Trust Bar (4 Pilar Kepercayaan: Data Terenkripsi, Komunitas Mahasiswa, Gratis Selamanya, Lokalitas Indonesia)
+[4] Features Showcase (Hero Card Scan Struk AI + 5 Grid Modul Nyata)
+[5] How It Works (3 Langkah Sederhana: Buat Akun → Catat/Scan → Pantau & Capai Goals)
+[6] Feature Highlight (Deep Dive Scan Struk AI dengan visual alur kamera & ekstraksi item)
+[7] Final CTA Banner (Ajakan Bergabung Ringan & Tanpa Risiko)
+[8] Footer (Struktur 4 Kolom: Brand, Produk, Bantuan, Legal)
+```
+
+---
+
+## 5. Standar Teknologi & Desain (Design System)
+
+- **Framework:** Next.js 15 (App Router, Turbopack) + TypeScript
+- **Styling:** Tailwind CSS + Shadcn/UI primitives
+- **Animasi:** Framer Motion (Transisi mulus 200–400ms, *exponential ease-out*)
+- **Ikonografi:** Lucide React (SVG konsisten, dilarang memakai emoji sebagai ikon antarmuka)
+- **Warna Utama:**
+  - *Base Background:* `#0F1419` (Warm dark neutral, bukan pure black/cyberpunk)
+  - *Section Surface:* `#1a1f2e`
+  - *Card Surface:* `#1f2534`
+  - *Primary Accent:* `#4B7BFF` (Muted Interactive Blue)
+  - *Success / Secondary:* `#2A9D8F` / `#10B981` (Teal / Emerald)
+  - *Warning / Highlight:* `#E8A76F` (Warm Amber)
+- **Tipografi:** Plus Jakarta Sans (Utama) & Roboto Mono (Data monospaced/angka numerik finansial `tabular-nums`).
+
+---
+
+## 6. Roadmap & Milestone Pengembangan
+
+| Fase | Deskripsi | Status |
+|---|---|---|
+| **Fase 1: Landing Page Revamp** | Penataan ulang landing page berbasis real personal finance app, eliminasi materi fiktif (Rupiah Radar), penonjolan OCR AI. | **SELESAI** |
+| **Fase 2: Otentikasi & Akun** | Alur pendaftaran, login Supabase Auth, reset password, proteksi route middleware. | **SELESAI** |
+| **Fase 3: Core App Modules** | Implementasi lengkap modul Home, Scan Struk, Monitor, Nabung, Catat, Template, dan Settings. | **SELESAI** |
+| **Fase 4: Real Data Integration** | Pengayaan integrasi database live (Supabase PostgreSQL), penghitungan dinamis jumlah pengguna aktif untuk social proof. | **IN PROGRESS** |
+| **Fase 5: Ekosistem Mobile** | Adaptasi PWA / aplikasi mobile native masa depan (React Native). | **PLANNED** |
+
+---
+*Dokumen ini merupakan acuan resmi pengembangan produk FINUSA (Finance Nusantara) dan harus dijadikan panduan konsistensi fitur serta komunikasi publik.*

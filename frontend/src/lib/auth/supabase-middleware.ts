@@ -42,10 +42,10 @@ export async function updateSession(request: NextRequest) {
       },
     });
 
-    // Safely fetch user from Supabase auth with generous 8000ms timeout
+    // Safely fetch user from Supabase auth with 2000ms timeout to avoid hanging dev server
     const userPromise = supabase.auth.getUser();
     const timeoutPromise = new Promise<{ data: { user: null } }>((resolve) =>
-      setTimeout(() => resolve({ data: { user: null } }), 8000)
+      setTimeout(() => resolve({ data: { user: null } }), 2000)
     );
 
     const {

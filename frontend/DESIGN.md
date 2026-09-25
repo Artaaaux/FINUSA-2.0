@@ -15,17 +15,17 @@ colors:
   neutral-subtle-text: "#374151"
 typography:
   display:
-    fontFamily: "'Nunito', sans-serif"
+    fontFamily: "'Plus Jakarta Sans', sans-serif"
     fontWeight: 800
   headline:
-    fontFamily: "'Nunito', sans-serif"
+    fontFamily: "'Plus Jakarta Sans', sans-serif"
     fontWeight: 700
   body:
-    fontFamily: "'Nunito', sans-serif"
+    fontFamily: "'Plus Jakarta Sans', sans-serif"
     fontWeight: 400
   label:
-    fontFamily: "'Share Tech Mono', monospace"
-    fontWeight: 400
+    fontFamily: "'Roboto Mono', 'Share Tech Mono', monospace"
+    fontWeight: 500
 rounded:
   md: "0.5rem"
   lg: "0.75rem"
@@ -88,20 +88,21 @@ Vibrant, energetic accents that pop against a deep, warm dark canvas to guide fo
 
 ## Typography
 
-**Display Font:** Nunito (with sans-serif)
-**Body Font:** Nunito (with sans-serif)
-**Label/Mono Font:** Share Tech Mono (with monospace)
+**Display Font:** Plus Jakarta Sans (with sans-serif fallback)
+**Body Font:** Plus Jakarta Sans (with sans-serif fallback)
+**Label/Mono Font:** Roboto Mono / Share Tech Mono (with monospace)
 
-**Character:** Approachable, rounded, and highly legible, reinforcing the "friendly companion" vibe while remaining clear for dense financial data. The monospace font brings a slight mechanical precision to specific card visuals.
+**Character:** Sharp, modern, geometric, and authoritative yet accessible. Replaces the overly rounded, casual feel of Nunito with a premier modern fintech typographic voice (used across leading Indonesian and global tech products). Provides crisp definition for headings, comfortable rhythm for body copy, and precision alignment for financial numerals.
 
 ### Hierarchy
-- **Display** (800, clamp(2rem, 5vw, 3rem)): Hero greetings and massive focal numbers.
-- **Headline** (700, 1.25rem - 1.5rem): Section titles and primary card headers.
-- **Body** (400, 0.875rem - 1rem): Standard descriptions, lists, and general interface copy.
-- **Label** (400, 0.75rem, tracking-widest): Used for uppercase section taxonomy, micro-copy, and credit-card style numbers.
+- **Display** (800, clamp(2.25rem, 5vw, 4.5rem)): Hero greetings, impact statements, and massive focal numbers. Letter-spacing tight (`-0.025em` to `-0.04em`).
+- **Headline** (700, 1.25rem - 1.75rem): Section titles and primary card headers.
+- **Body** (400 - 500, 0.875rem - 1rem): Standard descriptions, lists, and general interface copy.
+- **Label** (500 - 600, 0.75rem, tracking-wider): Uppercase taxonomy badges, categories, and micro-copy.
+- **Financial Data** (500 - 700, tabular-nums, font-mono): Currency figures, percentages, and metrics.
 
 ### Named Rules
-**The Legibility Rule.** Financial figures must be instantly readable. Always use tabular numbers (`tabular-nums`) for currency, percentages, and data tables to ensure perfect vertical alignment.
+**The Legibility Rule.** Financial figures must be instantly readable. Always use tabular numbers (`tabular-nums`) and monospace/proportional figures for currency, percentages, and data tables to ensure perfect vertical alignment.
 
 ## Layout
 
