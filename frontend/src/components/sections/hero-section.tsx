@@ -16,7 +16,9 @@ import {
   Zap, 
   TrendingUp,
   ArrowDownLeft,
-  ArrowUpRight
+  ArrowUpRight,
+  Hand,
+  Laptop
 } from 'lucide-react'
 
 export function HeroSection() {
@@ -199,7 +201,8 @@ export function HeroSection() {
                       <div className="flex items-center justify-between">
                         <div>
                           <h4 className="text-sm font-bold text-white flex items-center gap-1.5">
-                            Halo, Pengguna 👋
+                            <span>Halo, Pengguna</span>
+                            <Hand className="w-3.5 h-3.5 text-amber-400" />
                           </h4>
                           <p className="text-[11px] text-slate-400">Yuk, atur keuanganmu hari ini!</p>
                         </div>
@@ -296,8 +299,8 @@ export function HeroSection() {
                           </div>
                           <div className="mt-2 space-y-1.5">
                             <div className="flex items-center gap-2">
-                              <div className="w-7 h-7 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs">
-                                💻
+                              <div className="w-7 h-7 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center">
+                                <Laptop className="w-3.5 h-3.5" />
                               </div>
                               <div className="flex-1">
                                 <div className="flex justify-between items-center text-[10px]">

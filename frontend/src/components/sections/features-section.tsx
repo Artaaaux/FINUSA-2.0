@@ -68,7 +68,6 @@ export function FeaturesSection() {
           <p className="mt-4 text-slate-300 text-base sm:text-lg leading-relaxed">
             Finusa bukan sekadar pencatat keuangan biasa, melainkan partner cerdas yang membantu menjaga kesehatan finansialmu setiap hari.
           </p>
-          <div className="w-16 h-1 bg-gradient-to-r from-blue-500 via-cyan-400 to-indigo-500 rounded-full mt-5"></div>
         </div>
 
         {/* 4 Grid Cards */}

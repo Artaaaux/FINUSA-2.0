@@ -104,6 +104,7 @@ const config: Config = {
         "premium-purple": "0 0 20px rgba(167,139,250,0.15)",
         'glow-blue': '0 0 40px -10px rgba(22, 135, 255, 0.45)',
         'glow-cyan': '0 0 35px -8px rgba(0, 210, 255, 0.35)',
+        'glow-button': '0 4px 24px -2px rgba(56, 189, 248, 0.35)',
         'glass-card': '0 20px 50px rgba(0, 0, 0, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.12)',
         'glass-float': '0 25px 60px rgba(0, 0, 0, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.2)',
       },
