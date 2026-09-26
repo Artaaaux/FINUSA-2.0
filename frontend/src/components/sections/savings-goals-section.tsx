@@ -2,15 +2,21 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Target, CheckCircle2, ArrowRight } from 'lucide-react'
+import { Target, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 
 export function SavingsGoalsSection() {
   return (
-    <section className="py-24 relative bg-navy-900/30 border-t border-white/5" id="tujuan">
+    <section className="py-24 relative bg-navy-900/30 border-t border-white/5 section-deferred" id="tujuan">
       
-      {/* Ambient background glow */}
-      <div className="absolute top-1/3 right-10 w-96 h-96 bg-purple-600/10 rounded-full blur-[140px] pointer-events-none" />
+      {/* Ambient background glow (GPU Accelerated Radial) */}
+      <div 
+        className="absolute top-1/3 right-10 w-96 h-96 pointer-events-none" 
+        style={{
+          background: 'radial-gradient(circle at center, rgba(147, 51, 234, 0.12) 0%, rgba(147, 51, 234, 0.04) 45%, rgba(147, 51, 234, 0) 70%)',
+          transform: 'translateZ(0)',
+        }}
+      />
 
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">

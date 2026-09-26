@@ -22,10 +22,18 @@ export function Navbar() {
   const [activeItem, setActiveItem] = React.useState("Beranda");
   const [isScrolled, setIsScrolled] = React.useState(false);
 
-  // Scroll detection for header background
+  // Scroll detection for header background with rAF throttle & state guard
   React.useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const nextScrolled = window.scrollY > 20;
+          setIsScrolled((prev) => (prev !== nextScrolled ? nextScrolled : prev));
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
@@ -90,6 +98,7 @@ export function Navbar() {
 
   return (
     <header 
+      style={{ contain: 'layout style', transform: 'translateZ(0)' }}
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
         isScrolled 
           ? "bg-navy-950/85 backdrop-blur-xl border-b border-white/[0.08] shadow-lg shadow-black/20" 
@@ -109,6 +118,8 @@ export function Navbar() {
             <img 
               src="/Assets/logo-mark.png" 
               alt="Finusa Icon" 
+              width={40}
+              height={40}
               className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
             />
           </div>
@@ -192,7 +203,7 @@ export function Navbar() {
           {/* Drawer Header */}
           <div className="flex items-center justify-between border-b border-white/10 px-6 py-5">
             <div className="flex items-center gap-2.5">
-              <img src="/Assets/logo-mark.png" alt="Finusa" className="w-8 h-8 object-contain" />
+              <img src="/Assets/logo-mark.png" alt="Finusa" width={32} height={32} className="w-8 h-8 object-contain" />
               <span className="font-bold text-lg text-white">Finusa</span>
             </div>
             <button

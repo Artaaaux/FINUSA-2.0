@@ -54,7 +54,7 @@ const coreFeatures = [
 
 export function FeaturesSection() {
   return (
-    <section className="py-24 lg:py-32 relative overflow-hidden" id="fitur">
+    <section className="py-24 lg:py-32 relative overflow-hidden section-deferred" id="fitur">
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 relative z-10">
         
         {/* Section Header */}

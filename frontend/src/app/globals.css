@@ -101,29 +101,87 @@ body {
 
 @keyframes laserScanBeam {
   0% {
-    top: 6%;
+    transform: translate3d(0, 0, 0);
     opacity: 0.2;
   }
   15% {
     opacity: 1;
   }
   48% {
-    top: 92%;
+    transform: translate3d(0, var(--laser-travel, 100px), 0);
     opacity: 1;
   }
   52% {
-    top: 92%;
+    transform: translate3d(0, var(--laser-travel, 100px), 0);
     opacity: 1;
   }
   85% {
     opacity: 1;
   }
   98% {
-    top: 6%;
+    transform: translate3d(0, 0, 0);
     opacity: 0.4;
   }
   100% {
-    top: 6%;
+    transform: translate3d(0, 0, 0);
+    opacity: 0.2;
+  }
+}
+
+@keyframes laserScanBeamHero {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.2;
+  }
+  15% {
+    opacity: 1;
+  }
+  48% {
+    transform: translate3d(0, 102px, 0);
+    opacity: 1;
+  }
+  52% {
+    transform: translate3d(0, 102px, 0);
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  98% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.2;
+  }
+}
+
+@keyframes laserScanBeamDeep {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.2;
+  }
+  15% {
+    opacity: 1;
+  }
+  48% {
+    transform: translate3d(0, 340px, 0);
+    opacity: 1;
+  }
+  52% {
+    transform: translate3d(0, 340px, 0);
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  98% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
     opacity: 0.2;
   }
 }
@@ -131,21 +189,42 @@ body {
 .animate-float-dashboard {
   animation: floatDashboard 7.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
   will-change: transform;
+  transform: translateZ(0);
 }
 
 .animate-float-card-left {
   animation: floatCardLeft 5.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
   will-change: transform;
+  transform: translateZ(0);
 }
 
 .animate-float-card-right {
   animation: floatCardRight 6.4s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
   will-change: transform;
+  transform: translateZ(0);
 }
 
 .animate-laser-scan {
   animation: laserScanBeam 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  will-change: top, opacity;
+  will-change: transform, opacity;
+  transform: translateZ(0);
+}
+
+.animate-laser-scan-hero {
+  animation: laserScanBeamHero 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform, opacity;
+  transform: translateZ(0);
+}
+
+.animate-laser-scan-deep {
+  animation: laserScanBeamDeep 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform, opacity;
+  transform: translateZ(0);
+}
+
+.section-deferred {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 800px;
 }
 
 /* ───── Hero Section Entrance Animations ───── */
@@ -274,6 +353,7 @@ body {
 }
 
 .marquee-mask {
+  contain: paint;
   mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
   -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
 }
@@ -303,6 +383,7 @@ body {
   width: max-content;
   animation: marqueeScroll 32s linear infinite;
   will-change: transform;
+  transform: translateZ(0);
 }
 
 .animate-marquee-smooth:hover {

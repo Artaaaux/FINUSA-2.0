@@ -52,7 +52,10 @@ const tickerList = [...trustItems, ...trustItems, ...trustItems, ...trustItems]
 
 export function TrustTicker() {
   return (
-    <section className="border-y border-white/[0.08] bg-[#03091e]/85 py-5 overflow-hidden relative z-20">
+    <section 
+      className="border-y border-white/[0.08] bg-[#03091e]/85 py-5 overflow-hidden relative z-20"
+      style={{ contain: 'layout paint', transform: 'translateZ(0)' }}
+    >
       <div className="marquee-mask w-full overflow-hidden flex">
         <div className="animate-marquee-smooth flex items-center py-1">
           {tickerList.map((item, idx) => {

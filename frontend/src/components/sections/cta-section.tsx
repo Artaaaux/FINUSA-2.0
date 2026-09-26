@@ -3,11 +3,11 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { ArrowRight, Sparkles } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 
 export function CtaSection() {
   return (
-    <section className="py-24 lg:py-32 relative overflow-hidden">
+    <section className="py-24 lg:py-32 relative overflow-hidden section-deferred">
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 relative z-10">
         
         <motion.div 
@@ -17,9 +17,21 @@ export function CtaSection() {
           transition={{ duration: 0.7 }}
           className="max-w-5xl mx-auto relative rounded-3xl bg-gradient-to-b from-[#0d2252] to-[#081534] border border-blue-400/30 p-8 sm:p-14 lg:p-16 text-center shadow-glass-float overflow-hidden"
         >
-          {/* Decorative Glows */}
-          <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-cyan-400/20 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none" />
+          {/* Decorative Glows (GPU Accelerated Radial) */}
+          <div 
+            className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 pointer-events-none"
+            style={{
+              background: 'radial-gradient(circle at center, rgba(34, 211, 238, 0.22) 0%, rgba(34, 211, 238, 0.08) 45%, rgba(34, 211, 238, 0) 70%)',
+              transform: 'translateZ(0)',
+            }}
+          />
+          <div 
+            className="absolute -bottom-24 left-1/2 -translate-x-1/2 w-96 h-96 pointer-events-none"
+            style={{
+              background: 'radial-gradient(circle at center, rgba(37, 99, 235, 0.22) 0%, rgba(37, 99, 235, 0.08) 45%, rgba(37, 99, 235, 0) 70%)',
+              transform: 'translateZ(0)',
+            }}
+          />
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight relative z-10 font-sans">
             Mulai Rapikan Keuanganmu Hari Ini.

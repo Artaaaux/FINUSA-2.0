@@ -36,7 +36,7 @@ const steps = [
 
 export function HowToUseSection() {
   return (
-    <section className="py-24 lg:py-32 relative" id="cara-kerja">
+    <section className="py-24 lg:py-32 relative section-deferred" id="cara-kerja">
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 relative z-10">
         
         {/* Section Header */}
