@@ -1,7 +1,6 @@
 'use client'
 
 import React from 'react'
-import Marquee from 'react-fast-marquee'
 import { ShieldCheck, Zap, Sparkles, ScanLine, Smartphone, Lock } from 'lucide-react'
 
 const trustItems = [
@@ -49,23 +48,19 @@ const trustItems = [
   },
 ]
 
+const tickerList = [...trustItems, ...trustItems, ...trustItems, ...trustItems]
+
 export function TrustTicker() {
   return (
-    <section className="border-y border-white/[0.08] bg-navy-950/60 backdrop-blur-md py-6 overflow-hidden relative z-20">
-      <div className="marquee-mask w-full overflow-hidden">
-        <Marquee
-          speed={45}
-          pauseOnHover={true}
-          autoFill={true}
-          direction="left"
-          className="overflow-hidden py-1"
-        >
-          {trustItems.map((item, idx) => {
+    <section className="border-y border-white/[0.08] bg-[#03091e]/85 py-5 overflow-hidden relative z-20">
+      <div className="marquee-mask w-full overflow-hidden flex">
+        <div className="animate-marquee-smooth flex items-center py-1">
+          {tickerList.map((item, idx) => {
             const Icon = item.icon
             return (
               <div 
                 key={`trust-${idx}`}
-                className="flex items-center gap-3.5 flex-shrink-0 px-4 py-2.5 mx-3 sm:mx-5 rounded-2xl bg-white/[0.03] border border-white/5 backdrop-blur-sm hover:border-white/15 hover:bg-white/[0.06] transition-all duration-200 cursor-default select-none"
+                className="flex items-center gap-3.5 flex-shrink-0 px-4 py-2.5 mx-3 sm:mx-5 rounded-2xl bg-[#09122c] border border-white/[0.08] hover:border-white/20 hover:bg-[#0f1b3e] transition-colors duration-200 cursor-default select-none shadow-sm"
               >
                 <div className={`w-10 h-10 rounded-xl border flex items-center justify-center flex-shrink-0 ${item.bg} ${item.color}`}>
                   <Icon className="w-5 h-5" />
@@ -77,7 +72,7 @@ export function TrustTicker() {
               </div>
             )
           })}
-        </Marquee>
+        </div>
       </div>
     </section>
   )
