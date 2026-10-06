@@ -1,11 +1,9 @@
-'use client';
-
 import React from 'react';
 import Link from 'next/link';
 
 export function Footer() {
   return (
-    <footer className="border-t border-white/[0.08] bg-[#020716] py-16 relative z-10 font-sans">
+    <footer id="about" className="border-t border-white/[0.08] bg-[#020716] py-16 relative z-10 font-sans">
       <div className="max-w-[1400px] mx-auto px-6 md:px-12">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-10 pb-12 border-b border-white/[0.06]">
           
@@ -13,11 +11,12 @@ export function Footer() {
           <div className="md:col-span-2 space-y-4">
             <Link href="/" className="inline-block">
               <img 
-                src="/Assets/logo-full.png" 
+                src="/Assets/logo-full-320.webp" 
                 alt="FINUSA Finance Nusantara" 
                 width={160}
                 height={40}
                 loading="lazy"
+                decoding="async"
                 className="h-10 w-auto object-contain brightness-110" 
               />
             </Link>

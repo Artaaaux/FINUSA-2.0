@@ -1,8 +1,8 @@
 'use client'
 
 import React from 'react'
-import { motion } from 'framer-motion'
 import { Store, Calendar, ShoppingBag, Check, Sparkles, Tag, Clock } from 'lucide-react'
+import { cn } from '@/shared/lib/utils'
 
 interface AIScanOverlayProps {
   isDetected: boolean
@@ -15,15 +15,12 @@ export function AIScanOverlay({ isDetected, isCompleted }: AIScanOverlayProps) {
       {/* Left Floating Detected Entities (Positioned offset outward to avoid covering receipt prices) */}
       <div className="hidden sm:flex flex-col gap-3 absolute -left-5 lg:-left-7 top-14 z-20 pointer-events-none">
         {/* Item 1: Store */}
-        <motion.div
-          initial={{ opacity: 0, x: -16, scale: 0.95 }}
-          animate={
-            isDetected
-              ? { opacity: 1, x: 0, scale: 1 }
-              : { opacity: 0, x: -16, scale: 0.95 }
-          }
-          transition={{ duration: 0.35, delay: 0.05 }}
-          className="glass-card-sm-scan py-2.5 px-3.5 rounded-2xl flex items-center gap-3 shadow-xl pointer-events-auto hover:translate-x-1 transition-transform"
+        <div
+          style={{ transitionDelay: '50ms' }}
+          className={cn(
+            'glass-card-sm-scan py-2.5 px-3.5 rounded-2xl flex items-center gap-3 shadow-xl pointer-events-auto hover:translate-x-1 transition-[opacity,transform] duration-350',
+            isDetected ? 'opacity-100 translate-x-0 scale-100' : 'opacity-0 -translate-x-4 scale-95'
+          )}
         >
           <div className="w-8 h-8 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0">
             <Store className="w-4 h-4" />
@@ -35,18 +32,15 @@ export function AIScanOverlay({ isDetected, isCompleted }: AIScanOverlayProps) {
           <div className="w-5 h-5 rounded-full bg-cyan-500/30 text-cyan-300 flex items-center justify-center shrink-0">
             <Check className="w-3 h-3 stroke-[3]" />
           </div>
-        </motion.div>
+        </div>
 
         {/* Item 2: Date */}
-        <motion.div
-          initial={{ opacity: 0, x: -16, scale: 0.95 }}
-          animate={
-            isDetected
-              ? { opacity: 1, x: 0, scale: 1 }
-              : { opacity: 0, x: -16, scale: 0.95 }
-          }
-          transition={{ duration: 0.35, delay: 0.15 }}
-          className="glass-card-sm-scan py-2.5 px-3.5 rounded-2xl flex items-center gap-3 shadow-xl pointer-events-auto hover:translate-x-1 transition-transform"
+        <div
+          style={{ transitionDelay: '150ms' }}
+          className={cn(
+            'glass-card-sm-scan py-2.5 px-3.5 rounded-2xl flex items-center gap-3 shadow-xl pointer-events-auto hover:translate-x-1 transition-[opacity,transform] duration-350',
+            isDetected ? 'opacity-100 translate-x-0 scale-100' : 'opacity-0 -translate-x-4 scale-95'
+          )}
         >
           <div className="w-8 h-8 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0">
             <Calendar className="w-4 h-4" />
@@ -58,18 +52,15 @@ export function AIScanOverlay({ isDetected, isCompleted }: AIScanOverlayProps) {
           <div className="w-5 h-5 rounded-full bg-cyan-500/30 text-cyan-300 flex items-center justify-center shrink-0">
             <Check className="w-3 h-3 stroke-[3]" />
           </div>
-        </motion.div>
+        </div>
 
         {/* Item 3: Total Items */}
-        <motion.div
-          initial={{ opacity: 0, x: -16, scale: 0.95 }}
-          animate={
-            isDetected
-              ? { opacity: 1, x: 0, scale: 1 }
-              : { opacity: 0, x: -16, scale: 0.95 }
-          }
-          transition={{ duration: 0.35, delay: 0.25 }}
-          className="glass-card-sm-scan py-2.5 px-3.5 rounded-2xl flex items-center gap-3 shadow-xl pointer-events-auto hover:translate-x-1 transition-transform"
+        <div
+          style={{ transitionDelay: '250ms' }}
+          className={cn(
+            'glass-card-sm-scan py-2.5 px-3.5 rounded-2xl flex items-center gap-3 shadow-xl pointer-events-auto hover:translate-x-1 transition-[opacity,transform] duration-350',
+            isDetected ? 'opacity-100 translate-x-0 scale-100' : 'opacity-0 -translate-x-4 scale-95'
+          )}
         >
           <div className="w-8 h-8 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0">
             <ShoppingBag className="w-4 h-4" />
@@ -81,19 +72,16 @@ export function AIScanOverlay({ isDetected, isCompleted }: AIScanOverlayProps) {
           <div className="w-5 h-5 rounded-full bg-cyan-500/30 text-cyan-300 flex items-center justify-center shrink-0">
             <Check className="w-3 h-3 stroke-[3]" />
           </div>
-        </motion.div>
+        </div>
       </div>
 
-      {/* Right Floating Extracted Detail Card: Compact (w-[210px]), shifted outward so receipt details are clear */}
-      <motion.div
-        initial={{ opacity: 0, x: 16, scale: 0.95 }}
-        animate={
-          isDetected
-            ? { opacity: 1, x: 0, scale: 1 }
-            : { opacity: 0, x: 16, scale: 0.95 }
-        }
-        transition={{ duration: 0.4, delay: 0.2 }}
-        className="hidden sm:block absolute -right-4 lg:-right-8 top-14 z-20 w-[210px] pointer-events-none"
+      {/* Right Floating Extracted Detail Card */}
+      <div
+        style={{ transitionDelay: '200ms' }}
+        className={cn(
+          'hidden sm:block absolute -right-4 lg:-right-8 top-14 z-20 w-[210px] pointer-events-none transition-[opacity,transform] duration-400',
+          isDetected ? 'opacity-100 translate-x-0 scale-100' : 'opacity-0 translate-x-4 scale-95'
+        )}
       >
         <div className="glass-card-sm-scan p-3.5 rounded-2xl pointer-events-auto">
           {/* AI Processing / Verified Badge */}
@@ -142,20 +130,16 @@ export function AIScanOverlay({ isDetected, isCompleted }: AIScanOverlayProps) {
             </div>
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Bottom Confirmation Status Banner */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={
-          isCompleted
-            ? { opacity: 1, y: 0 }
-            : { opacity: 0, y: 12 }
-        }
-        transition={{ duration: 0.4 }}
-        className="mt-4 pt-2 relative z-20"
+      <div
+        className={cn(
+          'mt-4 pt-2 relative z-20 transition-[opacity,transform] duration-400',
+          isCompleted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'
+        )}
       >
-        <div className="glass-card-sm-scan py-3 px-4 rounded-2xl flex items-center gap-3.5 shadow-lg border border-cyan-400/30">
+        <div className="glass-card-sm-scan--flat py-3 px-4 rounded-2xl flex items-center gap-3.5 shadow-lg border border-cyan-400/30">
           <div className="w-9 h-9 rounded-xl bg-cyan-500/20 text-cyan-300 flex items-center justify-center shrink-0 shadow-lg shadow-cyan-500/20">
             <Check className="w-5 h-5 stroke-[2.5]" />
           </div>
@@ -168,7 +152,9 @@ export function AIScanOverlay({ isDetected, isCompleted }: AIScanOverlayProps) {
             </p>
           </div>
         </div>
-      </motion.div>
+      </div>
     </>
   )
 }
+
+export default AIScanOverlay

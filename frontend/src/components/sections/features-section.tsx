@@ -1,9 +1,7 @@
-'use client'
-
 import React from 'react'
-import { motion } from 'framer-motion'
 import { ScanLine, BarChart3, PiggyBank, Sparkles, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
+import { Reveal } from '@/components/ui/reveal'
 
 const coreFeatures = [
   {
@@ -75,13 +73,12 @@ export function FeaturesSection() {
           {coreFeatures.map((feature, idx) => {
             const Icon = feature.icon
             return (
-              <motion.div
+              <Reveal
                 key={feature.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-                className={`group relative rounded-2xl p-6 bg-[#0a1835]/80 hover:bg-[#0d1e42] border border-white/[0.08] ${feature.hoverBorder} transition-all duration-300 shadow-glass-card hover:-translate-y-1.5 flex flex-col justify-between`}
+                from="up"
+                delay={idx * 100}
+                margin="-80px"
+                className={`group relative rounded-2xl p-6 bg-[#0a1835]/80 hover:bg-[#0d1e42] border border-white/[0.08] ${feature.hoverBorder} transition-[transform,background-color,border-color] duration-300 shadow-glass-card hover:-translate-y-1.5 flex flex-col justify-between`}
               >
                 <div>
                   <div className="flex items-center justify-between mb-5">
@@ -111,7 +108,7 @@ export function FeaturesSection() {
                     <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </div>
-              </motion.div>
+              </Reveal>
             )
           })}
         </div>

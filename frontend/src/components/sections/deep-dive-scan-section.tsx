@@ -1,77 +1,72 @@
 'use client'
 
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { motion } from 'framer-motion'
-import { 
-  Camera, 
-  Sparkles, 
-  ArrowRight, 
-  Check
-} from 'lucide-react'
+import { Camera, Sparkles, ArrowRight, Check } from 'lucide-react'
 import Link from 'next/link'
 import { SectionBadge } from '@/components/ui/section-badge'
 import { AIScanReceipt } from './ai-scan/ai-scan-receipt'
 import { AIScanOverlay } from './ai-scan/ai-scan-overlay'
+import { Reveal } from '@/components/ui/reveal'
 
 export function DeepDiveAIScanSection() {
   const containerRef = useRef<HTMLDivElement>(null)
+  const hasStartedRef = useRef(false)
+  const timeoutsRef = useRef<NodeJS.Timeout[]>([])
 
-  const [hasStarted, setHasStarted] = useState(false)
-  const [scanProgress, setScanProgress] = useState(0)
   const [isScanning, setIsScanning] = useState(false)
   const [isDetected, setIsDetected] = useState(false)
   const [isCompleted, setIsCompleted] = useState(false)
+  const [item1Active, setItem1Active] = useState(false)
+  const [item2Active, setItem2Active] = useState(false)
+  const [item3Active, setItem3Active] = useState(false)
 
   const startScanSequence = useCallback(() => {
-    setHasStarted(true)
+    if (hasStartedRef.current) return
+    hasStartedRef.current = true
 
     // Check prefers-reduced-motion
     if (typeof window !== 'undefined') {
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
       if (prefersReducedMotion) {
-        setScanProgress(1)
         setIsScanning(false)
         setIsDetected(true)
         setIsCompleted(true)
+        setItem1Active(false)
+        setItem2Active(false)
+        setItem3Active(true)
         return
       }
     }
 
     setIsScanning(true)
-    const startTime = performance.now()
-    const duration = 2000 // 2 seconds scan pass
 
-    const animateScan = (now: number) => {
-      const elapsed = now - startTime
-      const progress = Math.min(elapsed / duration, 1)
-      setScanProgress(progress)
-
-      // Detection entities pop in as laser passes items
-      if (progress >= 0.35) {
-        setIsDetected(true)
-      }
-
-      if (progress < 1) {
-        requestAnimationFrame(animateScan)
-      } else {
-        // Final state reached
+    // Schedule milestone state updates (5 clean renders instead of 120 per-frame renders)
+    const timers = [
+      setTimeout(() => setItem1Active(true), 500),
+      setTimeout(() => setIsDetected(true), 700),
+      setTimeout(() => setItem2Active(true), 900),
+      setTimeout(() => setItem3Active(true), 1300),
+      setTimeout(() => setItem1Active(false), 1700),
+      setTimeout(() => setItem2Active(false), 1900),
+      setTimeout(() => {
         setIsScanning(false)
         setIsCompleted(true)
-      }
-    }
+      }, 2000),
+    ]
 
-    requestAnimationFrame(animateScan)
+    timeoutsRef.current = timers
   }, [])
 
   useEffect(() => {
     const el = containerRef.current
-    if (!el || hasStarted) return
+    if (!el || hasStartedRef.current) return
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             startScanSequence()
+            observer.disconnect()
           }
         })
       },
@@ -80,14 +75,17 @@ export function DeepDiveAIScanSection() {
 
     observer.observe(el)
 
-    // Immediate check if element is already within viewport
     const rect = el.getBoundingClientRect()
     if (rect.top < window.innerHeight && rect.bottom > 0) {
       startScanSequence()
+      observer.disconnect()
     }
 
-    return () => observer.disconnect()
-  }, [hasStarted, startScanSequence])
+    return () => {
+      observer.disconnect()
+      timeoutsRef.current.forEach(clearTimeout)
+    }
+  }, [startScanSequence])
 
   const benefitList = [
     {
@@ -107,29 +105,37 @@ export function DeepDiveAIScanSection() {
   return (
     <section 
       ref={containerRef}
+      id="ai-scan"
+      data-anim-region
       aria-label="Finusa AI Receipt Scanner"
       className="py-16 sm:py-24 lg:py-28 relative overflow-hidden section-deferred" 
-      id="ai-scan"
     >
-      {/* Ambient Radial Lighting Effects */}
+      {/* Ambient Radial Lighting Effects (Hardware-Accelerated) */}
       <div 
         aria-hidden="true"
-        className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] bg-blue-600/15 rounded-full blur-[140px] pointer-events-none" 
+        className="absolute top-1/4 left-1/4 pointer-events-none w-[650px] h-[650px]"
+        style={{
+          background: 'radial-gradient(circle at center, rgba(37, 99, 235, 0.18) 0%, rgba(37, 99, 235, 0.06) 45%, transparent 70%)',
+          transform: 'translate3d(-50%, -50%, 0)',
+        }}
       />
       <div 
         aria-hidden="true"
-        className="absolute bottom-10 right-1/4 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none" 
+        className="absolute bottom-10 right-1/4 pointer-events-none w-[500px] h-[500px]"
+        style={{
+          background: 'radial-gradient(circle at center, rgba(6, 182, 212, 0.14) 0%, rgba(6, 182, 212, 0.04) 45%, transparent 70%)',
+          transform: 'translateZ(0)',
+        }}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           
           {/* LEFT: Visual Presentation of Finusa AI OCR Receipt Scanner */}
-          <motion.div 
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-60px' }}
-            transition={{ duration: 0.6 }}
+          <Reveal 
+            from="left"
+            margin="-60px"
+            duration={600}
             className="lg:col-span-7 relative flex justify-center items-center"
           >
             {/* Outer Scanning Enclosure with Glassmorphic Frame */}
@@ -144,7 +150,7 @@ export function DeepDiveAIScanSection() {
                 </div>
 
                 {/* Right: Status Pill */}
-                <div className="glass-card-sm-scan flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium">
+                <div className="glass-card-sm-scan--flat flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium">
                   {isCompleted ? (
                     <>
                       <span className="w-2 h-2 rounded-full bg-emerald-400" />
@@ -166,25 +172,27 @@ export function DeepDiveAIScanSection() {
 
               {/* Receipt & Scanning Stage */}
               <AIScanReceipt 
-                scanProgress={scanProgress} 
                 isScanning={isScanning} 
+                item1Active={item1Active}
+                item2Active={item2Active}
+                item3Active={item3Active}
               />
 
-              {/* Surrounding Glass Overlay Cards (Positioned relative to glass-panel-scan) */}
+              {/* Surrounding Glass Overlay Cards */}
               <AIScanOverlay 
                 isDetected={isDetected} 
                 isCompleted={isCompleted} 
               />
 
             </div>
-          </motion.div>
+          </Reveal>
 
           {/* RIGHT: Finusa Copywriting and Action Triggers */}
-          <motion.div 
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-60px' }}
-            transition={{ duration: 0.6, delay: 0.15 }}
+          <Reveal 
+            from="right"
+            margin="-60px"
+            duration={600}
+            delay={150}
             className="lg:col-span-5 text-left"
           >
             {/* Category Pill */}
@@ -240,7 +248,7 @@ export function DeepDiveAIScanSection() {
               </Link>
             </div>
 
-            {/* Trust Badges & Verified Note (No Fabricated Metrics) */}
+            {/* Trust Badges & Verified Note */}
             <div className="mt-8 pt-6 border-t border-slate-800/80 flex flex-wrap items-center gap-3 sm:gap-6 text-xs text-slate-400">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
@@ -250,7 +258,7 @@ export function DeepDiveAIScanSection() {
               </div>
             </div>
 
-          </motion.div>
+          </Reveal>
 
         </div>
       </div>

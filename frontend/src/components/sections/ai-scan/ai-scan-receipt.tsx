@@ -5,14 +5,18 @@ import { Store } from 'lucide-react'
 import { cn } from '@/shared/lib/utils'
 
 interface AIScanReceiptProps {
-  scanProgress: number // 0 to 1
   isScanning: boolean
+  item1Active: boolean
+  item2Active: boolean
+  item3Active: boolean
   className?: string
 }
 
 export function AIScanReceipt({
-  scanProgress,
   isScanning,
+  item1Active,
+  item2Active,
+  item3Active,
   className,
 }: AIScanReceiptProps) {
   // Barcode pattern
@@ -20,14 +24,10 @@ export function AIScanReceipt({
 
   return (
     <div className={cn('relative flex justify-center py-2 sm:py-3 select-none', className)}>
-      {/* Scanning Laser Beam: Thinner (1.5px), refined glow */}
+      {/* Scanning Laser Beam (Composited GPU Transform - 0 Layout Cost) */}
       {isScanning && (
         <div
-          className="absolute left-2 right-2 sm:left-4 sm:right-4 z-30 pointer-events-none flex items-center justify-center transition-all duration-75"
-          style={{
-            top: `${Math.min(Math.max(scanProgress * 92 + 4, 4), 96)}%`,
-            opacity: scanProgress > 0 && scanProgress < 1 ? 1 : 0,
-          }}
+          className="absolute left-2 right-2 sm:left-4 sm:right-4 top-4 z-30 pointer-events-none flex items-center justify-center animate-receipt-laser-sweep"
         >
           <div className="w-full h-[1.5px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-90 shadow-[0_0_8px_rgba(34,211,238,0.7)]" />
           <div className="absolute w-14 h-1.5 bg-cyan-300/25 blur-[2px] rounded-full pointer-events-none" />
@@ -65,7 +65,7 @@ export function AIScanReceipt({
             <div
               className={cn(
                 'flex justify-between items-baseline font-medium text-slate-700 transition-colors duration-300 rounded px-1 -mx-1',
-                scanProgress > 0.25 && scanProgress < 0.85 && 'bg-cyan-50/70 text-slate-950'
+                item1Active && 'bg-cyan-50/70 text-slate-950 font-semibold'
               )}
             >
               <span>Susu Almond 1L</span>
@@ -74,7 +74,7 @@ export function AIScanReceipt({
             <div
               className={cn(
                 'flex justify-between items-baseline font-medium text-slate-700 transition-colors duration-300 rounded px-1 -mx-1',
-                scanProgress > 0.45 && scanProgress < 0.95 && 'bg-cyan-50/70 text-slate-950'
+                item2Active && 'bg-cyan-50/70 text-slate-950 font-semibold'
               )}
             >
               <span>Oatmeal Instant 800g</span>
@@ -83,7 +83,7 @@ export function AIScanReceipt({
             <div
               className={cn(
                 'flex justify-between items-baseline font-medium text-slate-700 transition-colors duration-300 rounded px-1 -mx-1',
-                scanProgress > 0.65 && 'bg-cyan-50/70 text-slate-950'
+                item3Active && 'bg-cyan-50/70 text-slate-950 font-semibold'
               )}
             >
               <span>Roti Gandum Utuh</span>
@@ -143,3 +143,5 @@ export function AIScanReceipt({
     </div>
   )
 }
+
+export default AIScanReceipt

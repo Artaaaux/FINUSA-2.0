@@ -1,20 +1,18 @@
-'use client'
-
 import React from 'react'
-import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
+import { Reveal } from '@/components/ui/reveal'
 
 export function CtaSection() {
   return (
     <section className="py-24 lg:py-32 relative overflow-hidden section-deferred">
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 relative z-10">
         
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.7 }}
+        <Reveal 
+          from="up"
+          distance={30}
+          duration={700}
+          margin="-100px"
           className="max-w-5xl mx-auto relative rounded-3xl bg-gradient-to-b from-[#0d2252] to-[#081534] border border-blue-400/30 p-8 sm:p-14 lg:p-16 text-center shadow-glass-float overflow-hidden"
         >
           {/* Decorative Glows (GPU Accelerated Radial) */}
@@ -61,7 +59,7 @@ export function CtaSection() {
           <p className="text-xs sm:text-sm text-cyan-300/80 mt-6 relative z-10 font-medium">
             ✓ 100% Gratis Selamanya • Setup &lt; 1 Menit
           </p>
-        </motion.div>
+        </Reveal>
 
       </div>
     </section>

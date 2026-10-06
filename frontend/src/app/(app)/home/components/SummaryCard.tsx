@@ -1,8 +1,16 @@
 "use client";
 
 import React from "react";
+import { Share_Tech_Mono } from "next/font/google";
 import { cn } from "@/shared/lib/utils";
 import { Wifi } from "lucide-react";
+
+const shareTechMono = Share_Tech_Mono({
+  weight: "400",
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-share-tech-mono",
+});
 
 interface SummaryCardProps {
   title: string;
@@ -81,6 +89,7 @@ export function SummaryCard({
         config.bgGradient,
         config.border,
         config.shadow,
+        shareTechMono.variable,
         className
       )}
     >

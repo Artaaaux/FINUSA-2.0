@@ -1,11 +1,9 @@
-'use client'
-
 import React from 'react'
-import { motion } from 'framer-motion'
 import { Target, ArrowRight, Laptop, Luggage, Check } from 'lucide-react'
 import Link from 'next/link'
 import { SectionBadge } from '@/components/ui/section-badge'
 import { FinancialGoalCard, FinancialGoal } from './financial-goals/financial-goal-card'
+import { Reveal } from '@/components/ui/reveal'
 
 const financialGoalsData: FinancialGoal[] = [
   {
@@ -45,25 +43,32 @@ export function SavingsGoalsSection() {
       className="py-16 lg:py-24 relative overflow-hidden section-deferred" 
       id="tujuan"
     >
-      {/* Ambient background blurred spheres */}
+      {/* Ambient background gradients (Hardware-Accelerated Radial) */}
       <div 
         aria-hidden="true" 
-        className="absolute -top-32 right-10 w-96 h-96 bg-gradient-to-r from-cyan-400/25 to-sky-400/20 rounded-full blur-[130px] pointer-events-none" 
+        className="absolute -top-32 right-10 w-96 h-96 pointer-events-none" 
+        style={{
+          background: 'radial-gradient(circle at center, rgba(34, 211, 238, 0.22) 0%, rgba(56, 189, 248, 0.08) 45%, transparent 70%)',
+          transform: 'translateZ(0)',
+        }}
       />
       <div 
         aria-hidden="true" 
-        className="absolute bottom-0 right-1/4 w-[32rem] h-[32rem] bg-gradient-to-r from-sky-500/20 to-cyan-400/15 rounded-full blur-[150px] pointer-events-none" 
+        className="absolute bottom-0 right-1/4 w-[32rem] h-[32rem] pointer-events-none" 
+        style={{
+          background: 'radial-gradient(circle at center, rgba(14, 165, 233, 0.18) 0%, rgba(34, 211, 238, 0.06) 45%, transparent 70%)',
+          transform: 'translateZ(0)',
+        }}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-12 lg:gap-16 items-center">
           
           {/* Left Column: Vision & Benefits */}
-          <motion.div 
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.6 }}
+          <Reveal 
+            from="left"
+            margin="-60px"
+            duration={600}
             className="xl:col-span-5 flex flex-col items-start z-10"
           >
             {/* Feature Pill Badge */}
@@ -113,20 +118,23 @@ export function SavingsGoalsSection() {
               </span>
               <ArrowRight className="w-4 h-4 text-white stroke-[2.2] transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
-          </motion.div>
+          </Reveal>
 
           {/* Right Column: Interactive Glass Goal Cards Showcase */}
-          <motion.div 
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.6 }}
+          <Reveal 
+            from="right"
+            margin="-60px"
+            duration={600}
             className="xl:col-span-7 relative flex items-center justify-center w-full"
           >
             {/* Ambient Card Glow Backdrop */}
             <div 
               aria-hidden="true" 
-              className="absolute -inset-6 bg-gradient-to-r from-sky-500/15 via-cyan-400/20 to-teal-400/15 rounded-3xl blur-2xl pointer-events-none -z-10" 
+              className="absolute -inset-6 rounded-3xl pointer-events-none -z-10" 
+              style={{
+                background: 'radial-gradient(ellipse at center, rgba(34, 211, 238, 0.15) 0%, rgba(20, 184, 166, 0.08) 50%, transparent 70%)',
+                transform: 'translateZ(0)',
+              }}
             />
 
             {/* Connecting Milestone Line between Cards (Desktop) */}
@@ -145,7 +153,7 @@ export function SavingsGoalsSection() {
               ))}
             </div>
 
-          </motion.div>
+          </Reveal>
 
         </div>
       </div>

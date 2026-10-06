@@ -1,10 +1,8 @@
-'use client'
-
 import React from 'react'
-import { motion } from 'framer-motion'
 import { Camera, Cpu, LayoutGrid, Sparkles } from 'lucide-react'
 import { SectionBadge } from '@/components/ui/section-badge'
 import { StepCard, StepItem } from './steps/step-card'
+import { Reveal } from '@/components/ui/reveal'
 
 const stepsData: StepItem[] = [
   {
@@ -34,24 +32,31 @@ export function HowToUseSection() {
       className="py-16 sm:py-24 lg:py-28 relative section-deferred overflow-hidden" 
       id="cara-kerja"
     >
-      {/* Atmospheric Ambient Lighting Backdrop */}
+      {/* Atmospheric Ambient Lighting Backdrop (Hardware-Accelerated Radial Gradient) */}
       <div 
         aria-hidden="true" 
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] md:w-[1000px] h-[350px] rounded-full bg-cyan-400/10 blur-[140px] pointer-events-none -z-10" 
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] md:w-[1000px] h-[350px] pointer-events-none -z-10" 
+        style={{
+          background: 'radial-gradient(ellipse at center, rgba(34, 211, 238, 0.12) 0%, rgba(34, 211, 238, 0.05) 45%, transparent 72%)',
+          transform: 'translate3d(-50%, -50%, 0)',
+        }}
       />
       <div 
         aria-hidden="true" 
-        className="absolute top-10 -left-20 w-[500px] h-[450px] rounded-full bg-blue-600/15 blur-[150px] pointer-events-none -z-10" 
+        className="absolute top-10 -left-20 w-[500px] h-[450px] pointer-events-none -z-10" 
+        style={{
+          background: 'radial-gradient(circle at center, rgba(37, 99, 235, 0.16) 0%, rgba(37, 99, 235, 0.06) 45%, transparent 72%)',
+          transform: 'translateZ(0)',
+        }}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col items-center">
         
         {/* Section Header */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.5 }}
+        <Reveal 
+          from="up"
+          margin="-60px"
+          duration={500}
           className="text-center max-w-3xl mx-auto mb-14 md:mb-18 flex flex-col items-center"
         >
           {/* Category Badge */}
@@ -76,7 +81,7 @@ export function HowToUseSection() {
           <p className="text-slate-300/80 sm:text-slate-400 text-sm sm:text-base md:text-lg max-w-xl mx-auto leading-relaxed font-normal">
             Tanpa setup yang rumit, siapa pun bisa langsung mulai mengatur keuangan hari ini.
           </p>
-        </motion.div>
+        </Reveal>
 
         {/* Steps Flow Section */}
         <div className="relative w-full max-w-6xl mx-auto">

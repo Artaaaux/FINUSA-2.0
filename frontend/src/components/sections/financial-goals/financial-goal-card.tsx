@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef } from 'react'
+import React, { useRef, useEffect } from 'react'
 import { Calendar, Target as TargetIcon } from 'lucide-react'
 import { ProgressBar } from '@/components/ui/progress-bar'
 import { cn } from '@/shared/lib/utils'
@@ -24,15 +24,28 @@ interface FinancialGoalCardProps {
 
 export function FinancialGoalCard({ goal, className }: FinancialGoalCardProps) {
   const cardRef = useRef<HTMLDivElement>(null)
+  const frameRef = useRef<number>(0)
+  const lastMousePos = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return
-    const rect = cardRef.current.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
-    cardRef.current.style.setProperty('--mouse-x', `${x}px`)
-    cardRef.current.style.setProperty('--mouse-y', `${y}px`)
+    lastMousePos.current = { x: e.clientX, y: e.clientY }
+    if (frameRef.current) return
+
+    frameRef.current = requestAnimationFrame(() => {
+      frameRef.current = 0
+      const el = cardRef.current
+      if (!el) return
+      const rect = el.getBoundingClientRect()
+      el.style.setProperty('--mouse-x', `${lastMousePos.current.x - rect.left}px`)
+      el.style.setProperty('--mouse-y', `${lastMousePos.current.y - rect.top}px`)
+    })
   }
+
+  useEffect(() => {
+    return () => {
+      if (frameRef.current) cancelAnimationFrame(frameRef.current)
+    }
+  }, [])
 
   const isTeal = goal.variant === 'teal'
 
@@ -41,7 +54,7 @@ export function FinancialGoalCard({ goal, className }: FinancialGoalCardProps) {
       ref={cardRef}
       onMouseMove={handleMouseMove}
       className={cn(
-        'glass-card-goals relative rounded-3xl p-6 sm:p-7 shadow-glass-card transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between group',
+        'glass-card-goals relative rounded-3xl p-6 sm:p-7 shadow-glass-card transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 flex flex-col justify-between group',
         isTeal
           ? 'border-teal-400/25 hover:border-teal-400/50 hover:shadow-[0_25px_50px_-12px_rgba(20,184,166,0.18)]'
           : 'border-sky-400/25 hover:border-sky-400/50 hover:shadow-[0_25px_50px_-12px_rgba(56,189,248,0.18)]',
@@ -133,3 +146,5 @@ export function FinancialGoalCard({ goal, className }: FinancialGoalCardProps) {
     </article>
   )
 }
+
+export default FinancialGoalCard

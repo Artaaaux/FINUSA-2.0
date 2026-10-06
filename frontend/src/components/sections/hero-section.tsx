@@ -1,7 +1,4 @@
-'use client'
-
 import React from 'react'
-import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { 
   ArrowRight, 
@@ -20,11 +17,13 @@ import {
   Hand,
   Laptop
 } from 'lucide-react'
+import { ScrollToButton } from '@/components/ui/scroll-to-button'
 
 export function HeroSection() {
   return (
     <section 
       id="beranda" 
+      data-anim-region
       className="relative pt-28 pb-20 lg:pt-36 lg:pb-32 overflow-hidden"
     >
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 relative z-10">
@@ -34,11 +33,8 @@ export function HeroSection() {
           <div className="lg:col-span-6 space-y-8 text-center lg:text-left z-20">
             
             {/* AI Pill Announcement Badge */}
-            <motion.div 
-              initial={{ opacity: 0, y: -15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-blue-950/60 border border-cyan-500/30 text-xs sm:text-sm text-cyan-300 backdrop-blur-md shadow-[0_0_15px_rgba(0,210,255,0.15)]"
+            <div 
+              className="hero-enter-down inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-blue-950/60 border border-cyan-500/30 text-xs sm:text-sm text-cyan-300 backdrop-blur-md shadow-[0_0_15px_rgba(0,210,255,0.15)]"
             >
               <span className="flex h-2 w-2 relative">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
@@ -50,38 +46,32 @@ export function HeroSection() {
               <span className="text-slate-400 hidden sm:inline">|</span>
               <span className="text-slate-300 truncate">Scan struk, catat pengeluaran otomatis</span>
               <ArrowRight className="w-3.5 h-3.5 text-cyan-400 ml-0.5 shrink-0" />
-            </motion.div>
+            </div>
 
-            {/* Main Heading */}
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.12] font-sans"
+            {/* Main Heading - Pure Server-Rendered for Immediate LCP */}
+            <h1 
+              style={{ ['--hero-delay' as string]: '100ms' }}
+              className="hero-enter-up text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.12] font-sans"
             >
               Kelola Keuanganmu <br className="hidden sm:inline" />
               <span className="text-cyan-300">
                 Lebih Mudah, Cerdas,
               </span>
               <br />dan Teratur
-            </motion.h1>
+            </h1>
 
             {/* Subheading description */}
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-base sm:text-lg text-slate-300/90 max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal"
+            <p 
+              style={{ ['--hero-delay' as string]: '200ms' }}
+              className="hero-enter-up text-base sm:text-lg text-slate-300/90 max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal"
             >
               Finusa hadir untuk membantumu mengatur pemasukan, pengeluaran, menabung, dan mencapai tujuan finansial — dengan bantuan AI yang siap bekerja untukmu.
-            </motion.p>
+            </p>
 
             {/* Call to Actions */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2"
+            <div 
+              style={{ ['--hero-delay' as string]: '300ms' }}
+              className="hero-enter-up flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2"
             >
               <Link 
                 href="/auth/signup"
@@ -91,28 +81,24 @@ export function HeroSection() {
                 <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
               </Link>
               
-              <button 
-                onClick={() => {
-                  document.getElementById('fitur')?.scrollIntoView({ behavior: 'smooth' })
-                }}
-                className="w-full sm:w-auto inline-flex items-center justify-center px-7 py-4 rounded-xl text-base font-medium text-slate-200 bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 hover:border-white/20 transition backdrop-blur-sm"
+              <ScrollToButton 
+                targetId="fitur"
+                className="w-full sm:w-auto inline-flex items-center justify-center px-7 py-4 rounded-xl text-base font-medium text-slate-200 bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 hover:border-white/20 transition backdrop-blur-sm cursor-pointer"
               >
                 <span>Lihat Fitur</span>
-              </button>
-            </motion.div>
+              </ScrollToButton>
+            </div>
 
             {/* Guarantee Note */}
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              className="flex items-center justify-center lg:justify-start gap-2 text-xs sm:text-sm text-cyan-300/80 font-medium"
+            <div 
+              style={{ ['--hero-delay' as string]: '400ms' }}
+              className="hero-enter-fade flex items-center justify-center lg:justify-start gap-2 text-xs sm:text-sm text-cyan-300/80 font-medium"
             >
               <div className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[10px]">
                 ✓
               </div>
               <span>100% Gratis Selamanya.</span>
-            </motion.div>
+            </div>
 
           </div>
 
@@ -137,14 +123,9 @@ export function HeroSection() {
             />
 
             {/* Main Desktop Mockup Frame (Layer 1 - Floating Background Plane) */}
-            <motion.div 
-              initial={{ opacity: 0, y: 25 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
-              className="relative mx-auto max-w-xl lg:max-w-none"
-            >
+            <div className="hero-enter-mockup relative mx-auto max-w-xl lg:max-w-none">
               <div className="animate-float-dashboard gpu-layer">
-                <div className="rounded-2xl bg-navy-900/90 border border-white/15 p-3.5 shadow-glass-card backdrop-blur-2xl transition-all duration-500 hover:border-blue-500/40">
+                <div className="rounded-2xl bg-[#041133]/95 border border-white/15 p-3.5 shadow-glass-card transition-colors duration-300 hover:border-blue-500/40">
                   
                   {/* Window Bar */}
                   <div className="flex items-center justify-between pb-3 border-b border-white/[0.07] px-2">
@@ -176,19 +157,19 @@ export function HeroSection() {
                         <Home className="w-3.5 h-3.5" />
                         <span>Beranda</span>
                       </div>
-                      <div className="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 text-xs font-medium flex items-center gap-2 transition">
+                      <div className="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 text-xs font-medium flex items-center gap-2 transition-colors">
                         <Receipt className="w-3.5 h-3.5" />
                         <span>Transaksi</span>
                       </div>
-                      <div className="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 text-xs font-medium flex items-center gap-2 transition">
+                      <div className="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 text-xs font-medium flex items-center gap-2 transition-colors">
                         <PiggyBank className="w-3.5 h-3.5" />
                         <span>Nabung</span>
                       </div>
-                      <div className="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 text-xs font-medium flex items-center gap-2 transition">
+                      <div className="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 text-xs font-medium flex items-center gap-2 transition-colors">
                         <BarChart3 className="w-3.5 h-3.5" />
                         <span>Laporan</span>
                       </div>
-                      <div className="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 text-xs font-medium flex items-center gap-2 transition">
+                      <div className="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 text-xs font-medium flex items-center gap-2 transition-colors">
                         <Settings className="w-3.5 h-3.5" />
                         <span>Pengaturan</span>
                       </div>
@@ -325,11 +306,11 @@ export function HeroSection() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
 
             {/* Layer 2: Floating AI Scan Struk Feature Showcase (Foreground Left Float) */}
             <div className="absolute -bottom-8 -left-2 sm:-left-8 z-30 animate-float-card-left gpu-layer pointer-events-auto">
-              <div className="w-[280px] sm:w-80 rounded-2xl bg-[#0d1f44]/95 border border-cyan-400/40 p-3.5 shadow-glass-float backdrop-blur-xl transition-all duration-300 hover:border-cyan-400/70 hover:shadow-[0_20px_50px_rgba(0,210,255,0.3)]">
+              <div className="w-[280px] sm:w-80 rounded-2xl bg-[#081533]/98 border border-cyan-400/40 p-3.5 shadow-glass-float transition-all duration-300 hover:border-cyan-400/70 hover:shadow-[0_20px_50px_rgba(0,210,255,0.3)]">
                 <div className="flex items-center justify-between pb-2 border-b border-white/10">
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded-lg bg-cyan-500/20 text-cyan-300 flex items-center justify-center text-xs">

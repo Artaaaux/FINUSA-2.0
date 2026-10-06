@@ -1,5 +1,3 @@
-'use client'
-
 import React from 'react'
 import { ShieldCheck, Zap, Sparkles, ScanLine, Smartphone, Lock } from 'lucide-react'
 
@@ -53,6 +51,7 @@ const tickerList = [...trustItems, ...trustItems, ...trustItems, ...trustItems]
 export function TrustTicker() {
   return (
     <section 
+      data-anim-region
       className="border-y border-white/[0.08] bg-[#03091e]/85 py-5 overflow-hidden relative z-20"
       style={{ contain: 'layout paint', transform: 'translateZ(0)' }}
     >

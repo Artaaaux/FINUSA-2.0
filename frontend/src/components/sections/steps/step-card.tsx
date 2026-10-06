@@ -1,8 +1,6 @@
-'use client'
-
 import React from 'react'
-import { motion } from 'framer-motion'
 import { cn } from '@/shared/lib/utils'
+import { Reveal } from '@/components/ui/reveal'
 
 export interface StepItem {
   step: string
@@ -19,13 +17,13 @@ interface StepCardProps {
 
 export function StepCard({ item, index, className }: StepCardProps) {
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-50px' }}
-      transition={{ duration: 0.5, delay: index * 0.15 }}
+    <Reveal
+      as="article"
+      from="up"
+      delay={index * 150}
+      margin="-50px"
       className={cn(
-        'apple-glass-card rounded-[26px] p-7 sm:p-9 flex flex-col items-center text-center transition-all duration-300 hover:border-cyan-400/60 hover:-translate-y-1.5 group h-full justify-between',
+        'apple-glass-card rounded-[26px] p-7 sm:p-9 flex flex-col items-center text-center transition-[transform,border-color] duration-300 hover:border-cyan-400/60 hover:-translate-y-1.5 group h-full justify-between',
         className
       )}
     >
@@ -52,6 +50,8 @@ export function StepCard({ item, index, className }: StepCardProps) {
           {item.desc}
         </p>
       </div>
-    </motion.article>
+    </Reveal>
   )
 }
+
+export default StepCard

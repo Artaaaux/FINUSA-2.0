@@ -99,7 +99,7 @@ export function Navbar() {
   return (
     <header 
       style={{ contain: 'layout style', transform: 'translateZ(0)' }}
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
+      className={`fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,box-shadow] duration-300 ${
         isScrolled 
           ? "bg-navy-950/85 backdrop-blur-xl border-b border-white/[0.08] shadow-lg shadow-black/20" 
           : "bg-navy-950/60 backdrop-blur-md border-b border-white/[0.05]"
@@ -114,12 +114,13 @@ export function Navbar() {
           className="flex items-center gap-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-xl"
           aria-label="Finusa Beranda"
         >
-          <div className="relative w-10 h-10 flex items-center justify-center p-1 rounded-xl bg-white/[0.03] border border-white/10 group-hover:border-blue-500/40 transition-all duration-300 shadow-sm">
+          <div className="relative w-10 h-10 flex items-center justify-center p-1 rounded-xl bg-white/[0.03] border border-white/10 group-hover:border-blue-500/40 transition-colors duration-300 shadow-sm">
             <img 
-              src="/Assets/logo-mark.png" 
+              src="/Assets/logo-mark-80.webp" 
               alt="Finusa Icon" 
               width={40}
               height={40}
+              decoding="async"
               className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
             />
           </div>
@@ -203,7 +204,7 @@ export function Navbar() {
           {/* Drawer Header */}
           <div className="flex items-center justify-between border-b border-white/10 px-6 py-5">
             <div className="flex items-center gap-2.5">
-              <img src="/Assets/logo-mark.png" alt="Finusa" width={32} height={32} className="w-8 h-8 object-contain" />
+              <img src="/Assets/logo-mark-80.webp" alt="Finusa" width={32} height={32} decoding="async" className="w-8 h-8 object-contain" />
               <span className="font-bold text-lg text-white">Finusa</span>
             </div>
             <button
