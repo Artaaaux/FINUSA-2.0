@@ -41,7 +41,7 @@ export function HeroSection() {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-400"></span>
               </span>
               <span className="font-semibold tracking-wide flex items-center gap-1.5">
-                ✦ Finusa AI
+                ✦ Finusa
               </span>
               <span className="text-slate-400 hidden sm:inline">|</span>
               <span className="text-slate-300 truncate">Scan struk, catat pengeluaran otomatis</span>
