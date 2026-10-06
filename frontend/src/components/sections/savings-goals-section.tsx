@@ -84,7 +84,7 @@ export function SavingsGoalsSection() {
             <h2 className="text-3xl sm:text-4xl lg:text-[46px] font-extrabold tracking-tight leading-[1.25] mb-6 text-white">
               Ubah Keinginan<br />
               Menjadi Rencana<br />
-              <span className="inline-block mt-1 bg-gradient-to-r from-sky-400 via-cyan-300 to-cyan-200 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(56,189,248,0.35)]">
+              <span className="inline-block mt-1 pb-2.5 bg-gradient-to-r from-sky-400 via-cyan-300 to-cyan-200 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(56,189,248,0.35)]">
                 Nyata
               </span>
             </h2>

@@ -72,7 +72,7 @@ export function HowToUseSection() {
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[52px] font-extrabold text-white tracking-tight leading-[1.18] mb-4">
             Mulai Rapi Finansial dalam 3{' '}
             <br className="hidden sm:inline" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-cyan-300 drop-shadow-[0_0_20px_rgba(34,211,238,0.3)]">
+            <span className="inline-block pb-1 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-cyan-300 drop-shadow-[0_0_20px_rgba(34,211,238,0.3)]">
               Langkah
             </span>
           </h2>
