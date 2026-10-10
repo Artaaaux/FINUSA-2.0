@@ -100,9 +100,11 @@ export function Navbar() {
     <header 
       style={{ contain: 'layout style', transform: 'translateZ(0)' }}
       className={`fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,box-shadow] duration-300 ${
-        isScrolled 
-          ? "bg-navy-950/85 backdrop-blur-xl border-b border-white/[0.08] shadow-lg shadow-black/20" 
-          : "bg-navy-950/60 backdrop-blur-md border-b border-white/[0.05]"
+        isOpen
+          ? "bg-[#020817] border-b border-white/[0.08]"
+          : isScrolled 
+          ? "bg-[#020817]/90 backdrop-blur-xl border-b border-white/[0.08] shadow-lg shadow-black/20" 
+          : "bg-[#020817]/70 backdrop-blur-md border-b border-white/[0.05]"
       }`}
     >
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
@@ -184,20 +186,22 @@ export function Navbar() {
 
       {/* Mobile Slide-in Drawer */}
       <div
-        className={`fixed inset-0 z-40 md:hidden transition-visibility ${
+        className={`fixed inset-0 z-40 md:hidden ${
           isOpen ? "visible" : "invisible delay-300"
         }`}
         aria-hidden={!isOpen}
       >
+        {/* Backdrop: hanya overlay gelap ringan, tanpa blur untuk performa */}
         <div
-          className={`absolute inset-0 bg-black/70 backdrop-blur-md transition-opacity duration-300 ${
+          className={`absolute inset-0 bg-black/60 transition-opacity duration-300 ${
             isOpen ? "opacity-100" : "opacity-0"
           }`}
           onClick={() => setIsOpen(false)}
         />
 
+        {/* Drawer: solid background — tidak pakai backdrop-blur agar tidak ada resource bertumpuk */}
         <aside
-          className={`absolute right-0 top-0 flex h-full w-[300px] flex-col border-l border-white/10 bg-navy-950/95 backdrop-blur-2xl transition-transform duration-300 ease-out shadow-2xl ${
+          className={`absolute right-0 top-0 flex h-full w-[300px] flex-col border-l border-white/[0.08] bg-[#020817] transition-transform duration-300 ease-out shadow-[-24px_0_60px_rgba(0,0,0,0.8)] ${
             isOpen ? "translate-x-0" : "translate-x-full"
           }`}
         >
@@ -236,7 +240,7 @@ export function Navbar() {
           </nav>
 
           {/* Drawer Footer Actions */}
-          <div className="border-t border-white/10 p-5 space-y-3 bg-navy-900/40">
+          <div className="border-t border-white/10 p-5 space-y-3 bg-[#030f2b]">
             <Link
               href="/auth/login"
               onClick={() => setIsOpen(false)}
