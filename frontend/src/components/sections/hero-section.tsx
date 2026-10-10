@@ -310,7 +310,7 @@ export function HeroSection() {
 
             {/* Layer 2: Floating AI Scan Struk Feature Showcase (Foreground Left Float) */}
             <div className="absolute -bottom-8 -left-2 sm:-left-8 z-30 animate-float-card-left gpu-layer pointer-events-auto">
-              <div className="w-[280px] sm:w-80 rounded-2xl bg-[#081533]/98 border border-cyan-400/40 p-3.5 shadow-glass-float transition-all duration-300 hover:border-cyan-400/70 hover:shadow-[0_20px_50px_rgba(0,210,255,0.3)]">
+              <div className="w-[280px] sm:w-80 rounded-2xl bg-[#061536]/85 backdrop-blur-md border border-cyan-400/40 p-3.5 shadow-glass-float transition-all duration-300 hover:border-cyan-400/70 hover:shadow-[0_20px_50px_rgba(0,210,255,0.3)]">
                 <div className="flex items-center justify-between pb-2 border-b border-white/10">
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded-lg bg-cyan-500/20 text-cyan-300 flex items-center justify-center text-xs">
@@ -325,7 +325,7 @@ export function HeroSection() {
                 </div>
                 
                 {/* Camera Viewport with Animated Laser Line */}
-                <div className="relative mt-2.5 h-28 sm:h-32 rounded-xl bg-navy-950/80 border border-cyan-500/30 overflow-hidden flex items-center justify-center">
+                <div className="relative mt-2.5 h-28 sm:h-32 rounded-xl bg-[#020817]/75 border border-cyan-500/30 overflow-hidden flex items-center justify-center">
                   {/* Laser Scanning Line (Compositor GPU translate3d) */}
                   <div className="absolute top-[6%] left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_15px_#00d2ff,0_0_25px_rgba(0,210,255,0.5)] animate-laser-scan-hero z-20 pointer-events-none" />
                   
@@ -369,7 +369,7 @@ export function HeroSection() {
 
             {/* Layer 3: Floating Phone App Card (Foreground Right Float) */}
             <div className="hidden sm:block absolute -top-8 -right-2 lg:-right-4 z-30 animate-float-card-right gpu-layer pointer-events-auto">
-              <div className="w-52 sm:w-56 rounded-3xl bg-[#091530] border-2 border-slate-700/80 p-2.5 shadow-glass-float transition-all duration-300 hover:border-blue-500/60 hover:shadow-[0_20px_50px_rgba(37,99,235,0.4)]">
+              <div className="w-52 sm:w-56 rounded-3xl bg-[#091530]/85 backdrop-blur-md border-2 border-slate-700/80 p-2.5 shadow-glass-float transition-all duration-300 hover:border-blue-500/60 hover:shadow-[0_20px_50px_rgba(37,99,235,0.4)]">
                 {/* Phone Bezel Details */}
                 <div className="w-16 h-3 bg-navy-950 rounded-full mx-auto mb-2 flex items-center justify-center">
                   <div className="w-2.5 h-2.5 rounded-full bg-slate-800 mr-2"></div>

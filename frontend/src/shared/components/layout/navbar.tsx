@@ -199,9 +199,9 @@ export function Navbar() {
           onClick={() => setIsOpen(false)}
         />
 
-        {/* Drawer: solid background — tidak pakai backdrop-blur agar tidak ada resource bertumpuk */}
+        {/* Drawer: frosted glass dengan blur ringan & opasitas pekat agar tidak tembus pandang */}
         <aside
-          className={`absolute right-0 top-0 flex h-full w-[300px] flex-col border-l border-white/[0.08] bg-[#020817] transition-transform duration-300 ease-out shadow-[-24px_0_60px_rgba(0,0,0,0.8)] ${
+          className={`absolute right-0 top-0 flex h-full w-[300px] flex-col border-l border-white/[0.08] bg-[#020817]/90 backdrop-blur-xl transition-transform duration-300 ease-out shadow-[-24px_0_60px_rgba(0,0,0,0.8)] ${
             isOpen ? "translate-x-0" : "translate-x-full"
           }`}
         >
