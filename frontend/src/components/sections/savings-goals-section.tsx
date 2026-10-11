@@ -1,5 +1,5 @@
 import React from 'react'
-import { Target, ArrowRight, Laptop, Luggage, Check } from 'lucide-react'
+import { ArrowRight, Laptop, Luggage, Check } from 'lucide-react'
 import Link from 'next/link'
 import { SectionBadge } from '@/components/ui/section-badge'
 import { FinancialGoalCard, FinancialGoal } from './financial-goals/financial-goal-card'
@@ -74,7 +74,6 @@ export function SavingsGoalsSection() {
             {/* Feature Pill Badge */}
             <SectionBadge 
               variant="sky" 
-              icon={<Target className="w-4 h-4 text-cyan-300 stroke-[1.8] drop-shadow-[0_0_8px_rgba(56,189,248,0.6)]" />}
               className="mb-6 sm:mb-8"
             >
               Fitur Target Finansial

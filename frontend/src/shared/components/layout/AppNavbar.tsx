@@ -275,8 +275,10 @@ export default function AppNavbar({ isCollapsed }: { isCollapsed: boolean }) {
             {/* Mobile Logo Container Tile */}
             <div className="lg:hidden w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500/20 via-indigo-500/15 to-teal-500/15 border border-blue-500/30 p-1 flex items-center justify-center shadow-[0_0_12px_rgba(75,123,255,0.2)] shrink-0">
               <img
-                src="/Assets/LogoIcon.png"
+                src="/Assets/logo-mark-80.webp"
                 alt="FINUSA Logo"
+                width={20}
+                height={20}
                 className="w-5 h-5 object-contain drop-shadow-[0_1px_4px_rgba(75,123,255,0.4)]"
               />
             </div>

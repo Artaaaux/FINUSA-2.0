@@ -102,8 +102,10 @@ export function ForgotPasswordForm() {
       {/* Header */}
       <div className="flex flex-col items-center mb-8">
         <img
-          src="/Assets/Logo.png"
+          src="/Assets/logo-full-320.webp"
           alt="FINUSA Logo"
+          width={160}
+          height={40}
           className="h-10 w-auto object-contain mb-3 select-none pointer-events-none"
         />
         <h2 className="text-2xl font-bold text-white text-center">Lupa Password</h2>

@@ -87,8 +87,10 @@ export default function PageTransition({ children }: { children: React.ReactNode
                 <div className="w-8 h-8 flex items-center justify-center">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img 
-                    src="/Assets/LogoIcon.png" 
+                    src="/Assets/logo-mark-80.webp" 
                     alt="FINUSA Logo" 
+                    width={24}
+                    height={24}
                     className="w-6 h-6 object-contain drop-shadow-[0_2px_6px_rgba(0,193,255,0.4)]" 
                   />
                 </div>

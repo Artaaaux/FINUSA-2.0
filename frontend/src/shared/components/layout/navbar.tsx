@@ -12,9 +12,8 @@ interface MenuItem {
 const navItems: MenuItem[] = [
   { label: "Beranda", href: "#beranda" },
   { label: "Fitur", href: "#fitur" },
-  { label: "Cara Kerja", href: "#cara-kerja" },
+  { label: "Langkah Cerdas", href: "#langkah-cerdas" },
   { label: "Tujuan", href: "#tujuan" },
-  { label: "Tentang", href: "#about" },
 ];
 
 export function Navbar() {

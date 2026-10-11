@@ -23,12 +23,6 @@ export function Footer() {
             <p className="text-sm text-slate-400 max-w-sm leading-relaxed">
               Platform manajemen finansial pintar bertenaga AI untuk generasi muda Indonesia. Mencatat pengeluaran otomatis, menabung impian, dan membangun masa depan yang stabil.
             </p>
-            <div className="pt-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-950/60 border border-blue-500/20 text-xs font-mono text-cyan-300">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                FINUSA v2.0 • 100% Gratis
-              </span>
-            </div>
           </div>
 
           {/* Links 1 - Produk */}
@@ -113,7 +107,7 @@ export function Footer() {
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
           <p>© 2026 Finusa (Finance Nusantara). Hak Cipta Dilindungi Undang-Undang.</p>
           <div className="flex items-center gap-6">
-            <span className="text-slate-400">Dibuat dengan ❤️ untuk kemandirian finansial generasi muda Indonesia</span>
+            <span className="text-slate-400">Developed by artaaaux developer</span>
           </div>
         </div>
 

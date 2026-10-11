@@ -144,8 +144,10 @@ export function SidebarNav({
       <div className="flex items-center px-3 py-5 h-[68px] overflow-hidden">
         <div className="w-8 h-8 flex items-center justify-center shrink-0 ml-1.5">
           <img 
-            src="/Assets/LogoIcon.png" 
+            src="/Assets/logo-mark-80.webp" 
             alt="FINUSA Icon" 
+            width={28}
+            height={28}
             className="w-7 h-7 object-contain drop-shadow-[0_2px_8px_rgba(0,193,255,0.4)]" 
           />
         </div>

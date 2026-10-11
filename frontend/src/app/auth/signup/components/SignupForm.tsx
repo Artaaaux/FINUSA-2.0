@@ -8,7 +8,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useSignup, useResendVerification } from "@/lib/auth/hooks";
 import { GoogleAuthButton } from "@/shared/components/auth/GoogleAuthButton";
 import { TurnstileWidget } from "@/shared/components/auth/TurnstileWidget";
-import logoImg from "../../../../../public/Assets/Logo.png";
 
 export function SignupForm() {
   const router = useRouter();
@@ -236,8 +235,10 @@ export function SignupForm() {
       {/* Header */}
       <div className="flex flex-col items-center mb-6">
         <img
-          src={logoImg.src}
+          src="/Assets/logo-full-320.webp"
           alt="FINUSA Logo"
+          width={160}
+          height={40}
           className="h-10 w-auto object-contain mb-3 select-none pointer-events-none"
         />
         <h2 className="text-2xl font-bold text-white text-center">Daftar</h2>

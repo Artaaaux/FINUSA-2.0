@@ -1,5 +1,5 @@
 import React from 'react'
-import { Camera, Cpu, LayoutGrid, Sparkles } from 'lucide-react'
+import { Camera, Cpu, LayoutGrid } from 'lucide-react'
 import { SectionBadge } from '@/components/ui/section-badge'
 import { StepCard, StepItem } from './steps/step-card'
 import { Reveal } from '@/components/ui/reveal'
@@ -28,10 +28,12 @@ const stepsData: StepItem[] = [
 export function HowToUseSection() {
   return (
     <section 
-      aria-label="3 Langkah Mudah Finusa" 
+      aria-label="3 Langkah Cerdas Finusa" 
       className="py-16 sm:py-24 lg:py-28 relative section-deferred overflow-hidden" 
-      id="cara-kerja"
+      id="langkah-cerdas"
     >
+      {/* Anchor alias for backward compatibility */}
+      <div id="cara-kerja" className="absolute -top-24 pointer-events-none" aria-hidden="true" />
       {/* Atmospheric Ambient Lighting Backdrop (Hardware-Accelerated Radial Gradient) */}
       <div 
         aria-hidden="true" 
@@ -62,17 +64,16 @@ export function HowToUseSection() {
           {/* Category Badge */}
           <SectionBadge 
             variant="cyan"
-            icon={<Sparkles className="w-3.5 h-3.5 text-cyan-300" />}
             className="mb-5 sm:mb-6"
           >
-            LANGKAH MUDAH
+            LANGKAH CERDAS
           </SectionBadge>
 
           {/* Main Title */}
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[52px] font-extrabold text-white tracking-tight leading-[1.18] mb-4">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[52px] font-extrabold text-white tracking-tight leading-[1.22] mb-4">
             Mulai Rapi Finansial dalam 3{' '}
             <br className="hidden sm:inline" />
-            <span className="inline-block pb-1 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-cyan-300 drop-shadow-[0_0_20px_rgba(34,211,238,0.3)]">
+            <span className="inline-block pt-1 pb-3.5 -mb-2.5 leading-[1.25] text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-cyan-300 drop-shadow-[0_0_20px_rgba(34,211,238,0.3)]">
               Langkah
             </span>
           </h2>
