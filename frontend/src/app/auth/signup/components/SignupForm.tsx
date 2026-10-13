@@ -3,16 +3,40 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Mail, Lock, Eye, EyeOff, Loader2, AlertCircle, Check } from "lucide-react";
+import Image from "next/image";
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  Loader2,
+  CheckCircle2,
+  XCircle,
+  ArrowRight,
+  ArrowLeft,
+  ShieldCheck,
+  Zap,
+  BarChart3,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useSignup, useResendVerification } from "@/lib/auth/hooks";
-import { GoogleAuthButton } from "@/shared/components/auth/GoogleAuthButton";
+import { useSignup, useResendVerification, useGoogleAuth } from "@/lib/auth/hooks";
 import { TurnstileWidget } from "@/shared/components/auth/TurnstileWidget";
 
 export function SignupForm() {
   const router = useRouter();
   const { signup, loading, error, success, setError } = useSignup();
-  const { resend, loading: resendLoading, sent: resendSent, error: resendError } = useResendVerification();
+  const {
+    resend,
+    loading: resendLoading,
+    sent: resendSent,
+    error: resendError,
+  } = useResendVerification();
+  const {
+    signInWithGoogle,
+    loading: googleLoading,
+    error: googleError,
+  } = useGoogleAuth();
+
   const [captchaToken, setCaptchaToken] = useState<string>("");
   const [captchaResetKey, setCaptchaResetKey] = useState<number>(0);
   const [isWaitingVerification, setIsWaitingVerification] = useState(false);
@@ -25,8 +49,16 @@ export function SignupForm() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Field validation and touched states
-  const [errors, setErrors] = useState<{ email?: string; password?: string; confirmPassword?: string }>({});
-  const [touched, setTouched] = useState<{ email?: boolean; password?: boolean; confirmPassword?: boolean }>({});
+  const [errors, setErrors] = useState<{
+    email?: string;
+    password?: string;
+    confirmPassword?: string;
+  }>({});
+  const [touched, setTouched] = useState<{
+    email?: boolean;
+    password?: boolean;
+    confirmPassword?: boolean;
+  }>({});
 
   // Password strength state
   const [strength, setStrength] = useState({ score: 0, label: "", color: "" });
@@ -46,7 +78,7 @@ export function SignupForm() {
     if (/[^A-Za-z0-9]/.test(password)) score += 1;
 
     let label = "Sangat Lemah";
-    let color = "bg-red-500";
+    let color = "bg-rose-500";
 
     if (score === 2) {
       label = "Lemah";
@@ -56,10 +88,10 @@ export function SignupForm() {
       color = "bg-yellow-500";
     } else if (score === 4) {
       label = "Kuat";
-      color = "bg-green-500";
+      color = "bg-emerald-500";
     } else if (score >= 5) {
       label = "Sangat Kuat";
-      color = "bg-accent-cyan";
+      color = "bg-cyan-400";
     }
 
     setStrength({ score, label, color });
@@ -90,16 +122,24 @@ export function SignupForm() {
       setErrors((prev) => ({ ...prev, email: validateEmail(email) }));
     } else if (field === "password") {
       setErrors((prev) => ({ ...prev, password: validatePassword(password) }));
-      // Also validate confirm password if it has value
       if (confirmPassword) {
-        setErrors((prev) => ({ ...prev, confirmPassword: validateConfirmPassword(confirmPassword) }));
+        setErrors((prev) => ({
+          ...prev,
+          confirmPassword: validateConfirmPassword(confirmPassword),
+        }));
       }
     } else {
-      setErrors((prev) => ({ ...prev, confirmPassword: validateConfirmPassword(confirmPassword) }));
+      setErrors((prev) => ({
+        ...prev,
+        confirmPassword: validateConfirmPassword(confirmPassword),
+      }));
     }
   };
 
-  const handleChange = (field: "email" | "password" | "confirmPassword", value: string) => {
+  const handleChange = (
+    field: "email" | "password" | "confirmPassword",
+    value: string
+  ) => {
     if (field === "email") {
       setEmail(value);
       if (touched.email) {
@@ -110,7 +150,6 @@ export function SignupForm() {
       if (touched.password) {
         setErrors((prev) => ({ ...prev, password: validatePassword(value) }));
       }
-      // Revalidate confirm password if it matches
       if (touched.confirmPassword && confirmPassword) {
         setErrors((prev) => ({
           ...prev,
@@ -120,7 +159,10 @@ export function SignupForm() {
     } else {
       setConfirmPassword(value);
       if (touched.confirmPassword || value === password) {
-        setErrors((prev) => ({ ...prev, confirmPassword: value === password ? "" : "Password tidak cocok" }));
+        setErrors((prev) => ({
+          ...prev,
+          confirmPassword: value === password ? "" : "Password tidak cocok",
+        }));
       }
     }
   };
@@ -128,10 +170,8 @@ export function SignupForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Mark all as touched
     setTouched({ email: true, password: true, confirmPassword: true });
 
-    // Validate all fields
     const emailErr = validateEmail(email);
     const passErr = validatePassword(password);
     const confirmErr = validateConfirmPassword(confirmPassword);
@@ -156,342 +196,639 @@ export function SignupForm() {
         setIsWaitingVerification(true);
       }
     } catch {
-      // Error is set in signup hook
-      // Reset Turnstile CAPTCHA agar token baru digenerate untuk percobaan berikutnya
       setCaptchaResetKey((prev) => prev + 1);
       setCaptchaToken("");
     }
   };
 
-  if (isWaitingVerification) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="w-full bg-[#1a1f3a] border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-[0_8px_24px_rgba(0,0,0,0.15)] relative overflow-hidden text-center"
-      >
-        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-blue-600 via-accent-cyan to-accent-green" />
+  const handleGoogleSignIn = async () => {
+    try {
+      await signInWithGoogle("/home");
+    } catch {
+      // Handled by hook
+    }
+  };
 
-        <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
-          <Mail className="w-8 h-8 animate-bounce" />
-        </div>
-
-        <h2 className="text-2xl font-bold text-white mb-2">Cek Email Anda!</h2>
-        <p className="text-slate-300 text-sm mb-4 leading-relaxed">
-          Tautan verifikasi telah dikirimkan ke alamat email:
-          <br />
-          <span className="font-semibold text-accent-cyan break-all">{email}</span>
-        </p>
-
-        <p className="text-slate-400 text-xs mb-6">
-          Silakan buka inbox email Anda dan klik tombol <strong>&quot;Aktifkan Akun FINUSA&quot;</strong> untuk memverifikasi akun sebelum bisa masuk ke dashboard.
-        </p>
-
-        {resendSent && (
-          <div className="mb-4 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs">
-            Link verifikasi baru telah berhasil dikirim ulang ke email Anda!
-          </div>
-        )}
-        {resendError && (
-          <div className="mb-4 p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs">
-            {resendError}
-          </div>
-        )}
-
-        <div className="space-y-3">
-          <button
-            type="button"
-            onClick={() => resend(email)}
-            disabled={resendLoading || resendSent}
-            className="w-full h-11 flex items-center justify-center font-medium text-sm text-slate-200 bg-[#0F172A] hover:bg-[#1E293B] border border-slate-700/80 rounded-lg transition-all duration-200 disabled:opacity-50"
-          >
-            {resendLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin mr-2" />
-            ) : null}
-            {resendSent ? "Email Terkirim Ulang" : "Kirim Ulang Email Verifikasi"}
-          </button>
-
-          <Link
-            href="/auth/login"
-            className="w-full h-11 flex items-center justify-center font-semibold text-white bg-[#2563EB] hover:bg-blue-600 rounded-lg transition-all duration-200 text-sm"
-          >
-            Sudah Verifikasi? Masuk Sekarang
-          </Link>
-        </div>
-      </motion.div>
-    );
-  }
+  const activeErrorMessage = error || googleError;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-      className="w-full bg-[#1a1f3a] border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-[0_8px_24px_rgba(0,0,0,0.15)] relative overflow-hidden"
-    >
-      {/* Visual top border line */}
-      <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-blue-600 via-accent-cyan to-accent-green" />
+    <div className="relative min-h-screen w-full bg-[#070B1D] font-sans text-slate-100 antialiased overflow-x-hidden selection:bg-cyan-500 selection:text-white flex flex-col justify-between">
+      {/* ───── Ambient Background And Lighting Effects ───── */}
+      <div aria-hidden="true" className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        {/* Deep midnight angular background gradients */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-[#050814] via-[#0B1530] to-[#0A1D3B] opacity-95" />
 
-      {/* Header */}
-      <div className="flex flex-col items-center mb-6">
-        <img
-          src="/Assets/logo-full-320.webp"
-          alt="FINUSA Logo"
-          width={160}
-          height={40}
-          className="h-10 w-auto object-contain mb-3 select-none pointer-events-none"
-        />
-        <h2 className="text-2xl font-bold text-white text-center">Daftar</h2>
-        <p className="text-slate-400 text-sm text-center mt-1">
-          Mulai langkah cerdas finansial Anda
-        </p>
-      </div>
+        {/* Right Side: Architectural luminous ambient orbs and bokeh behind form card */}
+        <div className="absolute right-0 top-0 w-3/5 h-full bg-gradient-to-l from-[#132A55]/30 via-transparent to-transparent" />
+        <div className="absolute -right-24 top-1/4 w-[540px] h-[540px] bg-[#1687FF]/20 rounded-full blur-[120px]" />
 
-      {/* General error or success messages */}
-      <AnimatePresence mode="wait">
-        {error && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="mb-4 p-3 rounded-lg bg-red-950/50 border border-red-900/50 flex items-start gap-2 text-red-400 text-xs"
+        {/* Vibrant cyan & royal blue orb positioned directly behind the frosted card for refraction */}
+        <div className="absolute right-[8%] top-[22%] w-[480px] h-[480px] bg-gradient-to-br from-[#19D3FF]/30 to-[#2463F4]/35 rounded-full blur-[95px]" />
+        <div className="absolute right-[15%] top-[45%] w-[380px] h-[380px] bg-[#00E5FF]/20 rounded-full blur-[80px]" />
+
+        {/* Lower-left soft ambient pool */}
+        <div className="absolute -left-20 bottom-0 w-[600px] h-[600px] bg-gradient-to-tr from-[#1687FF]/20 via-[#0B1A3C]/40 to-transparent rounded-full blur-[120px]" />
+
+        {/* Specular 3D Curved Glass Ribbon Geometry (Lower Left) */}
+        <div className="absolute -left-24 -bottom-36 w-[640px] h-[640px] opacity-75 md:opacity-90 transition-opacity pointer-events-none">
+          <svg
+            className="w-full h-full ribbon-gradient-edge"
+            fill="none"
+            viewBox="0 0 600 600"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-            <span>{error}</span>
-          </motion.div>
-        )}
-        {success && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="mb-4 p-3 rounded-lg bg-green-950/50 border border-green-900/50 flex items-start gap-2 text-accent-green text-xs"
-          >
-            <Check className="w-4 h-4 shrink-0 mt-0.5 text-accent-green" />
-            <div>
-              <p className="font-semibold">Pendaftaran Berhasil!</p>
-              <p className="text-[11px] text-slate-300 mt-0.5">
-                Mengalihkan ke dashboard...
-              </p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Email Input */}
-        <div className="space-y-1.5">
-          <label htmlFor="email" className="text-xs font-semibold text-slate-300">
-            Email
-          </label>
-          <div className="relative">
-            <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
-              <Mail className="w-4 h-4" />
-            </span>
-            <input
-              id="email"
-              type="email"
-              placeholder="nama@email.com"
-              value={email}
-              onChange={(e) => handleChange("email", e.target.value)}
-              onBlur={() => handleBlur("email")}
-              disabled={loading || success}
-              className={`w-full h-11 pl-10 pr-4 bg-[#0F172A] border rounded-lg text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-accent-cyan transition-all duration-200 ${
-                errors.email && touched.email
-                  ? "border-[#EF4444] focus:border-[#EF4444]"
-                  : "border-[#1E293B] focus:border-accent-cyan"
-              }`}
+            <path
+              d="M-40,550 C120,480 230,360 210,180 C200,90 140,40 50,70 C-30,100 -50,220 20,340 C90,460 280,520 490,490"
+              filter="blur(16px)"
+              opacity="0.3"
+              stroke="url(#ambientGlassGradSignup)"
+              strokeLinecap="round"
+              strokeWidth="48"
             />
-          </div>
-          <AnimatePresence>
-            {errors.email && touched.email && (
-              <motion.p
-                initial={{ opacity: 0, y: -5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -5 }}
-                className="text-xs text-[#EF4444] flex items-center gap-1 mt-1"
-              >
-                <span>{errors.email}</span>
-              </motion.p>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Password Input */}
-        <div className="space-y-1.5">
-          <label htmlFor="password" className="text-xs font-semibold text-slate-300">
-            Password
-          </label>
-          <div className="relative">
-            <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
-              <Lock className="w-4 h-4" />
-            </span>
-            <input
-              id="password"
-              type={showPassword ? "text" : "password"}
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => handleChange("password", e.target.value)}
-              onBlur={() => handleBlur("password")}
-              disabled={loading || success}
-              className={`w-full h-11 pl-10 pr-10 bg-[#0F172A] border rounded-lg text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-accent-cyan transition-all duration-200 ${
-                errors.password && touched.password
-                  ? "border-[#EF4444] focus:border-[#EF4444]"
-                  : "border-[#1E293B] focus:border-accent-cyan"
-              }`}
+            <path
+              d="M-30,530 C130,470 240,350 220,190 C210,105 150,55 70,82 C-5,110 -30,220 35,335 C105,445 285,505 480,480"
+              stroke="url(#specularRibbonGradSignup)"
+              strokeLinecap="round"
+              strokeWidth="18"
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword((prev) => !prev)}
-              tabIndex={-1}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-300 focus:outline-none"
-            >
-              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            </button>
-          </div>
-
-          {/* Password Strength Indicator (Visual Indicator V2) */}
-          {password && (
-            <div className="space-y-1 mt-1.5">
-              <div className="flex justify-between items-center text-[10px]">
-                <span className="text-slate-400">Kekuatan Password:</span>
-                <span
-                  className={`font-semibold ${
-                    strength.score <= 2
-                      ? "text-red-400"
-                      : strength.score === 3
-                      ? "text-yellow-400"
-                      : "text-accent-green"
-                  }`}
-                >
-                  {strength.label}
-                </span>
-              </div>
-              <div className="flex gap-1 h-1">
-                {[1, 2, 3, 4, 5].map((idx) => (
-                  <div
-                    key={idx}
-                    className={`flex-1 h-full rounded-full transition-all duration-300 ${
-                      idx <= strength.score ? strength.color : "bg-slate-800"
-                    }`}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-
-          <AnimatePresence>
-            {errors.password && touched.password && (
-              <motion.p
-                initial={{ opacity: 0, y: -5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -5 }}
-                className="text-xs text-[#EF4444] flex items-center gap-1 mt-1"
-              >
-                <span>{errors.password}</span>
-              </motion.p>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Confirm Password Input */}
-        <div className="space-y-1.5">
-          <label htmlFor="confirmPassword" className="text-xs font-semibold text-slate-300">
-            Konfirmasi Password
-          </label>
-          <div className="relative">
-            <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
-              <Lock className="w-4 h-4" />
-            </span>
-            <input
-              id="confirmPassword"
-              type={showConfirmPassword ? "text" : "password"}
-              placeholder="••••••••"
-              value={confirmPassword}
-              onChange={(e) => handleChange("confirmPassword", e.target.value)}
-              onBlur={() => handleBlur("confirmPassword")}
-              disabled={loading || success}
-              className={`w-full h-11 pl-10 pr-10 bg-[#0F172A] border rounded-lg text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-accent-cyan transition-all duration-200 ${
-                errors.confirmPassword && touched.confirmPassword
-                  ? "border-[#EF4444] focus:border-[#EF4444]"
-                  : "border-[#1E293B] focus:border-accent-cyan"
-              }`}
+            <path
+              d="M-20,525 C135,465 242,345 222,192 C214,112 156,65 80,90 C10,118 -15,222 45,332 C112,440 288,498 475,475"
+              opacity="0.9"
+              stroke="url(#sharpHighlightGradSignup)"
+              strokeLinecap="round"
+              strokeWidth="2.5"
             />
-            <button
-              type="button"
-              onClick={() => setShowConfirmPassword((prev) => !prev)}
-              tabIndex={-1}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-300 focus:outline-none"
-            >
-              {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            </button>
-          </div>
-          <AnimatePresence>
-            {errors.confirmPassword && touched.confirmPassword && (
-              <motion.p
-                initial={{ opacity: 0, y: -5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -5 }}
-                className="text-xs text-[#EF4444] flex items-center gap-1 mt-1"
-              >
-                <span>{errors.confirmPassword}</span>
-              </motion.p>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Anti-Bot Cloudflare Turnstile CAPTCHA */}
-        <TurnstileWidget
-          key={captchaResetKey}
-          resetTrigger={captchaResetKey}
-          onVerify={(token) => setCaptchaToken(token)}
-          onExpire={() => setCaptchaToken("")}
-          onError={() => setCaptchaToken("")}
-        />
-
-        {/* Submit Button */}
-        <button
-          type="submit"
-          disabled={loading || success}
-          className="w-full h-11 flex items-center justify-center font-semibold text-white bg-[#2563EB] rounded-lg transition-all duration-300 hover:bg-gradient-to-r hover:from-[#2563EB] hover:to-accent-cyan hover:shadow-[0_0_15px_rgba(0,217,255,0.4)] disabled:opacity-50 disabled:cursor-not-allowed select-none active:scale-[0.98] mt-6"
-        >
-          {loading ? (
-            <Loader2 className="w-5 h-5 animate-spin" />
-          ) : (
-            "Daftar"
-          )}
-        </button>
-      </form>
-
-      {/* Divider */}
-      <div className="relative my-5">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-slate-800" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-[#1a1f3a] px-3 text-slate-500 font-medium tracking-wider">
-            atau
-          </span>
+            <defs>
+              <linearGradient id="ambientGlassGradSignup" x1="0%" x2="100%" y1="0%" y2="100%">
+                <stop offset="0%" stopColor="#19D3FF" stopOpacity="0.6" />
+                <stop offset="50%" stopColor="#2463F4" stopOpacity="0.3" />
+                <stop offset="100%" stopColor="#0B1530" stopOpacity="0" />
+              </linearGradient>
+              <linearGradient id="specularRibbonGradSignup" x1="20%" x2="80%" y1="10%" y2="90%">
+                <stop offset="0%" stopColor="#AEEBFF" stopOpacity="0.85" />
+                <stop offset="35%" stopColor="#28C8F5" stopOpacity="0.4" />
+                <stop offset="70%" stopColor="#1687FF" stopOpacity="0.6" />
+                <stop offset="100%" stopColor="#5599FF" stopOpacity="0.15" />
+              </linearGradient>
+              <linearGradient id="sharpHighlightGradSignup" x1="10%" x2="90%" y1="0%" y2="100%">
+                <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.95" />
+                <stop offset="45%" stopColor="#9EEBFF" stopOpacity="0.75" />
+                <stop offset="80%" stopColor="#32B5FF" stopOpacity="0.4" />
+                <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+          </svg>
         </div>
       </div>
 
-      {/* Google OAuth Button */}
-      <GoogleAuthButton
-        label="Daftar dengan Google"
-        nextPath="/home"
-        disabled={loading || success}
-      />
-
-      {/* Footer Link */}
-      <div className="mt-6 text-center text-sm text-slate-400">
-        Sudah punya akun?{" "}
+      {/* Floating Home / Back Button */}
+      <div className="relative z-20 px-4 sm:px-6 lg:px-12 pt-4 sm:pt-6">
         <Link
-          href="/auth/login"
-          className="text-accent-cyan hover:underline font-medium transition-colors duration-200"
+          href="/"
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/40 border border-white/10 text-slate-300 hover:text-white hover:border-cyan-400/40 transition-all duration-300 backdrop-blur-md text-xs sm:text-sm group shadow-sm hover:shadow-[0_0_15px_rgba(25,211,255,0.2)]"
         >
-          Masuk
+          <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform text-cyan-400" />
+          <span>Kembali ke Beranda</span>
         </Link>
       </div>
-    </motion.div>
+
+      {/* ───── Main Content Wrapper ───── */}
+      <main className="relative z-10 flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-12 py-6 sm:py-10">
+        <div className="w-full max-w-7xl mx-auto flex items-center justify-center lg:grid lg:grid-cols-12 gap-10 lg:gap-8">
+          {/* ───── Left Hero Section (Desktop only - hidden on mobile) ───── */}
+          <section
+            className="hidden lg:flex lg:col-span-6 flex-col justify-center space-y-8 lg:space-y-9 lg:pr-6"
+            data-purpose="hero-brand-presentation"
+          >
+            {/* Brand Identity: Official FINUSA logo */}
+            <header className="flex items-center space-x-3.5">
+              <div className="relative w-11 h-11 flex items-center justify-center p-1.5 rounded-xl bg-white/[0.04] border border-white/10 shadow-[0_2px_12px_rgba(25,211,255,0.25)] flex-shrink-0">
+                <Image
+                  src="/Assets/logo-mark-80.webp"
+                  alt="FINUSA"
+                  width={44}
+                  height={44}
+                  priority
+                  className="w-full h-full object-contain drop-shadow-[0_2px_8px_rgba(25,211,255,0.4)]"
+                />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-2xl font-extrabold tracking-tight text-white leading-none">
+                  FINUSA
+                </span>
+                <span className="text-[9px] font-semibold tracking-[0.26em] text-[#86A3CF] uppercase mt-1">
+                  Finance Nusantara
+                </span>
+              </div>
+            </header>
+
+            {/* Main Headline & Narrative Copy */}
+            <div className="space-y-4">
+              <h1 className="text-4xl sm:text-5xl lg:text-[46px] font-bold text-white tracking-tight leading-[1.18]">
+                Mulai Langkah Cerdas
+                <br />
+                bersama <span className="text-gradient-cyan">FINUSA</span>
+              </h1>
+              <p className="text-[#B7C5DC] text-base sm:text-lg max-w-[460px] leading-relaxed">
+                Kelola finansial Anda dengan lebih mudah, aman dan terpercaya.
+              </p>
+            </div>
+
+            {/* 3 Feature Highlight Pills */}
+            <div
+              className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4 pt-2 max-w-[500px]"
+              data-purpose="features-list"
+            >
+              {/* Feature Item 1: Aman */}
+              <div className="apple-glass-pill rounded-2xl p-3.5 sm:p-4 flex flex-row sm:flex-col items-center sm:items-start gap-3 sm:gap-2.5 transition-transform hover:-translate-y-1 duration-200">
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-cyan-500/10 border border-cyan-400/25 flex items-center justify-center text-cyan-400 shadow-sm shrink-0">
+                  <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6 stroke-[1.8]" />
+                </div>
+                <div>
+                  <h3 className="text-white text-sm font-semibold tracking-wide">Aman</h3>
+                  <p className="text-[12px] text-[#8EA2C6] leading-snug mt-0.5">
+                    Data Anda terlindungi
+                  </p>
+                </div>
+              </div>
+
+              {/* Feature Item 2: Cepat */}
+              <div className="apple-glass-pill rounded-2xl p-3.5 sm:p-4 flex flex-row sm:flex-col items-center sm:items-start gap-3 sm:gap-2.5 transition-transform hover:-translate-y-1 duration-200">
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-cyan-500/10 border border-cyan-400/25 flex items-center justify-center text-cyan-400 shadow-sm shrink-0">
+                  <Zap className="w-5 h-5 sm:w-6 sm:h-6 stroke-[1.8]" />
+                </div>
+                <div>
+                  <h3 className="text-white text-sm font-semibold tracking-wide">Cepat</h3>
+                  <p className="text-[12px] text-[#8EA2C6] leading-snug mt-0.5">
+                    Pendaftaran praktis
+                  </p>
+                </div>
+              </div>
+
+              {/* Feature Item 3: Mudah */}
+              <div className="apple-glass-pill rounded-2xl p-3.5 sm:p-4 flex flex-row sm:flex-col items-center sm:items-start gap-3 sm:gap-2.5 transition-transform hover:-translate-y-1 duration-200">
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-cyan-500/10 border border-cyan-400/25 flex items-center justify-center text-cyan-400 shadow-sm shrink-0">
+                  <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 stroke-[1.8]" />
+                </div>
+                <div>
+                  <h3 className="text-white text-sm font-semibold tracking-wide">Mudah</h3>
+                  <p className="text-[12px] text-[#8EA2C6] leading-snug mt-0.5">
+                    Pantau keuangan dalam satu tempat
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ───── Right Signup Card Section ───── */}
+          <section
+            className="w-full lg:col-span-6 flex justify-center lg:justify-end"
+            data-purpose="signup-form-container"
+          >
+            {isWaitingVerification ? (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+                className="w-full max-w-[460px] lg:max-w-[490px] apple-glass-card rounded-2xl sm:rounded-[28px] p-6 sm:p-9 relative overflow-hidden text-center"
+              >
+                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center text-cyan-400 shadow-[0_0_20px_rgba(25,211,255,0.2)]">
+                  <Mail className="w-8 h-8 animate-bounce" />
+                </div>
+
+                <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2 tracking-tight">
+                  Cek Email Anda!
+                </h2>
+                <p className="text-[#C2CEE2] text-sm mb-4 leading-relaxed">
+                  Tautan verifikasi telah dikirimkan ke alamat email:
+                  <br />
+                  <span className="font-semibold text-cyan-400 break-all">{email}</span>
+                </p>
+
+                <p className="text-[#8EA2C6] text-xs mb-6 leading-relaxed">
+                  Silakan buka inbox email Anda dan klik tautan verifikasi untuk mengaktifkan akun sebelum bisa masuk ke dashboard FINUSA.
+                </p>
+
+                {resendSent && (
+                  <div className="mb-4 p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs">
+                    Link verifikasi baru telah berhasil dikirim ulang ke email Anda!
+                  </div>
+                )}
+                {resendError && (
+                  <div className="mb-4 p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs">
+                    {resendError}
+                  </div>
+                )}
+
+                <div className="space-y-3">
+                  <button
+                    type="button"
+                    onClick={() => resend(email)}
+                    disabled={resendLoading || resendSent}
+                    className="apple-glass-btn-secondary w-full h-12 rounded-xl flex items-center justify-center font-medium text-sm text-slate-200 transition-all duration-200 disabled:opacity-50"
+                  >
+                    {resendLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    ) : null}
+                    {resendSent ? "Email Terkirim Ulang" : "Kirim Ulang Email Verifikasi"}
+                  </button>
+
+                  <Link
+                    href="/auth/login"
+                    className="btn-gradient-primary w-full h-12 rounded-xl flex items-center justify-center font-semibold text-white transition-all duration-200 text-sm shadow-btn-glow"
+                  >
+                    Sudah Verifikasi? Masuk Sekarang
+                  </Link>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+                className="w-full max-w-[460px] lg:max-w-[490px] apple-glass-card rounded-2xl sm:rounded-[28px] p-6 sm:p-9 relative overflow-hidden"
+              >
+                {/* Card Interior Top Header with FINUSA Crest */}
+                <div className="flex flex-col items-center text-center">
+                  <div
+                    aria-label="FINUSA Logo"
+                    className="flex items-center space-x-2.5 mb-4 sm:mb-5"
+                  >
+                    <div className="relative w-10 h-10 flex items-center justify-center p-1 rounded-xl bg-white/[0.04] border border-white/10 shadow-[0_2px_10px_rgba(25,211,255,0.25)] flex-shrink-0">
+                      <Image
+                        src="/Assets/logo-mark-80.webp"
+                        alt="FINUSA Logo"
+                        width={40}
+                        height={40}
+                        priority
+                        className="w-full h-full object-contain drop-shadow-[0_2px_8px_rgba(25,211,255,0.35)]"
+                      />
+                    </div>
+                    <div className="text-left">
+                      <span className="text-xl font-bold tracking-tight text-white leading-none block">
+                        FINUSA
+                      </span>
+                      <span className="text-[8px] font-semibold tracking-[0.22em] text-[#86A3CF] uppercase block mt-0.5">
+                        Finance Nusantara
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Title & Subtitle */}
+                  <h2 className="text-[28px] sm:text-[32px] font-bold text-white tracking-tight">
+                    Daftar
+                  </h2>
+                  <p className="text-sm text-[#C2CEE2] mt-1.5 font-normal">
+                    Kelola finansial Anda dengan FINUSA
+                  </p>
+                </div>
+
+                {/* Alerts (Fail & Success feedback) */}
+                <AnimatePresence mode="wait">
+                  {activeErrorMessage && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -8, scale: 0.98 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                      transition={{ duration: 0.2 }}
+                      className="mt-5 p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 flex items-center gap-3 text-xs text-rose-300 shadow-sm backdrop-blur-md"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400 shrink-0">
+                        <XCircle className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-bold text-xs text-rose-400 uppercase tracking-wider">
+                          Gagal
+                        </p>
+                        <p className="text-slate-200 text-xs mt-0.5 leading-relaxed">
+                          {activeErrorMessage}
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {success && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -8, scale: 0.98 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                      transition={{ duration: 0.2 }}
+                      className="mt-5 p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center gap-3 text-xs text-emerald-300 shadow-sm backdrop-blur-md"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0">
+                        <CheckCircle2 className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-bold text-xs text-emerald-400 uppercase tracking-wider">
+                          Berhasil
+                        </p>
+                        <p className="text-slate-200 text-xs mt-0.5">
+                          Pendaftaran berhasil! Mengalihkan ke dashboard...
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Interactive Signup Form */}
+                <form onSubmit={handleSubmit} className="mt-6 space-y-4" id="signupForm">
+                  {/* Email Field */}
+                  <div className="space-y-1.5">
+                    <label
+                      htmlFor="signupEmailInput"
+                      className="block text-[13px] font-semibold text-[#E5ECF8]"
+                    >
+                      Email
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#8EA2C6]">
+                        <Mail className="w-5 h-5" strokeWidth={1.8} />
+                      </div>
+                      <input
+                        id="signupEmailInput"
+                        name="email"
+                        type="email"
+                        autoComplete="email"
+                        placeholder="nama@email.com"
+                        value={email}
+                        onChange={(e) => handleChange("email", e.target.value)}
+                        onBlur={() => handleBlur("email")}
+                        disabled={loading || success}
+                        required
+                        className={`apple-glass-input w-full h-13 sm:h-14 pl-12 pr-4 rounded-2xl text-white placeholder-[#6E82A5] text-[15px] focus:outline-none transition-all duration-200 ${
+                          errors.email && touched.email
+                            ? "border-rose-500 focus:border-rose-500"
+                            : ""
+                        }`}
+                      />
+                    </div>
+                    <AnimatePresence>
+                      {errors.email && touched.email && (
+                        <motion.p
+                          initial={{ opacity: 0, y: -4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -4 }}
+                          className="text-xs text-rose-400 flex items-center gap-1 mt-1 font-medium pl-1"
+                        >
+                          <span>{errors.email}</span>
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* Password Field */}
+                  <div className="space-y-1.5 pt-0.5">
+                    <label
+                      htmlFor="signupPasswordInput"
+                      className="block text-[13px] font-semibold text-[#E5ECF8]"
+                    >
+                      Password
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#8EA2C6]">
+                        <Lock className="w-5 h-5" strokeWidth={1.8} />
+                      </div>
+                      <input
+                        id="signupPasswordInput"
+                        name="password"
+                        type={showPassword ? "text" : "password"}
+                        autoComplete="new-password"
+                        placeholder="Minimal 6 karakter"
+                        value={password}
+                        onChange={(e) => handleChange("password", e.target.value)}
+                        onBlur={() => handleBlur("password")}
+                        disabled={loading || success}
+                        required
+                        className={`apple-glass-input w-full h-13 sm:h-14 pl-12 pr-12 rounded-2xl text-white placeholder-[#6E82A5] text-[15px] focus:outline-none transition-all duration-200 ${
+                          errors.password && touched.password
+                            ? "border-rose-500 focus:border-rose-500"
+                            : ""
+                        }`}
+                      />
+                      <button
+                        type="button"
+                        id="toggleSignupPasswordBtn"
+                        aria-label="Tampilkan atau sembunyikan password"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        disabled={loading || success}
+                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-[#8EA2C6] hover:text-white transition-colors focus:outline-none"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="w-5 h-5" strokeWidth={1.8} />
+                        ) : (
+                          <Eye className="w-5 h-5" strokeWidth={1.8} />
+                        )}
+                      </button>
+                    </div>
+
+                    {/* Password Strength Indicator */}
+                    {password && (
+                      <div className="space-y-1 mt-2 px-1">
+                        <div className="flex justify-between items-center text-[11px]">
+                          <span className="text-[#8EA2C6]">Kekuatan Password:</span>
+                          <span
+                            className={`font-semibold ${
+                              strength.score <= 2
+                                ? "text-rose-400"
+                                : strength.score === 3
+                                ? "text-yellow-400"
+                                : "text-emerald-400"
+                            }`}
+                          >
+                            {strength.label}
+                          </span>
+                        </div>
+                        <div className="flex gap-1.5 h-1.5">
+                          {[1, 2, 3, 4, 5].map((idx) => (
+                            <div
+                              key={idx}
+                              className={`flex-1 h-full rounded-full transition-all duration-300 ${
+                                idx <= strength.score ? strength.color : "bg-white/10"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <AnimatePresence>
+                      {errors.password && touched.password && (
+                        <motion.p
+                          initial={{ opacity: 0, y: -4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -4 }}
+                          className="text-xs text-rose-400 flex items-center gap-1 mt-1 font-medium pl-1"
+                        >
+                          <span>{errors.password}</span>
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* Confirm Password Field */}
+                  <div className="space-y-1.5 pt-0.5">
+                    <label
+                      htmlFor="signupConfirmPasswordInput"
+                      className="block text-[13px] font-semibold text-[#E5ECF8]"
+                    >
+                      Konfirmasi Password
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#8EA2C6]">
+                        <Lock className="w-5 h-5" strokeWidth={1.8} />
+                      </div>
+                      <input
+                        id="signupConfirmPasswordInput"
+                        name="confirmPassword"
+                        type={showConfirmPassword ? "text" : "password"}
+                        autoComplete="new-password"
+                        placeholder="Ulangi password"
+                        value={confirmPassword}
+                        onChange={(e) => handleChange("confirmPassword", e.target.value)}
+                        onBlur={() => handleBlur("confirmPassword")}
+                        disabled={loading || success}
+                        required
+                        className={`apple-glass-input w-full h-13 sm:h-14 pl-12 pr-12 rounded-2xl text-white placeholder-[#6E82A5] text-[15px] focus:outline-none transition-all duration-200 ${
+                          errors.confirmPassword && touched.confirmPassword
+                            ? "border-rose-500 focus:border-rose-500"
+                            : ""
+                        }`}
+                      />
+                      <button
+                        type="button"
+                        id="toggleSignupConfirmPasswordBtn"
+                        aria-label="Tampilkan atau sembunyikan konfirmasi password"
+                        onClick={() => setShowConfirmPassword((prev) => !prev)}
+                        disabled={loading || success}
+                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-[#8EA2C6] hover:text-white transition-colors focus:outline-none"
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff className="w-5 h-5" strokeWidth={1.8} />
+                        ) : (
+                          <Eye className="w-5 h-5" strokeWidth={1.8} />
+                        )}
+                      </button>
+                    </div>
+                    <AnimatePresence>
+                      {errors.confirmPassword && touched.confirmPassword && (
+                        <motion.p
+                          initial={{ opacity: 0, y: -4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -4 }}
+                          className="text-xs text-rose-400 flex items-center gap-1 mt-1 font-medium pl-1"
+                        >
+                          <span>{errors.confirmPassword}</span>
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* Cloudflare Turnstile Anti-Bot Widget */}
+                  <div className="flex justify-center w-full overflow-hidden min-h-[65px]">
+                    <TurnstileWidget
+                      key={captchaResetKey}
+                      resetTrigger={captchaResetKey}
+                      onVerify={(token) => setCaptchaToken(token)}
+                      onExpire={() => setCaptchaToken("")}
+                      onError={() => setCaptchaToken("")}
+                    />
+                  </div>
+
+                  {/* Primary Submit Button */}
+                  <div className="pt-2">
+                    <button
+                      type="submit"
+                      disabled={loading || success}
+                      className="btn-gradient-primary w-full h-[54px] sm:h-[56px] rounded-2xl flex items-center justify-center space-x-2 text-white font-bold text-[16px] shadow-btn-glow cursor-pointer transition duration-200 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed select-none"
+                    >
+                      {loading ? (
+                        <>
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                          <span>Mendaftarkan...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Daftar</span>
+                          <ArrowRight className="w-5 h-5 stroke-[2.2]" />
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* OR Divider */}
+                  <div className="relative py-3 flex items-center justify-center">
+                    <div className="w-full border-t border-slate-400/20" />
+                    <span className="absolute bg-[#0D1C3C]/80 border border-white/10 px-3.5 py-0.5 text-[11px] font-semibold tracking-wider text-[#A6BCD9] uppercase backdrop-blur-md rounded-full shadow-sm">
+                      ATAU
+                    </span>
+                  </div>
+
+                  {/* Google Sign-Up Button */}
+                  <button
+                    type="button"
+                    onClick={handleGoogleSignIn}
+                    disabled={loading || success || googleLoading}
+                    className="apple-glass-btn-secondary w-full h-[52px] sm:h-[54px] rounded-2xl flex items-center justify-center space-x-3 text-slate-100 font-medium text-[15px] cursor-pointer group active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed select-none"
+                  >
+                    {googleLoading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin text-slate-300" />
+                        <span>Menghubungkan ke Google...</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg
+                          className="w-5 h-5 shrink-0"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                            fill="#4285F4"
+                          />
+                          <path
+                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                            fill="#34A853"
+                          />
+                          <path
+                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                            fill="#FBBC05"
+                          />
+                          <path
+                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                            fill="#EA4335"
+                          />
+                        </svg>
+                        <span className="group-hover:text-white transition-colors">
+                          Daftar dengan Google
+                        </span>
+                      </>
+                    )}
+                  </button>
+
+                  {/* Bottom Login Prompt */}
+                  <div className="text-center pt-3 pb-1">
+                    <p className="text-[14px] text-[#A6BCD9]">
+                      Sudah punya akun?
+                      <Link
+                        href="/auth/login"
+                        className="text-[#27C9F4] font-semibold hover:underline hover:text-[#5ce0ff] transition-colors ml-1.5"
+                      >
+                        Masuk
+                      </Link>
+                    </p>
+                  </div>
+                </form>
+              </motion.div>
+            )}
+          </section>
+        </div>
+      </main>
+
+      {/* ───── Subtle Footer ───── */}
+      <footer className="relative z-10 py-5 text-center text-xs text-[#6B82A8] pointer-events-none">
+        © {new Date().getFullYear()} FINUSA. Hak Cipta Dilindungi.
+      </footer>
+    </div>
   );
 }

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Mail,
   Lock,
@@ -212,7 +213,7 @@ export function LoginForm() {
       </div>
 
       {/* Floating Home / Back Button */}
-      <div className="relative z-20 px-4 sm:px-6 lg:px-12 pt-5 sm:pt-6">
+      <div className="relative z-20 px-4 sm:px-6 lg:px-12 pt-4 sm:pt-6">
         <Link
           href="/"
           className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/40 border border-white/10 text-slate-300 hover:text-white hover:border-cyan-400/40 transition-all duration-300 backdrop-blur-md text-xs sm:text-sm group shadow-sm hover:shadow-[0_0_15px_rgba(25,211,255,0.2)]"
@@ -223,66 +224,31 @@ export function LoginForm() {
       </div>
 
       {/* ───── Main Content Wrapper ───── */}
-      <main className="relative z-10 flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-12 py-8 sm:py-12">
-        <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
-          {/* ───── Left Hero Section ───── */}
+      <main className="relative z-10 flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-12 py-6 sm:py-10">
+        <div className="w-full max-w-7xl mx-auto flex items-center justify-center lg:grid lg:grid-cols-12 gap-10 lg:gap-8">
+          {/* ───── Left Hero Section (Desktop only - hidden on mobile) ───── */}
           <section
-            className="lg:col-span-6 flex flex-col justify-center space-y-8 lg:space-y-9 lg:pr-6"
+            className="hidden lg:flex lg:col-span-6 flex-col justify-center space-y-8 lg:space-y-9 lg:pr-6"
             data-purpose="hero-brand-presentation"
           >
-            {/* Brand Identity: Interconnected ribbon logo */}
+            {/* Brand Identity: Official FINUSA logo */}
             <header className="flex items-center space-x-3.5">
-              <div aria-hidden="true" className="relative w-11 h-11 flex-shrink-0">
-                <svg
-                  className="w-full h-full drop-shadow-[0_2px_12px_rgba(25,211,255,0.45)]"
-                  fill="none"
-                  viewBox="0 0 44 44"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M7 11C7 8.79086 8.79086 7 11 7H33C35.2091 7 37 8.79086 37 11V15C37 17.2091 35.2091 19 33 19H17V33C17 35.2091 15.2091 37 13 37H11C8.79086 37 7 35.2091 7 33V11Z"
-                    fill="url(#finusaMarkGrad1)"
-                  />
-                  <path
-                    d="M19 21H29C31.2091 21 33 22.7909 33 25V27C33 29.2091 31.2091 31 29 31H19V21Z"
-                    fill="url(#finusaMarkGrad2)"
-                  />
-                  <path
-                    d="M25 35L34 26C35.5 24.5 37 25.5 37 27.5V35C37 36.1 36.1 37 35 37H27C25.5 37 24.5 35.8 25 35Z"
-                    fill="#19D3FF"
-                  />
-                  <defs>
-                    <linearGradient
-                      gradientUnits="userSpaceOnUse"
-                      id="finusaMarkGrad1"
-                      x1="7"
-                      x2="37"
-                      y1="7"
-                      y2="37"
-                    >
-                      <stop stopColor="#19D3FF" />
-                      <stop offset="1" stopColor="#1687FF" />
-                    </linearGradient>
-                    <linearGradient
-                      gradientUnits="userSpaceOnUse"
-                      id="finusaMarkGrad2"
-                      x1="19"
-                      x2="33"
-                      y1="21"
-                      y2="31"
-                    >
-                      <stop stopColor="#28C8F5" />
-                      <stop offset="1" stopColor="#2463F4" />
-                    </linearGradient>
-                  </defs>
-                </svg>
+              <div className="relative w-11 h-11 flex items-center justify-center p-1.5 rounded-xl bg-white/[0.04] border border-white/10 shadow-[0_2px_12px_rgba(25,211,255,0.25)] flex-shrink-0">
+                <Image
+                  src="/Assets/logo-mark-80.webp"
+                  alt="FINUSA"
+                  width={44}
+                  height={44}
+                  priority
+                  className="w-full h-full object-contain drop-shadow-[0_2px_8px_rgba(25,211,255,0.4)]"
+                />
               </div>
               <div className="flex flex-col">
                 <span className="text-2xl font-extrabold tracking-tight text-white leading-none">
                   FINUSA
                 </span>
                 <span className="text-[9px] font-semibold tracking-[0.26em] text-[#86A3CF] uppercase mt-1">
-                  Finance Indonesia USA
+                  Finance Nusantara
                 </span>
               </div>
             </header>
@@ -347,14 +313,14 @@ export function LoginForm() {
 
           {/* ───── Right Login Card Section ───── */}
           <section
-            className="lg:col-span-6 flex justify-center lg:justify-end"
+            className="w-full lg:col-span-6 flex justify-center lg:justify-end"
             data-purpose="login-form-container"
           >
             <motion.div
-              initial={{ opacity: 0, y: 24 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-              className="w-full max-w-[500px] apple-glass-card rounded-[28px] p-7 sm:p-10 relative overflow-hidden"
+              transition={{ duration: 0.4, ease: "easeOut" }}
+              className="w-full max-w-[460px] lg:max-w-[490px] apple-glass-card rounded-2xl sm:rounded-[28px] p-6 sm:p-9 relative overflow-hidden"
             >
               {/* Card Interior Top Header with FINUSA Crest */}
               <div className="flex flex-col items-center text-center">
@@ -362,55 +328,22 @@ export function LoginForm() {
                   aria-label="FINUSA Logo"
                   className="flex items-center space-x-2.5 mb-4 sm:mb-5"
                 >
-                  <svg
-                    className="w-9 h-9 drop-shadow-[0_2px_10px_rgba(25,211,255,0.4)]"
-                    fill="none"
-                    viewBox="0 0 44 44"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M7 11C7 8.79086 8.79086 7 11 7H33C35.2091 7 37 8.79086 37 11V15C37 17.2091 35.2091 19 33 19H17V33C17 35.2091 15.2091 37 13 37H11C8.79086 37 7 35.2091 7 33V11Z"
-                      fill="url(#cardLogoGrad1)"
+                  <div className="relative w-10 h-10 flex items-center justify-center p-1 rounded-xl bg-white/[0.04] border border-white/10 shadow-[0_2px_10px_rgba(25,211,255,0.25)] flex-shrink-0">
+                    <Image
+                      src="/Assets/logo-mark-80.webp"
+                      alt="FINUSA Logo"
+                      width={40}
+                      height={40}
+                      priority
+                      className="w-full h-full object-contain drop-shadow-[0_2px_8px_rgba(25,211,255,0.35)]"
                     />
-                    <path
-                      d="M19 21H29C31.2091 21 33 22.7909 33 25V27C33 29.2091 31.2091 31 29 31H19V21Z"
-                      fill="url(#cardLogoGrad2)"
-                    />
-                    <path
-                      d="M25 35L34 26C35.5 24.5 37 25.5 37 27.5V35C37 36.1 36.1 37 35 37H27C25.5 37 24.5 35.8 25 35Z"
-                      fill="#19D3FF"
-                    />
-                    <defs>
-                      <linearGradient
-                        gradientUnits="userSpaceOnUse"
-                        id="cardLogoGrad1"
-                        x1="7"
-                        x2="37"
-                        y1="7"
-                        y2="37"
-                      >
-                        <stop stopColor="#19D3FF" />
-                        <stop offset="1" stopColor="#1687FF" />
-                      </linearGradient>
-                      <linearGradient
-                        gradientUnits="userSpaceOnUse"
-                        id="cardLogoGrad2"
-                        x1="19"
-                        x2="33"
-                        y1="21"
-                        y2="31"
-                      >
-                        <stop stopColor="#28C8F5" />
-                        <stop offset="1" stopColor="#2463F4" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
+                  </div>
                   <div className="text-left">
                     <span className="text-xl font-bold tracking-tight text-white leading-none block">
                       FINUSA
                     </span>
                     <span className="text-[8px] font-semibold tracking-[0.22em] text-[#86A3CF] uppercase block mt-0.5">
-                      FINANCE INDONESIA USA
+                      Finance Nusantara
                     </span>
                   </div>
                 </div>
@@ -586,13 +519,15 @@ export function LoginForm() {
                 </div>
 
                 {/* Cloudflare Turnstile Anti-Bot Widget */}
-                <TurnstileWidget
-                  key={captchaResetKey}
-                  resetTrigger={captchaResetKey}
-                  onVerify={(token) => setCaptchaToken(token)}
-                  onExpire={() => setCaptchaToken("")}
-                  onError={() => setCaptchaToken("")}
-                />
+                <div className="flex justify-center w-full overflow-hidden min-h-[65px]">
+                  <TurnstileWidget
+                    key={captchaResetKey}
+                    resetTrigger={captchaResetKey}
+                    onVerify={(token) => setCaptchaToken(token)}
+                    onExpire={() => setCaptchaToken("")}
+                    onError={() => setCaptchaToken("")}
+                  />
+                </div>
 
                 {/* Primary Submit Button */}
                 <div className="pt-2">

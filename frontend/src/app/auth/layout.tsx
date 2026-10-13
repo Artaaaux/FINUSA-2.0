@@ -12,9 +12,10 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const isLoginPage = pathname?.startsWith("/auth/login");
+  const isAuthFullPage =
+    pathname?.startsWith("/auth/login") || pathname?.startsWith("/auth/signup");
 
-  if (isLoginPage) {
+  if (isAuthFullPage) {
     return <>{children}</>;
   }
 
