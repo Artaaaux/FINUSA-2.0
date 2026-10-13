@@ -1,5 +1,5 @@
 # 📊 FINUSA - Template Pengelolaan Keuangan Pribadi
-## Panduan Lengkap untuk Mahasiswa dan Orang Awam di Indonesia
+## Panduan Lengkap untuk Pelajar dan Orang Awam di Indonesia
 
 ---
 

@@ -26,7 +26,7 @@ Purpose: Menyediakan interface lengkap untuk mengelola profil pengguna, preferen
 
 Target Users:
 
-* Semua pengguna Finusa (mahasiswa, fresh graduates, profesional muda, individuals)
+* Semua pengguna Finusa (pelajar, fresh graduates, profesional muda, individuals)
 * Admin users (untuk admin panel - future)
 
 Core Goals:

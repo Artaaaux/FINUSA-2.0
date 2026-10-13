@@ -1,5 +1,8 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { AnimatedBackground } from "@/shared/components/ui/animated-background";
 
@@ -8,6 +11,13 @@ export default function AuthLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+  const isLoginPage = pathname?.startsWith("/auth/login");
+
+  if (isLoginPage) {
+    return <>{children}</>;
+  }
+
   return (
     <div className="bg-bg-dark min-h-screen w-full flex flex-col justify-center items-center p-4 sm:p-6 md:p-8 relative select-none overflow-hidden">
       <AnimatedBackground />
@@ -34,3 +44,4 @@ export default function AuthLayout({
     </div>
   );
 }
+

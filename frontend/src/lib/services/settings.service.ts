@@ -88,7 +88,7 @@ export const SettingsService = {
 
     try {
       const { error: uploadError } = await supabase.storage
-        .from("receipts")
+        .from("avatars")
         .upload(filePath, file, {
           upsert: true,
           contentType: file.type || "image/jpeg",
@@ -96,18 +96,18 @@ export const SettingsService = {
 
       if (!uploadError) {
         const { data: urlData } = supabase.storage
-          .from("receipts")
+          .from("avatars")
           .getPublicUrl(filePath);
 
         if (urlData?.publicUrl) {
           return urlData.publicUrl;
         }
       }
-    } catch (e) {
-      console.warn("Direct storage upload failed, converting to data URL fallback", e);
+    } catch {
+      // ignore
     }
 
-    // Fallback: convert file to data URL
+    // Fallback: konversi file gambar ke data URL lokal yang aman
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(reader.result as string);
@@ -146,7 +146,20 @@ export const SettingsService = {
       return { success: false, error: "Kata sandi baru tidak boleh sama dengan kata sandi saat ini." };
     }
 
-    // Update to new password via authenticated Supabase session
+    // 1. Verifikasi kredensial kata sandi saat ini (Mencegah Account Takeover)
+    const { error: verifyError } = await supabase.auth.signInWithPassword({
+      email: user.email,
+      password: currentPassword,
+    });
+
+    if (verifyError) {
+      return {
+        success: false,
+        error: "Kata sandi saat ini tidak sesuai. Harap periksa kembali kata sandi Anda.",
+      };
+    }
+
+    // 2. Perbarui ke kata sandi baru setelah re-autentikasi berhasil
     const { error: updateError } = await supabase.auth.updateUser({
       password: newPassword,
     });
@@ -185,13 +198,29 @@ export const SettingsService = {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return false;
 
-    // Remove user transaction and preference records
+    // Bersihkan seluruh data pengguna dari database (Cascade cleanup)
     try {
       await supabase.from("transactions").delete().eq("user_id", user.id);
+      await supabase.from("accounts").delete().eq("user_id", user.id);
+      await supabase.from("categories").delete().eq("user_id", user.id);
+      await supabase.from("savings_goals").delete().eq("user_id", user.id);
+      await supabase.from("recurring_transactions").delete().eq("user_id", user.id);
+      await supabase.from("google_accounts").delete().eq("user_id", user.id);
+      await supabase.from("synced_sheets").delete().eq("user_id", user.id);
       await supabase.from("user_preferences").delete().eq("user_id", user.id);
       await supabase.from("profiles").delete().eq("id", user.id);
     } catch (e) {
       console.warn("Cleanup before signout warning:", e);
+    }
+
+    // Bersihkan seluruh cache browser/storage untuk mencegah residual data leak
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.clear();
+        sessionStorage.clear();
+      } catch {
+        // ignore storage errors
+      }
     }
 
     await supabase.auth.signOut();

@@ -65,18 +65,18 @@ export default function PageTransition({ children }: { children: React.ReactNode
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.22 }}
-            className="fixed inset-0 z-40 bg-[#0F1419]/45 backdrop-blur-md flex items-center justify-center pointer-events-none"
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-40 bg-[#0F1419]/40 backdrop-blur-sm flex items-center justify-center pointer-events-none transform-gpu"
             aria-live="polite"
             aria-busy="true"
           >
             {/* High-tech Finusa Loading Card */}
             <motion.div
-              initial={{ scale: 0.88, opacity: 0, y: 10 }}
+              initial={{ scale: 0.92, opacity: 0, y: 8 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.88, opacity: 0, y: -10 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              className="p-5 rounded-2xl bg-[#121722]/90 border border-slate-700/60 shadow-[0_16px_40px_rgba(0,0,0,0.6),0_0_25px_rgba(75,123,255,0.18)] flex flex-col items-center gap-3 min-w-[130px]"
+              exit={{ scale: 0.92, opacity: 0, y: -8 }}
+              transition={{ duration: 0.18, ease: "easeOut" }}
+              className="p-5 rounded-2xl bg-[#121722]/95 border border-slate-700/60 shadow-[0_16px_40px_rgba(0,0,0,0.6),0_0_25px_rgba(75,123,255,0.18)] flex flex-col items-center gap-3 min-w-[130px] will-change-transform"
             >
               {/* Dual Ring Spinner with Finusa F glyph */}
               <div className="relative w-12 h-12 flex items-center justify-center">
@@ -112,18 +112,18 @@ export default function PageTransition({ children }: { children: React.ReactNode
         )}
       </AnimatePresence>
 
-      {/* ── Main Page Content with Smooth De-blur Entrance ── */}
+      {/* ── Main Page Content with Smooth GPU Entrance ── */}
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={pathname}
-          initial={{ opacity: 0, y: 12, filter: "blur(6px)" }}
+          initial={{ opacity: 0, y: 10, filter: "blur(2px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          exit={{ opacity: 0, y: -8, filter: "blur(4px)" }}
+          exit={{ opacity: 0, y: -6, filter: "blur(2px)" }}
           transition={{
-            duration: 0.32,
+            duration: 0.28,
             ease: [0.22, 1, 0.36, 1], // Exponential ease-out
           }}
-          className="w-full"
+          className="w-full transform-gpu will-change-[transform,opacity]"
         >
           {children}
         </motion.div>

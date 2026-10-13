@@ -53,7 +53,7 @@ function getIconComponent(iconName: string) {
   }
 }
 
-export default function GoalListRow({
+function GoalListRow({
   goal,
   onQuickDeposit,
   onOpenDetail,
@@ -165,3 +165,5 @@ export default function GoalListRow({
     </div>
   );
 }
+
+export default React.memo(GoalListRow);

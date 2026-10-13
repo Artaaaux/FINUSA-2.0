@@ -10,7 +10,7 @@
 ═════════════════════════════════════════════════════════════════════════════
 
 Nama Produk: FINUSA (Financial Management System - University & All)
-Target Pengguna: Mahasiswa, Orang Awam, Pengguna All Level
+Target Pengguna: Pelajar, Orang Awam, Pengguna All Level
 Platform: Google Sheets (Cloud-based, Free, Easy to Access)
 Bahasa: Indonesia
 Tujuan: Efisiensi Pengelolaan Keuangan Pribadi
@@ -126,7 +126,7 @@ ANALISIS:
 💡 USE CASES
 ═════════════════════════════════════════════════════════════════════════════
 
-MAHASISWA:
+PELAJAR:
 "Saya terima uang saku Rp 2 juta/bulan, tapi cepat habis. 
 Pakai FINUSA sekarang saya tahu: 40% habis di makanan, 30% transport, 30% hiburan.
 Sekarang saya target hemat Rp 100k/minggu dari makanan. Efektif!"
@@ -422,7 +422,7 @@ Mulai sekarang, ubah relationship Anda dengan uang! 💰
 
 Template FINUSA v1.0
 Dibuat oleh: Konsultan Ekonomi & Professor dari Harvard University
-Untuk: Mahasiswa & Orang Awam Indonesia
+Untuk: Pelajar & Orang Awam Indonesia
 Tujuan: Financial Empowerment Through Simple Tools
 Waktu: September 2024
 Lisensi: Free to use, modify, share

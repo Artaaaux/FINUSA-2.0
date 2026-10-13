@@ -26,7 +26,7 @@ Purpose: Menyediakan sistem pembukuan yang mudah digunakan untuk mencatat semua 
 
 Target Users:
 
-* Mahasiswa & Pelajar (track daily expenses & pocket money)
+* Pelajar & Generasi Muda (track daily expenses & pocket money)
 * Fresh Graduates & Profesional Muda (track monthly salary, debt tracking, personal budgeting)
 * Individu yang ingin organized financial records
 

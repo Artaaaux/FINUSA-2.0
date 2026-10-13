@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/auth/supabase-server";
 import { optimizeReceiptImage } from "@/shared/lib/receipt/resize-image";
 import { extractReceiptData } from "@/shared/lib/receipt/extract";
 
@@ -7,6 +8,20 @@ export const maxDuration = 60; // 60 seconds
 
 export async function POST(req: NextRequest) {
   try {
+    // 0. Autentikasi Pengguna: Pastikan hanya pengguna terautentikasi yang dapat memicu AI model
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: "Unauthorized. Silakan masuk (login) terlebih dahulu untuk memproses struk." },
+        { status: 401 }
+      );
+    }
+
     let imageBuffer: Buffer | null = null;
     let mimeType = "image/jpeg";
     let clientTime: string | undefined;
@@ -64,6 +79,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { error: "Data gambar kosong." },
         { status: 400 }
+      );
+    }
+
+    if (imageBuffer.length > 10 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: "Ukuran gambar terlalu besar. Maksimal 10MB." },
+        { status: 413 }
       );
     }
 

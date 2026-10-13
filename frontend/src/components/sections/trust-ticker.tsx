@@ -5,7 +5,7 @@ const trustItems = [
   {
     icon: ShieldCheck,
     title: 'Aman & Terenkripsi',
-    subtitle: 'Standar Bank 256-Bit',
+    subtitle: 'Enkripsi Standar 256-Bit',
     color: 'text-emerald-400',
     bg: 'bg-emerald-500/10 border-emerald-500/20',
   },

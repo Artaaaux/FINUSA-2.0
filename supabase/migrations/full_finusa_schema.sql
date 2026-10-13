@@ -401,31 +401,34 @@ CREATE POLICY "Users can manage own sheet sync history" ON public.sheet_sync_his
     FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
 -- ==============================================================================
--- 10. STORAGE BUCKET FOR RECEIPTS
+-- 10. STORAGE BUCKET CONFIGURATION (Private / Restricted)
+-- Note: Fitur AI Scan Finusa tidak lagi menyimpan foto struk fisik ke storage.
+-- Bucket dijadikan privat untuk menjaga kerahasiaan berkas pengguna.
 -- ==============================================================================
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 VALUES (
     'receipts',
     'receipts',
-    true,
+    false,
     5242880,
     ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/heic']
 )
 ON CONFLICT (id) DO UPDATE SET
-    public = true,
+    public = false,
     file_size_limit = 5242880,
     allowed_mime_types = ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/heic'];
 
--- Storage Policies for receipts bucket
+-- Storage Policies for receipts bucket (Owner Only)
 DROP POLICY IF EXISTS "Authenticated users can upload receipts" ON storage.objects;
 DROP POLICY IF EXISTS "Anyone can view receipts" ON storage.objects;
 DROP POLICY IF EXISTS "Users can delete own receipts" ON storage.objects;
+DROP POLICY IF EXISTS "Users can view own receipts in storage" ON storage.objects;
 
 CREATE POLICY "Authenticated users can upload receipts" ON storage.objects
-    FOR INSERT WITH CHECK (bucket_id = 'receipts' AND auth.role() = 'authenticated');
+    FOR INSERT WITH CHECK (bucket_id = 'receipts' AND auth.role() = 'authenticated' AND auth.uid()::text = (storage.foldername(name))[1]);
 
-CREATE POLICY "Anyone can view receipts" ON storage.objects
-    FOR SELECT USING (bucket_id = 'receipts');
+CREATE POLICY "Users can view own receipts in storage" ON storage.objects
+    FOR SELECT USING (bucket_id = 'receipts' AND auth.uid()::text = (storage.foldername(name))[1]);
 
 CREATE POLICY "Users can delete own receipts" ON storage.objects
     FOR DELETE USING (bucket_id = 'receipts' AND auth.uid()::text = (storage.foldername(name))[1]);
@@ -576,10 +579,17 @@ END $$;
 -- ==============================================================================
 GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
 
-GRANT ALL ON ALL TABLES IN SCHEMA public TO authenticated, anon, service_role;
-GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO authenticated, anon, service_role;
-GRANT ALL ON ALL ROUTINES IN SCHEMA public TO authenticated, anon, service_role;
+-- Authenticated & Service Role have CRUD access controlled strictly by RLS
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO authenticated;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO service_role;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO authenticated, service_role;
+GRANT ALL ON ALL ROUTINES IN SCHEMA public TO authenticated, service_role;
 
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO authenticated, anon, service_role;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO authenticated, anon, service_role;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON ROUTINES TO authenticated, anon, service_role;
+-- Anon role is restricted from writing any data
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon;
+GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO anon;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO authenticated;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO service_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO authenticated, service_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON ROUTINES TO authenticated, service_role;

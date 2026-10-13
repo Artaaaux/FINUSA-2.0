@@ -16,10 +16,10 @@ To provide a clear, comprehensive personal finance management tool (Finance Nusa
 A warm, friendly, and accessible approach to finance that combines AI-assisted insights with a strong local Indonesian context, differentiating it from cold, hyper-corporate banking apps.
 
 ## Operating Context
-Used via web browsers (desktop and mobile) for daily or weekly financial check-ins. Workflows include reviewing recent activity, checking savings progress, interacting with AI for financial tips, and optionally syncing data with Google Sheets.
+Used via web browsers (desktop and mobile) for daily or weekly financial check-ins. Workflows include reviewing recent activity, checking savings progress, scanning receipts with AI OCR for automatic bookkeeping, and optionally syncing data with Google Sheets.
 
 ## Capabilities and Constraints
-- Multi-feature tracking: AI Chat, Analytics (Monitor), Savings (Nabung), Bookkeeping (Pembukuan), and Google Sheets sync.
+- Multi-feature tracking: Smart OCR Receipt Scanner, Analytics (Monitor), Savings Goals (Nabung), Cash Recording (Catat & Pembukuan), and Google Sheets master template integration.
 - Language: Indonesian.
 - Explicitly open for future visual redesigns without strict legacy brand constraints.
 

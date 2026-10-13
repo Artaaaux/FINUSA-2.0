@@ -26,7 +26,7 @@ Purpose: Membantu pengguna mengatur tujuan menabung (financial goals), melacak p
 
 Target Users:
 
-* Mahasiswa (saving untuk gadget, liburan, pendidikan)
+* Pelajar (saving untuk gadget, liburan, pendidikan)
 * Fresh Graduates & Profesional Muda (emergency fund, investasi, rencana masa depan)
 * Individu yang ingin mengelola keuangan lebih terstruktur
 

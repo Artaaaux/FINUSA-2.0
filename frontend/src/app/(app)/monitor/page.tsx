@@ -1,17 +1,35 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { PeriodType, DashboardSummary, Transaction, CashflowPoint, CategoryBreakdownPoint } from "./types";
 import MonitorHeader from "./components/MonitorHeader";
 import KpiCards from "./components/KpiCards";
-import IncomeExpenseChart from "./components/IncomeExpenseChart";
-import CategoryBreakdown from "./components/CategoryBreakdown";
 import TransactionTable from "./components/TransactionTable";
-import ExportModal from "./components/ExportModal";
 import { PembukuanService } from "@/lib/services/pembukuan.service";
 import { AnalyticsService } from "@/lib/services/analytics.service";
+
+const IncomeExpenseChart = dynamic(() => import("./components/IncomeExpenseChart"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[320px] rounded-2xl bg-card/40 border border-slate-700/40 animate-pulse flex items-center justify-center text-slate-500 text-xs">
+      Memuat Grafik Arus Kas...
+    </div>
+  ),
+});
+
+const CategoryBreakdown = dynamic(() => import("./components/CategoryBreakdown"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[320px] rounded-2xl bg-card/40 border border-slate-700/40 animate-pulse flex items-center justify-center text-slate-500 text-xs">
+      Memuat Alokasi Kategori...
+    </div>
+  ),
+});
+
+const ExportModal = dynamic(() => import("./components/ExportModal"), { ssr: false });
 
 const staggered = (delay: number) => ({
   initial: { opacity: 0, y: 10 },

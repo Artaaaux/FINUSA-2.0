@@ -30,7 +30,7 @@ interface TransactionTableProps {
   onPageChange: (newPage: number) => void;
 }
 
-export default function TransactionTable({
+function TransactionTable({
   transactions,
   selectedIds,
   onToggleSelect,
@@ -291,3 +291,5 @@ export default function TransactionTable({
     </div>
   );
 }
+
+export default React.memo(TransactionTable);

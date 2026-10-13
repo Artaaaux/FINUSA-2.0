@@ -101,7 +101,7 @@ function CircularProgress({ progress, strokeColor }: { progress: number; strokeC
   );
 }
 
-export default function GoalCard({
+function GoalCard({
   goal,
   onQuickDeposit,
   onOpenDetail,
@@ -397,3 +397,5 @@ export default function GoalCard({
     </div>
   );
 }
+
+export default React.memo(GoalCard);

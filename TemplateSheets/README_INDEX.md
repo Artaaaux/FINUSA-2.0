@@ -2,7 +2,7 @@
 
 ## 🎯 Selamat Datang!
 
-Anda telah menerima **Template FINUSA** - solusi lengkap untuk mengelola keuangan pribadi dengan efisien, khusus dirancang untuk mahasiswa dan orang awam di Indonesia.
+Anda telah menerima **Template FINUSA** - solusi lengkap untuk mengelola keuangan pribadi dengan efisien, khusus dirancang untuk pelajar dan orang awam di Indonesia.
 
 ---
 

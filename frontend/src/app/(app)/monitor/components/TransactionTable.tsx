@@ -35,7 +35,7 @@ interface TransactionTableProps {
   transactions: Transaction[];
 }
 
-export default function TransactionTable({ transactions }: TransactionTableProps) {
+function TransactionTable({ transactions }: TransactionTableProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<TransactionType>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
@@ -550,3 +550,6 @@ export default function TransactionTable({ transactions }: TransactionTableProps
     </div>
   );
 }
+
+export default React.memo(TransactionTable);
+

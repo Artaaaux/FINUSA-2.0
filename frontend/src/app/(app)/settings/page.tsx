@@ -11,17 +11,19 @@ import { useAuth } from "@/lib/auth/hooks";
 import { useUserProfile } from "@/lib/context/UserProfileContext";
 import { supabase } from "@/lib/auth/supabase";
 
+import dynamic from "next/dynamic";
+
 // Single-page responsive views
 import DesktopSettingsView from "./components/DesktopSettingsView";
 import MobileSettingsView from "./components/MobileSettingsView";
 
-// Modals
-import TimezoneModal from "./components/modals/TimezoneModal";
-import MobileProfileModal from "./components/modals/MobileProfileModal";
-import MobilePasswordModal from "./components/modals/MobilePasswordModal";
-import DataExportModal from "./components/modals/DataExportModal";
-import DeleteAccountModal from "./components/modals/DeleteAccountModal";
-import KeyboardShortcutsModal from "./components/modals/KeyboardShortcutsModal";
+// Modals (dynamically imported for performance)
+const TimezoneModal = dynamic(() => import("./components/modals/TimezoneModal"), { ssr: false });
+const MobileProfileModal = dynamic(() => import("./components/modals/MobileProfileModal"), { ssr: false });
+const MobilePasswordModal = dynamic(() => import("./components/modals/MobilePasswordModal"), { ssr: false });
+const DataExportModal = dynamic(() => import("./components/modals/DataExportModal"), { ssr: false });
+const DeleteAccountModal = dynamic(() => import("./components/modals/DeleteAccountModal"), { ssr: false });
+const KeyboardShortcutsModal = dynamic(() => import("./components/modals/KeyboardShortcutsModal"), { ssr: false });
 
 export default function SettingsPage() {
   const router = useRouter();

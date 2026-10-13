@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Plus, Target } from "lucide-react";
@@ -15,12 +16,13 @@ import NabungKpiSummary from "./components/NabungKpiSummary";
 import NabungFilterBar from "./components/NabungFilterBar";
 import GoalCard from "./components/GoalCard";
 import GoalListRow from "./components/GoalListRow";
-import GoalDetailModal from "./components/GoalDetailModal";
-import CreateGoalModal from "./components/CreateGoalModal";
-import AddMoneyModal from "./components/AddMoneyModal";
-import AutoSaveModal from "./components/AutoSaveModal";
-import MilestoneCelebrationModal from "./components/MilestoneCelebrationModal";
-import NabungExportModal from "./components/NabungExportModal";
+
+const GoalDetailModal = dynamic(() => import("./components/GoalDetailModal"), { ssr: false });
+const CreateGoalModal = dynamic(() => import("./components/CreateGoalModal"), { ssr: false });
+const AddMoneyModal = dynamic(() => import("./components/AddMoneyModal"), { ssr: false });
+const AutoSaveModal = dynamic(() => import("./components/AutoSaveModal"), { ssr: false });
+const MilestoneCelebrationModal = dynamic(() => import("./components/MilestoneCelebrationModal"), { ssr: false });
+const NabungExportModal = dynamic(() => import("./components/NabungExportModal"), { ssr: false });
 
 const staggered = (delay: number) => ({
   initial: { opacity: 0, y: 12 },
@@ -128,7 +130,7 @@ export default function NabungPage() {
   const handleDeposit = async (
     goalId: string,
     depositAmount: number,
-    sourceAccount = "BCA Bisnis & Operasional",
+    sourceAccount = "Kas Operasional Harian",
     notes = "Setoran Tabungan"
   ) => {
     setGoals((prev) =>
@@ -251,7 +253,7 @@ export default function NabungPage() {
           enabled: false,
           frequency: "bulanan",
           amount: Math.round((goalData.targetAmount || 10000000) / 6),
-          sourceAccount: "BCA Bisnis & Operasional",
+          sourceAccount: "Kas Operasional Harian",
           nextDebitDate: new Date().toISOString().split("T")[0],
         },
         transactions: [],

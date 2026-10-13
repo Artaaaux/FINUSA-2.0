@@ -36,17 +36,26 @@ export default function NabungExportModal({
       "Nominal Auto-Save",
     ];
 
+    const sanitizeCsvCell = (val: unknown): string => {
+      if (val === null || val === undefined) return '""';
+      const str = String(val).replace(/"/g, '""');
+      if (/^[=+\-@\t\r]/.test(str)) {
+        return `"'${str}"`;
+      }
+      return `"${str}"`;
+    };
+
     const rows = goals.map((g) => [
-      g.id,
-      `"${g.name.replace(/"/g, '""')}"`,
-      `"${g.categoryLabel}"`,
-      g.userType,
+      sanitizeCsvCell(g.id),
+      sanitizeCsvCell(g.name),
+      sanitizeCsvCell(g.categoryLabel),
+      sanitizeCsvCell(g.userType),
       g.targetAmount,
       g.currentAmount,
       Math.round((g.currentAmount / g.targetAmount) * 100),
-      g.targetDate,
-      g.priority,
-      g.status,
+      sanitizeCsvCell(g.targetDate),
+      sanitizeCsvCell(g.priority),
+      sanitizeCsvCell(g.status),
       g.autoSave.enabled ? "Ya" : "Tidak",
       g.autoSave.enabled ? g.autoSave.amount : 0,
     ]);

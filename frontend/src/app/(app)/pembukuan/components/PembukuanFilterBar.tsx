@@ -75,7 +75,6 @@ export default function PembukuanFilterBar({
       minAmount: undefined,
       maxAmount: undefined,
       hasAttachment: undefined,
-      isReconciled: "all",
     });
   };
 
@@ -88,8 +87,7 @@ export default function PembukuanFilterBar({
     filters.accountIds.length > 0 ||
     filters.minAmount !== undefined ||
     filters.maxAmount !== undefined ||
-    filters.hasAttachment !== undefined ||
-    filters.isReconciled !== "all";
+    filters.hasAttachment !== undefined;
 
   return (
     <div className="space-y-3">

@@ -99,15 +99,24 @@ export default function DataExportModal({
       if (format === "json") {
         dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportPayload, null, 2));
       } else if (format === "csv") {
+        const sanitizeCsvCell = (val: unknown): string => {
+          if (val === null || val === undefined) return '""';
+          const str = String(val).replace(/"/g, '""');
+          if (/^[=+\-@\t\r]/.test(str)) {
+            return `"'${str}"`;
+          }
+          return `"${str}"`;
+        };
+
         const headers = ["Tanggal", "Deskripsi", "Kategori", "Tipe", "Nominal", "Status", "Merchant"].join(",");
         const rows = filteredTransactions.map((t) => [
-          `"${String(t.date || "")}"`,
-          `"${String(t.description || "").replace(/"/g, '""')}"`,
-          `"${String(t.category || "")}"`,
-          `"${String(t.type || "")}"`,
+          sanitizeCsvCell(t.date || ""),
+          sanitizeCsvCell(t.description || ""),
+          sanitizeCsvCell(t.category || ""),
+          sanitizeCsvCell(t.type || ""),
           Number(t.amount) || 0,
-          `"${String(t.status || "completed")}"`,
-          `"${String(t.merchant || "").replace(/"/g, '""')}"`,
+          sanitizeCsvCell(t.status || "completed"),
+          sanitizeCsvCell(t.merchant || ""),
         ].join(","));
         dataStr = "data:text/csv;charset=utf-8," + encodeURIComponent([headers, ...rows].join("\n"));
       } else {

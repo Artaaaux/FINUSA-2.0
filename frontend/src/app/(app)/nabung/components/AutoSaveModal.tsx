@@ -177,7 +177,7 @@ export default function AutoSaveModal({
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center gap-1.5">
                   <Wallet className="w-3.5 h-3.5 text-blue-400" />
-                  <span>Rekening Sumber Debit</span>
+                  <span>Sumber Kas Alokasi</span>
                 </label>
                 <select
                   value={sourceAccount}

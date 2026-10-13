@@ -821,7 +821,7 @@ async function generateMasterTemplate() {
   wsGoals.autoFilter = "A3:H3";
 
   const savingsGoals = [
-    [1, "Dana Darurat Mahasiswa (3 Bulan Kas)", "Prioritas Utama", 4500000, 1800000, { formula: "D4-E4", result: 2700000 }, { formula: "E4/D4", result: 0.40 }, { formula: 'IF(G4>=1, "🟢 TERCAPAI", IF(G4>=0.5, "🟡 BERJALAN BAIK", "⚪ PROSES AWAL"))', result: "⚪ PROSES AWAL" }],
+    [1, "Dana Darurat Pelajar (3 Bulan Kas)", "Prioritas Utama", 4500000, 1800000, { formula: "D4-E4", result: 2700000 }, { formula: "E4/D4", result: 0.40 }, { formula: 'IF(G4>=1, "🟢 TERCAPAI", IF(G4>=0.5, "🟡 BERJALAN BAIK", "⚪ PROSES AWAL"))', result: "⚪ PROSES AWAL" }],
     [2, "Laptop Belajar & Produktivitas", "Pendidikan", 8000000, 3200000, { formula: "D5-E5", result: 4800000 }, { formula: "E5/D5", result: 0.40 }, { formula: 'IF(G5>=1, "🟢 TERCAPAI", IF(G5>=0.5, "🟡 BERJALAN BAIK", "⚪ PROSES AWAL"))', result: "⚪ PROSES AWAL" }],
     [3, "Ujian Sertifikasi & Pelatihan", "Pengembangan Diri", 1500000, 1000000, { formula: "D6-E6", result: 500000 }, { formula: "E6/D6", result: 0.6667 }, { formula: 'IF(G6>=1, "🟢 TERCAPAI", IF(G6>=0.5, "🟡 BERJALAN BAIK", "⚪ PROSES AWAL"))', result: "🟡 BERJALAN BAIK" }],
     [4, "Liburan Akhir Semester", "Impian & Hadiah Diri", 2000000, 750000, { formula: "D7-E7", result: 1250000 }, { formula: "E7/D7", result: 0.375 }, { formula: 'IF(G7>=1, "🟢 TERCAPAI", IF(G7>=0.5, "🟡 BERJALAN BAIK", "⚪ PROSES AWAL"))', result: "⚪ PROSES AWAL" }],

@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Check, X, ArrowRight, TrendingUp, Sparkles, Shield, Clock, Info } from "lucide-react";
+import { Check, X, ArrowRight, TrendingUp } from "lucide-react";
 
 interface ProfileScenario {
   id: string;
@@ -24,7 +24,7 @@ interface ProfileScenario {
 const PROFILES: ProfileScenario[] = [
   {
     id: "student",
-    name: "Mahasiswa & Pelajar",
+    name: "Pelajar & Generasi Muda",
     badge: "Uang Saku & Kerja Lepas",
     role: "Alokasi uang saku, kos, dan jajan harian",
     monthlyIncome: 3500000,

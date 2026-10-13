@@ -140,9 +140,9 @@ export default function CameraView({
 
             {/* Animated Laser Scanning Line */}
             <motion.div
-              className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-blue-400 to-transparent shadow-[0_0_16px_rgba(59,130,246,1)]"
+              className="absolute inset-x-0 top-[5%] h-1 bg-gradient-to-r from-transparent via-blue-400 to-transparent shadow-[0_0_16px_rgba(59,130,246,1)] transform-gpu will-change-transform"
               animate={{
-                top: ["5%", "95%", "5%"],
+                y: [0, 340, 0],
                 opacity: [0.6, 1, 0.6],
               }}
               transition={{

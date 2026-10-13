@@ -21,7 +21,7 @@ interface TransactionCardListProps {
   onDelete: (id: string) => void;
 }
 
-export default function TransactionCardList({
+function TransactionCardList({
   transactions,
   selectedIds,
   onToggleSelect,
@@ -160,3 +160,5 @@ export default function TransactionCardList({
     </div>
   );
 }
+
+export default React.memo(TransactionCardList);

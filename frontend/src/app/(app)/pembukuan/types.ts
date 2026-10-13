@@ -5,7 +5,6 @@ export type PembukuanTab =
   | "ledger"
   | "categories"
   | "recurring"
-  | "reconciliation"
   | "import";
 
 export type DatePreset =
@@ -48,9 +47,9 @@ export interface PembukuanTransaction {
   categoryColor?: string;
   receiptPhotoId?: string;
   attachments?: AttachmentItem[];
+  recurringId?: string;
   isReconciled?: boolean;
   reconciledAt?: string;
-  recurringId?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -97,45 +96,6 @@ export interface RecurringTransaction {
   autoCreate?: boolean;
 }
 
-export interface BankStatementTransaction {
-  id: string;
-  date: string;
-  description: string;
-  amount: number;
-  type: "credit" | "debit"; // credit = income into bank, debit = expense
-  balanceAfter?: number;
-  matchedTransactionId?: string;
-}
-
-export interface ReconciliationMatch {
-  bankTrxId: string;
-  appTrxId: string;
-  confidence: number;
-  matchedBy: "auto" | "manual";
-}
-
-export interface ReconciliationSummary {
-  accountId: string;
-  accountName: string;
-  statementPeriod: {
-    start: string;
-    end: string;
-  };
-  openingBalance: number;
-  closingBalance: number;
-  totalBankCredit: number;
-  totalBankDebit: number;
-  totalBankStatements?: number;
-  matchedCount: number;
-  unmatchedCount?: number;
-  unmatchedBankCount: number;
-  unmatchedAppCount: number;
-  discrepancy?: number;
-  discrepancyAmount: number;
-  isBalanced: boolean;
-  status?: "verified" | "completed" | "in_progress" | string;
-}
-
 export interface FilterState {
   searchQuery: string;
   datePreset: DatePreset;
@@ -148,7 +108,6 @@ export interface FilterState {
   minAmount?: number;
   maxAmount?: number;
   hasAttachment?: boolean;
-  isReconciled?: "all" | "yes" | "no";
   sortBy: "date_desc" | "date_asc" | "amount_desc" | "amount_asc";
   page: number;
   pageSize: number;
@@ -164,7 +123,6 @@ export interface PembukuanKpiData {
   completedCount?: number;
   totalTransactionsCount?: number;
   profitMargin?: number;
-  unreconciledCount?: number;
   totalTransactions?: number;
 }
 

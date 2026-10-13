@@ -207,9 +207,20 @@ export default function AppNavbar({ isCollapsed }: { isCollapsed: boolean }) {
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
-    await supabase.auth.signOut();
-    router.push("/auth/login");
-    router.refresh();
+    try {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("finusa_settings_profile");
+        if (user?.id) {
+          localStorage.removeItem(`finusa_read_notifs_${user.id}`);
+        }
+      }
+      await supabase.auth.signOut();
+    } catch (err) {
+      console.warn("Logout error:", err);
+    } finally {
+      router.push("/auth/login");
+      router.refresh();
+    }
   };
 
   const markAllNotifRead = () => {

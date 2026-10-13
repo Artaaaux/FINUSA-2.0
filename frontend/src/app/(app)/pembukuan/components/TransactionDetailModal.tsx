@@ -7,7 +7,6 @@ import {
   Paperclip,
   CheckCircle2,
   AlertCircle,
-  Scale,
   Edit3,
   Trash2,
   Copy,
@@ -93,13 +92,6 @@ export default function TransactionDetailModal({
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 text-[10px] font-semibold">
                       <AlertCircle className="w-3 h-3" />
                       <span>Pending (Tertunda)</span>
-                    </span>
-                  )}
-
-                  {transaction.isReconciled && (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-400 text-[10px] font-semibold">
-                      <Scale className="w-3 h-3" />
-                      <span>Terekonsiliasi Bank</span>
                     </span>
                   )}
                 </div>

@@ -34,7 +34,7 @@ export default function NabungFilterBar({
   const categories = [
     { key: "all", label: "Semua Kategori" },
     { key: "darurat", label: "Dana Darurat" },
-    { key: "usaha", label: "Usaha Mandiri" },
+    { key: "usaha", label: "Kebutuhan Usaha" },
     { key: "gadget", label: "Gadget & Belajar" },
     { key: "pendidikan", label: "Pendidikan" },
     { key: "properti", label: "Properti" },

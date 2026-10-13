@@ -31,12 +31,33 @@ export default function PembukuanExportModal({
     return true;
   });
 
+  function sanitizeCsvCell(val: unknown): string {
+    if (val === null || val === undefined) return '""';
+    const str = String(val).replace(/"/g, '""');
+    if (/^[=+\-@\t\r]/.test(str)) {
+      return `"'${str}"`;
+    }
+    return `"${str}"`;
+  }
+
   const handleExport = () => {
     if (format === "csv") {
       const headers = "ID,Tanggal,Waktu,Tipe,Nominal,Kategori,Akun,Deskripsi,Merchant,Status,Tag\n";
       const rows = filteredToExport
         .map((t) =>
-          `"${t.id}","${t.date}","${t.time || ""}","${t.type}",${t.amount},"${t.categoryName}","${t.accountName}","${t.description.replace(/"/g, '""')}","${(t.merchant || "").replace(/"/g, '""')}","${t.status}","${t.tags.join("; ")}"`
+          [
+            sanitizeCsvCell(t.id),
+            sanitizeCsvCell(t.date),
+            sanitizeCsvCell(t.time || ""),
+            sanitizeCsvCell(t.type),
+            Number(t.amount) || 0,
+            sanitizeCsvCell(t.categoryName),
+            sanitizeCsvCell(t.accountName),
+            sanitizeCsvCell(t.description),
+            sanitizeCsvCell(t.merchant || ""),
+            sanitizeCsvCell(t.status),
+            sanitizeCsvCell(t.tags.join("; ")),
+          ].join(",")
         )
         .join("\n");
 

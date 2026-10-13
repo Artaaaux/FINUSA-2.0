@@ -8,18 +8,20 @@ import { cn } from "@/shared/lib/utils";
 import { usePembukuan } from "@/app/(app)/pembukuan/hooks/usePembukuan";
 import { PembukuanTransaction } from "@/app/(app)/pembukuan/types";
 
+import dynamic from "next/dynamic";
 import PembukuanHeader from "@/app/(app)/pembukuan/components/PembukuanHeader";
 import PembukuanKpiCards from "@/app/(app)/pembukuan/components/PembukuanKpiCards";
 import QuickAddBar from "@/app/(app)/pembukuan/components/QuickAddBar";
 import PembukuanFilterBar from "@/app/(app)/pembukuan/components/PembukuanFilterBar";
 import TransactionTable from "@/app/(app)/pembukuan/components/TransactionTable";
 import TransactionCardList from "@/app/(app)/pembukuan/components/TransactionCardList";
-import AddTransactionModal from "@/app/(app)/pembukuan/components/AddTransactionModal";
-import TransactionDetailModal from "@/app/(app)/pembukuan/components/TransactionDetailModal";
-import CategoryManagerView from "@/app/(app)/pembukuan/components/CategoryManagerView";
-import RecurringTransactionsView from "@/app/(app)/pembukuan/components/RecurringTransactionsView";
-import BulkImportModal from "@/app/(app)/pembukuan/components/BulkImportModal";
-import PembukuanExportModal from "@/app/(app)/pembukuan/components/PembukuanExportModal";
+
+const AddTransactionModal = dynamic(() => import("@/app/(app)/pembukuan/components/AddTransactionModal"), { ssr: false });
+const TransactionDetailModal = dynamic(() => import("@/app/(app)/pembukuan/components/TransactionDetailModal"), { ssr: false });
+const CategoryManagerView = dynamic(() => import("@/app/(app)/pembukuan/components/CategoryManagerView"), { ssr: false });
+const RecurringTransactionsView = dynamic(() => import("@/app/(app)/pembukuan/components/RecurringTransactionsView"), { ssr: false });
+const BulkImportModal = dynamic(() => import("@/app/(app)/pembukuan/components/BulkImportModal"), { ssr: false });
+const PembukuanExportModal = dynamic(() => import("@/app/(app)/pembukuan/components/PembukuanExportModal"), { ssr: false });
 
 const staggered = (delay: number) => ({
   initial: { opacity: 0, y: 10 },

@@ -13,3 +13,6 @@ backend/dist
 
 # debug
 debug/
+
+# OCR binary models
+*.traineddata

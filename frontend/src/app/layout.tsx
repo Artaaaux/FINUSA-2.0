@@ -1,21 +1,6 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Roboto_Mono } from "next/font/google";
 import { ThemeProvider } from "@/shared/context/ThemeContext";
 import "./globals.css";
-
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  display: "swap",
-  variable: "--font-sans",
-});
-
-const robotoMono = Roboto_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  display: "swap",
-  variable: "--font-roboto-mono",
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://finusa.web.id"),
@@ -62,7 +47,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" suppressHydrationWarning className={`dark ${plusJakartaSans.variable} ${robotoMono.variable}`}>
+    <html lang="id" suppressHydrationWarning className="dark font-sans">
       <body className="min-h-screen bg-bg-dark font-sans text-white antialiased">
         <ThemeProvider>
           {children}

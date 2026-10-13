@@ -1,8 +1,7 @@
 import path from "path";
 import fs from "fs";
+import { createRequire } from "node:module";
 import { NvidiaModelsClient } from "./nvidia-models";
-
-declare const __non_webpack_require__: NodeRequire | undefined;
 import { detectCategory, detectItemCategory } from "./categorize";
 import type { ReceiptItem, ExtractedReceiptData } from "./types";
 import { generateSimulatedReceipt } from "./sample";
@@ -325,7 +324,7 @@ function extractJsonFromModelResponse(text: string): Record<string, unknown> {
  */
 function isTesseractWasmAvailable(): boolean {
   try {
-    const req = typeof __non_webpack_require__ !== "undefined" ? __non_webpack_require__ : require;
+    const req = createRequire(import.meta.url);
     const corePkg = req.resolve("tesseract.js-core/package.json");
     const coreDir = path.dirname(corePkg);
     const candidateFiles = [
@@ -354,7 +353,7 @@ async function performOcr(imageInput: string): Promise<string> {
       const workerOptions: Record<string, unknown> = {};
 
       try {
-        const req = typeof __non_webpack_require__ !== "undefined" ? __non_webpack_require__ : require;
+        const req = createRequire(import.meta.url);
         const tesseractEntry = req.resolve("tesseract.js/package.json");
         const workerPath = path.join(path.dirname(tesseractEntry), "dist", "worker.min.js");
         if (fs.existsSync(workerPath)) {

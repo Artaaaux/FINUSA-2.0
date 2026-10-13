@@ -5,13 +5,10 @@ import {
   PembukuanTransaction,
   CategoryItem,
   RecurringTransaction,
-  BankStatementTransaction,
   FilterState,
   PembukuanKpiData,
   PembukuanTab,
   TransactionStatus,
-  ReconciliationMatch,
-  ReconciliationSummary,
 } from "../types";
 import {
   DEFAULT_CATEGORIES,
@@ -29,7 +26,6 @@ const DEFAULT_FILTERS: FilterState = {
   status: "all",
   categoryIds: [],
   accountIds: [],
-  isReconciled: "all",
   sortBy: "date_desc",
   page: 1,
   pageSize: 10,
@@ -45,8 +41,6 @@ export function usePembukuan() {
   const [categories, setCategories] = useState<CategoryItem[]>(DEFAULT_CATEGORIES);
   const [accounts, setAccounts] = useState<AccountOption[]>(PEMBUKUAN_ACCOUNTS);
   const [recurring, setRecurring] = useState<RecurringTransaction[]>([]);
-  const [bankStatements] = useState<BankStatementTransaction[]>([]);
-  const [reconciliationMatches, setReconciliationMatches] = useState<ReconciliationMatch[]>([]);
 
   // UI Selection & Filter State
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
@@ -123,14 +117,6 @@ export function usePembukuan() {
     }
   }, [recurring, isClient]);
 
-  useEffect(() => {
-    if (isClient) {
-      try {
-        localStorage.setItem("finusa_pembukuan_reconciliation_matches", JSON.stringify(reconciliationMatches));
-      } catch {}
-    }
-  }, [reconciliationMatches, isClient]);
-
   const showToast = useCallback((title: string, desc?: string, type: "success" | "error" | "info" = "success") => {
     setToastMessage({ title, desc, type });
     setTimeout(() => {
@@ -194,7 +180,6 @@ export function usePembukuan() {
       status: data.status || "completed",
       tags: data.tags || [],
       attachments: data.attachments || [],
-      isReconciled: false,
       createdAt: now.toISOString(),
       updatedAt: now.toISOString(),
     };
@@ -422,75 +407,6 @@ export function usePembukuan() {
     });
   }, [addTransaction, recurring]);
 
-  // --- Bank Reconciliation Logic ---
-  const matchReconciliation = useCallback((bankStatementId: string, transactionId: string) => {
-    const newMatch: ReconciliationMatch = {
-      bankTrxId: bankStatementId,
-      appTrxId: transactionId,
-      confidence: 100,
-      matchedBy: "manual",
-    };
-
-    setReconciliationMatches((prev) => [...prev, newMatch]);
-    setTransactions((prev) =>
-      prev.map((t) => (t.id === transactionId ? { ...t, isReconciled: true } : t))
-    );
-    showToast("Rekonsiliasi Cocok", "Mutasi bank berhasil dipasangkan dengan pembukuan", "success");
-  }, [showToast]);
-
-  const unmatchReconciliation = useCallback((bankStatementId: string) => {
-    const match = reconciliationMatches.find((m) => m.bankTrxId === bankStatementId);
-    if (match) {
-      setTransactions((prev) =>
-        prev.map((t) => (t.id === match.appTrxId ? { ...t, isReconciled: false } : t))
-      );
-    }
-    setReconciliationMatches((prev) => prev.filter((m) => m.bankTrxId !== bankStatementId));
-    showToast("Pemasangan Dibatalkan", undefined, "info");
-  }, [reconciliationMatches, showToast]);
-
-  const autoMatchBankStatement = useCallback((bankStatementId?: string) => {
-    if (bankStatementId) {
-      const stmt = bankStatements.find((b) => b.id === bankStatementId);
-      if (!stmt) return;
-
-      const candidates = transactions.filter((t) => {
-        if (t.isReconciled) return false;
-        const sameType = (stmt.type === "credit" && t.type === "income") || (stmt.type === "debit" && t.type === "expense");
-        const sameAmount = Math.abs(t.amount - stmt.amount) < 1;
-        return sameType && sameAmount;
-      });
-
-      if (candidates.length > 0) {
-        matchReconciliation(bankStatementId, candidates[0].id);
-      } else {
-        showToast("Tidak Ditemukan Kecocokan Otomatis", "Silakan pasangkan secara manual atau catat transaksi baru", "error");
-      }
-    } else {
-      let matchCount = 0;
-      bankStatements.forEach((stmt) => {
-        const isMatched = reconciliationMatches.some((m) => m.bankTrxId === stmt.id);
-        if (!isMatched) {
-          const candidate = transactions.find((t) => {
-            if (t.isReconciled) return false;
-            const sameType = (stmt.type === "credit" && t.type === "income") || (stmt.type === "debit" && t.type === "expense");
-            const sameAmount = Math.abs(t.amount - stmt.amount) < 1;
-            return sameType && sameAmount;
-          });
-          if (candidate) {
-            matchReconciliation(stmt.id, candidate.id);
-            matchCount++;
-          }
-        }
-      });
-      if (matchCount > 0) {
-        showToast("Pencocokan Otomatis Selesai", `${matchCount} transaksi berhasil dipasangkan`, "success");
-      } else {
-        showToast("Tidak Ada Mutasi Baru yang Cocok", undefined, "info");
-      }
-    }
-  }, [bankStatements, transactions, reconciliationMatches, matchReconciliation, showToast]);
-
   // Bulk Import
   const importTransactions = useCallback((newTxs: Partial<PembukuanTransaction>[]) => {
     newTxs.forEach((tx) => addTransaction(tx));
@@ -521,10 +437,6 @@ export function usePembukuan() {
 
       // Accounts
       if (filters.accountIds.length > 0 && !filters.accountIds.includes(tx.accountId)) return false;
-
-      // Reconciliation
-      if (filters.isReconciled === "yes" && !tx.isReconciled) return false;
-      if (filters.isReconciled === "no" && tx.isReconciled) return false;
 
       // Date Filters
       const now = new Date();
@@ -566,14 +478,12 @@ export function usePembukuan() {
   const kpiData: PembukuanKpiData = useMemo(() => {
     let totalIncome = 0;
     let totalExpense = 0;
-    let reconciledCount = 0;
     let pendingTotal = 0;
     let pendingCount = 0;
 
     transactions.forEach((t) => {
       if (t.type === "income") totalIncome += t.amount;
       if (t.type === "expense") totalExpense += t.amount;
-      if (t.isReconciled) reconciledCount++;
       if (t.status === "pending") {
         pendingTotal += t.amount;
         pendingCount++;
@@ -582,7 +492,6 @@ export function usePembukuan() {
 
     const netProfit = totalIncome - totalExpense;
     const count = transactions.length;
-    const reconciledPercentage = count > 0 ? Math.round((reconciledCount / count) * 100) : 0;
 
     return {
       totalIncome,
@@ -592,7 +501,6 @@ export function usePembukuan() {
       pendingTotal,
       pendingCount,
       transactionCount: count,
-      reconciledPercentage,
       incomeTrend: 0,
       expenseTrend: 0,
       profitTrend: 0,
@@ -603,42 +511,6 @@ export function usePembukuan() {
     };
   }, [transactions]);
 
-  // --- Memoized Reconciliation Summary ---
-  const reconciliationSummary: ReconciliationSummary = useMemo(() => {
-    const totalBank = bankStatements.length;
-    const matchedCount = reconciliationMatches.length;
-    const unmatchedCount = totalBank - matchedCount;
-
-    const bankDebitTotal = bankStatements.reduce((acc, curr) => curr.type === "debit" ? acc + curr.amount : acc, 0);
-    const bankCreditTotal = bankStatements.reduce((acc, curr) => curr.type === "credit" ? acc + curr.amount : acc, 0);
-    const appIncomeTotal = transactions.filter((t) => t.type === "income").reduce((acc, curr) => acc + curr.amount, 0);
-    const appExpenseTotal = transactions.filter((t) => t.type === "expense").reduce((acc, curr) => acc + curr.amount, 0);
-
-    const discrepancy = Math.abs((bankCreditTotal - bankDebitTotal) - (appIncomeTotal - appExpenseTotal));
-
-    return {
-      accountId: accounts[0]?.id || "",
-      accountName: accounts[0]?.name || "Rekening Kas",
-      statementPeriod: {
-        start: "2026-03-01",
-        end: "2026-03-31",
-      },
-      openingBalance: 18500000,
-      closingBalance: 24500000,
-      totalBankCredit: 12500000,
-      totalBankDebit: 6500000,
-      totalBankStatements: totalBank,
-      matchedCount,
-      unmatchedCount,
-      unmatchedBankCount: unmatchedCount,
-      unmatchedAppCount: Math.max(0, transactions.length - matchedCount),
-      discrepancy,
-      discrepancyAmount: discrepancy,
-      isBalanced: discrepancy === 0 && unmatchedCount === 0,
-      status: discrepancy === 0 && unmatchedCount === 0 ? "verified" : unmatchedCount === 0 ? "completed" : "in_progress",
-    };
-  }, [bankStatements, reconciliationMatches, transactions, accounts]);
-
   return {
     activeTab,
     setActiveTab,
@@ -646,9 +518,6 @@ export function usePembukuan() {
     filteredTransactions,
     categories,
     recurring,
-    bankStatements,
-    reconciliationMatches,
-    reconciliationSummary,
     filters,
     setFilters,
     selectedIds,
@@ -670,9 +539,6 @@ export function usePembukuan() {
     toggleRecurringActive,
     deleteRecurring,
     triggerRecurringNow,
-    matchReconciliation,
-    unmatchReconciliation,
-    autoMatchBankStatement,
     importTransactions,
   };
 }

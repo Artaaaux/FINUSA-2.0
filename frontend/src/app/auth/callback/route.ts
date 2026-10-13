@@ -7,20 +7,22 @@ export async function GET(request: NextRequest) {
   const type = searchParams.get("type");
   const rawNext = searchParams.get("next");
 
-  // Determine target path: if type is recovery or next contains reset-password, redirect to /auth/reset-password
-  const next = (type === "recovery" || rawNext === "/auth/reset-password" || rawNext?.includes("reset-password"))
-    ? "/auth/reset-password"
-    : (rawNext ?? "/home");
+  // Validasi ketat target path (mencegah Open Redirect & Host Header Injection)
+  let safeNext = "/home";
+  if (type === "recovery" || rawNext === "/auth/reset-password" || rawNext?.includes("reset-password")) {
+    safeNext = "/auth/reset-password";
+  } else if (
+    rawNext &&
+    rawNext.startsWith("/") &&
+    !rawNext.startsWith("//") &&
+    !rawNext.includes("\\") &&
+    !rawNext.includes("://")
+  ) {
+    safeNext = rawNext;
+  }
 
   if (code) {
-    const forwardedHost = request.headers.get("x-forwarded-host");
-    const isLocalEnv = process.env.NODE_ENV === "development";
-    const redirectUrl = isLocalEnv
-      ? `${origin}${next}`
-      : forwardedHost
-      ? `https://${forwardedHost}${next}`
-      : `${origin}${next}`;
-
+    const redirectUrl = new URL(safeNext, origin).toString();
     const response = NextResponse.redirect(redirectUrl);
 
     const supabase = createServerClient(

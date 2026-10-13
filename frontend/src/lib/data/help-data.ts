@@ -79,8 +79,8 @@ export const HELP_CATEGORIES: HelpCategory[] = [
         ],
         troubleshooting: [
           {
-            issue: "Apakah saldo di tabungan otomatis terpotong dari rekening bank asli saya?",
-            solution: "FINUSA adalah sistem pencatatan dan pemantauan mandiri. Transaksi fisik pemindahan uang antar-rekening tetap dilakukan via aplikasi perbankan Anda, sementara FINUSA mencatat alokasi dan status pencapaiannya secara real-time."
+            issue: "Apakah saldo di tabungan otomatis terpotong dari saldo riil dompet saya?",
+            solution: "FINUSA adalah sistem pencatatan dan pemantauan kas mandiri. Transaksi pemindahan dana riil tetap dilakukan secara mandiri oleh Anda, sementara FINUSA memantau alokasi dan status target pencapaiannya secara visual dan real-time."
           }
         ]
       },
@@ -201,10 +201,10 @@ export const HELP_CATEGORIES: HelpCategory[] = [
           },
           {
             stepNumber: 3,
-            title: "Tentukan Rekening Sumber (Opsional)",
-            instruction: "Pilih dari rekening atau kantong mana uang tersebut disisihkan.",
+            title: "Tentukan Sumber Dana Kas (Opsional)",
+            instruction: "Pilih dari pos kas atau dompet mana uang tersebut disisihkan.",
             details: [
-              "Pilihan sumber: Kas Tunai, Bank BCA, Bank Mandiri, GoPay, OVO, atau sumber lainnya."
+              "Pilihan sumber: Kas Utama, Pos Operasional, GoPay, Dompet Digital, Kas Tunai, atau pos lainnya."
             ]
           },
           {
@@ -274,7 +274,7 @@ export const HELP_CATEGORIES: HelpCategory[] = [
             instruction: "Tentukan interval: Harian, Mingguan, atau Bulanan.",
             details: [
               "Untuk pekerja bergaji tetap, frekuensi Bulanan (sesuai tanggal gajian) adalah pilihan paling tepat.",
-              "Untuk mahasiswa atau freelancer, frekuensi Mingguan membantu meringankan beban psikologis."
+              "Untuk pelajar atau freelancer, frekuensi Mingguan membantu meringankan beban psikologis."
             ]
           },
           {
@@ -479,7 +479,7 @@ export const HELP_CATEGORIES: HelpCategory[] = [
         ],
         bestPractices: [
           "Segera foto struk belanjaan baru di hari yang sama sebelum tinta thermal memudar terpapar panas.",
-          "Struk minimarket (Alfamart, Indomaret, Superindo), SPBU, dan struk mesin EDC perbankan memiliki format standar yang sangat optimal dipindai."
+          "Struk minimarket (Alfamart, Indomaret, Superindo), SPBU, restoran, dan struk kasir mesin EDC memiliki format standar yang sangat optimal dipindai."
         ],
         troubleshooting: [
           {
@@ -562,7 +562,7 @@ export const HELP_CATEGORIES: HelpCategory[] = [
             details: [
               "Gunakan Pengeluaran saat membeli makanan via QRIS, membayar bensin tunai, atau bayar parkir.",
               "Gunakan Pemasukan saat menerima transfer gaji, uang saku, atau omzet harian.",
-              "Gunakan Transfer saat memindahkan uang antar rekening bank atau top-up dompet digital."
+              "Gunakan Transfer saat memindahkan uang antar pos kas atau top-up dompet digital."
             ]
           }
         ],
@@ -696,7 +696,7 @@ export const HELP_CATEGORIES: HelpCategory[] = [
         troubleshooting: [
           {
             issue: "Angka Net Cashflow tidak sesuai dengan sisa uang fisik di dompet",
-            solution: "Pastikan tidak ada transaksi tunai atau potongan biaya admin bank yang terlewat dicatat pada menu Catat."
+            solution: "Pastikan tidak ada transaksi tunai atau potongan biaya admin layanan yang terlewat dicatat pada menu Catat."
           }
         ]
       },
