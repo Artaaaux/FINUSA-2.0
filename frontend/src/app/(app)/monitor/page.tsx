@@ -145,6 +145,8 @@ export default function MonitorPage() {
           } else if (selectedPeriod === "this_year") {
             const curYearStr = `${currentYear}-`;
             periodMatch = (d) => d.startsWith(curYearStr);
+          } else if (selectedPeriod === "all") {
+            periodMatch = () => true;
           }
 
           const mappedTx: Transaction[] = dbTx
@@ -166,7 +168,7 @@ export default function MonitorPage() {
         }
 
         if (summaryData) {
-          const periodLabel = selectedPeriod === "this_month" ? "bulan ini" : selectedPeriod === "last_month" ? "bulan lalu" : "tahun ini";
+          const periodLabel = selectedPeriod === "this_month" ? "bulan ini" : selectedPeriod === "last_month" ? "bulan lalu" : selectedPeriod === "this_year" ? "tahun ini" : "semua waktu";
           const compareLabel = selectedPeriod === "this_year" ? "tahun lalu" : "bulan lalu";
 
           const incomeChange = summaryData.incomeGrowthPercent;

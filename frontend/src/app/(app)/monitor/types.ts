@@ -1,4 +1,4 @@
-export type PeriodType = "this_month" | "last_month" | "this_year";
+export type PeriodType = "this_month" | "last_month" | "this_year" | "all";
 
 export type TransactionType = "all" | "income" | "expense";
 

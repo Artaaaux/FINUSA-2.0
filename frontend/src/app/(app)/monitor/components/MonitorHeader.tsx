@@ -19,7 +19,8 @@ export default function MonitorHeader({
   const periods: { id: PeriodType; label: string }[] = [
     { id: "this_month", label: "Bulan Ini" },
     { id: "last_month", label: "Bulan Lalu" },
-    { id: "this_year", label: "Tahun Ini (YTD)" },
+    { id: "this_year", label: "Tahun Ini" },
+    { id: "all", label: "Semua Waktu" },
   ];
 
   return (

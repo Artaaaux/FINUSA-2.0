@@ -1,7 +1,7 @@
 import { PembukuanService } from "./pembukuan.service";
 
 export interface MonthlyFinancialSummary {
-  period: "this_month" | "last_month" | "this_year";
+  period: "this_month" | "last_month" | "this_year" | "all";
   totalIncome: number;
   totalExpense: number;
   netSavings: number;
@@ -23,7 +23,7 @@ export interface MonthlyFinancialSummary {
 }
 
 export const AnalyticsService = {
-  async getDashboardSummary(period: "this_month" | "last_month" | "this_year" = "this_month"): Promise<MonthlyFinancialSummary> {
+  async getDashboardSummary(period: "this_month" | "last_month" | "this_year" | "all" = "this_month"): Promise<MonthlyFinancialSummary> {
     const [transactions, accounts] = await Promise.all([
       PembukuanService.getTransactions(),
       PembukuanService.getAccounts(),
@@ -68,7 +68,7 @@ export const AnalyticsService = {
 
       trendEndYear = targetDate.getFullYear();
       trendEndMonth = targetDate.getMonth() + 1;
-    } else {
+    } else if (period === "this_year") {
       // this_year
       const curYearStr = `${currentYear}-`;
       const prevYearStr = `${currentYear - 1}-`;
@@ -78,6 +78,11 @@ export const AnalyticsService = {
 
       const nextYearStr = `${currentYear + 1}-`;
       afterPeriodMatch = (d) => d >= nextYearStr;
+    } else {
+      // all
+      currentMatch = () => true;
+      previousMatch = () => false;
+      afterPeriodMatch = () => false;
     }
 
     let totalIncome = 0;

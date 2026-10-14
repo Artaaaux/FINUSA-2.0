@@ -514,6 +514,48 @@ export const MOCK_SUMMARIES: Record<PeriodType, DashboardSummary> = {
       },
     },
   },
+  all: {
+    period: "all",
+    totalBalance: 25070000,
+    totalIncome: 120000000,
+    totalExpense: 80000000,
+    netCashflow: 40000000,
+    savingRate: 33.3,
+    kpis: {
+      balance: {
+        title: "Total Saldo Kas",
+        value: 25070000,
+        previousValue: 0,
+        changePercentage: 100,
+        isPositive: true,
+        trendText: "seluruh rekening",
+      },
+      income: {
+        title: "Total Pemasukan",
+        value: 120000000,
+        previousValue: 0,
+        changePercentage: 100,
+        isPositive: true,
+        trendText: "semua waktu",
+      },
+      expense: {
+        title: "Total Pengeluaran",
+        value: 80000000,
+        previousValue: 0,
+        changePercentage: 100,
+        isPositive: true,
+        trendText: "semua waktu",
+      },
+      savingRate: {
+        title: "Rasio Tabungan",
+        value: 33.3,
+        previousValue: 0,
+        changePercentage: 33.3,
+        isPositive: true,
+        trendText: "kondisi sehat",
+      },
+    },
+  },
 };
 
 export const MOCK_MONTHLY_CASHFLOW: CashflowPoint[] = [
