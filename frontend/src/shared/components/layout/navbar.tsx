@@ -190,14 +190,9 @@ export function Navbar() {
                   <div className="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent pointer-events-none" />
                 </div>
               </div>
-              <div className="flex flex-col">
-                <span className="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-1 leading-none font-sans">
-                  Finusa
-                </span>
-                <span className="text-[9px] uppercase tracking-wider text-blue-300/70 font-semibold mt-1">
-                  Finance Companion
-                </span>
-              </div>
+              <span className="text-xl sm:text-2xl font-bold tracking-tight text-white font-sans">
+                Finusa
+              </span>
             </a>
 
             {/* 2. CENTER: Apple VisionOS / macOS Sliding Nav Capsule */}
@@ -309,12 +304,7 @@ export function Navbar() {
                   />
                 </div>
               </div>
-              <div className="flex flex-col">
-                <span className="font-bold text-lg text-white font-sans leading-none">Finusa</span>
-                <span className="text-[9px] uppercase tracking-wider text-blue-300/70 font-semibold mt-0.5">
-                  Finance Companion
-                </span>
-              </div>
+              <span className="font-bold text-lg text-white font-sans">Finusa</span>
             </div>
             <button
               type="button"
