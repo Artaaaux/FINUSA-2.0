@@ -54,18 +54,6 @@ function TransactionTable({ transactions }: TransactionTableProps) {
     return Array.from(set);
   }, [transactions]);
 
-  // Clean distinct non-cash accounts so cash isn't duplicated
-  const specificNonCashAccounts = useMemo(() => {
-    const set = new Set<string>();
-    transactions.forEach((t) => {
-      const isCash = isCashTransaction({ accountName: t.account, metadata: { paymentMethod: t.account } });
-      if (!isCash && t.account && t.account.trim()) {
-        set.add(t.account);
-      }
-    });
-    return Array.from(set);
-  }, [transactions]);
-
   // Filter & Sort Pipeline
   const filteredTransactions = useMemo(() => {
     return transactions
@@ -95,11 +83,6 @@ function TransactionTable({ transactions }: TransactionTableProps) {
           const isCash = isCashTransaction({ accountName: t.account, metadata: { paymentMethod: t.account } });
           if (channelFilter === "cash" && !isCash) return false;
           if (channelFilter === "digital" && isCash) return false;
-        }
-
-        // Account (Specific non-cash account)
-        if (accountFilter !== "all" && accountFilter !== "cash" && accountFilter !== "digital") {
-          if (t.account !== accountFilter) return false;
         }
 
         return true;
@@ -295,29 +278,16 @@ function TransactionTable({ transactions }: TransactionTableProps) {
           <select
             value={accountFilter}
             onChange={(e) => {
-              const val = e.target.value;
+              const val = e.target.value as "all" | "cash" | "digital";
               setAccountFilter(val);
-              if (val === "all" || val === "cash" || val === "digital") {
-                setChannelFilter(val as "all" | "cash" | "digital");
-              } else {
-                setChannelFilter("digital");
-              }
+              setChannelFilter(val);
               setCurrentPage(1);
             }}
             className="w-full px-3 py-2 rounded-xl bg-slate-900/80 border border-slate-800 text-xs text-slate-300 focus:outline-none focus:border-blue-500 cursor-pointer"
           >
-            <option value="all">Semua Jalur & Rekening</option>
+            <option value="all">Semua Jalur</option>
             <option value="cash">💵 Tunai (Duit Pegang)</option>
-            <option value="digital">💳 Non-Tunai (Digital / Bank / QRIS)</option>
-            {specificNonCashAccounts.length > 0 && (
-              <optgroup label="Rekening / Bank Tertentu">
-                {specificNonCashAccounts.map((a) => (
-                  <option key={a} value={a}>
-                    💳 {a}
-                  </option>
-                ))}
-              </optgroup>
-            )}
+            <option value="digital">💳 Non-Tunai (Digital)</option>
           </select>
         </div>
 

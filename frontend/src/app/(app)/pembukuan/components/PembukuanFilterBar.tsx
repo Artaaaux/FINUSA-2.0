@@ -415,41 +415,23 @@ export default function PembukuanFilterBar({
               </select>
             </div>
 
-            {/* Filter by Account / Channel */}
+            {/* Filter by Payment Channel (Tunai vs Non-Tunai) */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300">Metode / Jalur Kas</label>
+              <label className="text-xs font-semibold text-slate-300">Jalur Kas</label>
               <select
-                value={
-                  filters.paymentChannel === "cash"
-                    ? "channel_cash"
-                    : filters.paymentChannel === "digital"
-                    ? "channel_digital"
-                    : filters.accountIds[0] || ""
-                }
+                value={filters.paymentChannel || "all"}
                 onChange={(e) => {
-                  const val = e.target.value;
-                  if (val === "channel_cash") {
-                    onFilterChange({ paymentChannel: "cash", accountIds: [], page: 1 });
-                  } else if (val === "channel_digital") {
-                    onFilterChange({ paymentChannel: "digital", accountIds: [], page: 1 });
-                  } else if (val === "") {
-                    onFilterChange({ paymentChannel: "all", accountIds: [], page: 1 });
-                  } else {
-                    onFilterChange({ paymentChannel: "all", accountIds: [val], page: 1 });
-                  }
+                  onFilterChange({
+                    paymentChannel: e.target.value as "all" | "cash" | "digital",
+                    accountIds: [],
+                    page: 1,
+                  });
                 }}
                 className="w-full px-3 py-2 rounded-xl bg-[#0F1419] border border-slate-700 text-white text-xs focus:outline-none focus:border-blue-500 cursor-pointer"
               >
-                <option value="">Semua Jalur & Rekening</option>
-                <option value="channel_cash">💵 Tunai (Semua Duit Pegang)</option>
-                <option value="channel_digital">💳 Non-Tunai (Digital / Bank / QRIS)</option>
-                <optgroup label="Rekening / Akun Spesifik">
-                  {accounts.map((a) => (
-                    <option key={a.id} value={a.id}>
-                      {a.name}
-                    </option>
-                  ))}
-                </optgroup>
+                <option value="all">Semua Jalur</option>
+                <option value="cash">💵 Tunai (Duit Pegang)</option>
+                <option value="digital">💳 Non-Tunai (Digital)</option>
               </select>
             </div>
 
