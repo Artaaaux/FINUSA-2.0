@@ -197,7 +197,7 @@ function TransactionTable({
                           : "bg-blue-500/10 text-blue-300 border border-blue-500/20"
                       )}
                     >
-                      {isCashTransaction(tx) ? "💵 Tunai (Pegang)" : "💳 Non-Tunai"}
+                      {isCashTransaction(tx) ? "Tunai (Pegang)" : "Non-Tunai"}
                     </span>
                   </td>
 

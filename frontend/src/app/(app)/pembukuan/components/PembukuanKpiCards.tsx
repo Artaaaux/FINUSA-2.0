@@ -29,10 +29,10 @@ export default function PembukuanKpiCards({ kpiData }: PembukuanKpiCardsProps) {
       extra: (
         <div className="flex items-center gap-1.5 mt-1.5 text-[10px] sm:text-[11px] flex-wrap">
           <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-amber-500/10 text-amber-300 font-medium border border-amber-500/20" title="Duit dipegang (Kas Tunai Fisik)">
-            💵 Tunai: {formatCurrency(kpiData.cashIncome || 0)}
+            Tunai: {formatCurrency(kpiData.cashIncome || 0)}
           </span>
           <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-blue-500/10 text-blue-300 font-medium border border-blue-500/20" title="Duit digital (Rekening / QRIS / E-Wallet)">
-            💳 Digital: {formatCurrency(kpiData.digitalIncome || 0)}
+            Digital: {formatCurrency(kpiData.digitalIncome || 0)}
           </span>
         </div>
       ),
@@ -47,10 +47,10 @@ export default function PembukuanKpiCards({ kpiData }: PembukuanKpiCardsProps) {
       extra: (
         <div className="flex items-center gap-1.5 mt-1.5 text-[10px] sm:text-[11px] flex-wrap">
           <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-amber-500/10 text-amber-300 font-medium border border-amber-500/20" title="Keluar tunai">
-            💵 Tunai: {formatCurrency(kpiData.cashExpense || 0)}
+            Tunai: {formatCurrency(kpiData.cashExpense || 0)}
           </span>
           <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-blue-500/10 text-blue-300 font-medium border border-blue-500/20" title="Keluar digital">
-            💳 Digital: {formatCurrency(kpiData.digitalExpense || 0)}
+            Digital: {formatCurrency(kpiData.digitalExpense || 0)}
           </span>
         </div>
       ),

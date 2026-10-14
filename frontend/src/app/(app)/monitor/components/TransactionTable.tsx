@@ -205,7 +205,7 @@ function TransactionTable({ transactions }: TransactionTableProps) {
               )}
               title="Duit dipegang (Kas Tunai)"
             >
-              <span>💵 Tunai (Pegang)</span>
+              <span>Tunai (Pegang)</span>
             </button>
             <button
               type="button"
@@ -222,7 +222,7 @@ function TransactionTable({ transactions }: TransactionTableProps) {
               )}
               title="Duit digital (Rekening / QRIS / E-Wallet)"
             >
-              <span>💳 Non-Tunai (Digital)</span>
+              <span>Non-Tunai (Digital)</span>
             </button>
           </div>
         </div>
@@ -286,8 +286,8 @@ function TransactionTable({ transactions }: TransactionTableProps) {
             className="w-full px-3 py-2 rounded-xl bg-slate-900/80 border border-slate-800 text-xs text-slate-300 focus:outline-none focus:border-blue-500 cursor-pointer"
           >
             <option value="all">Semua Jalur</option>
-            <option value="cash">💵 Tunai (Duit Pegang)</option>
-            <option value="digital">💳 Non-Tunai (Digital)</option>
+            <option value="cash">Tunai (Duit Pegang)</option>
+            <option value="digital">Non-Tunai (Digital)</option>
           </select>
         </div>
 
@@ -346,9 +346,9 @@ function TransactionTable({ transactions }: TransactionTableProps) {
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-800 text-blue-300 border border-slate-700 text-[11px]">
               Jalur:{" "}
               {accountFilter === "cash" || channelFilter === "cash"
-                ? "💵 Tunai (Pegang)"
+                ? "Tunai (Pegang)"
                 : accountFilter === "digital" || channelFilter === "digital"
-                ? "💳 Non-Tunai (Digital)"
+                ? "Non-Tunai (Digital)"
                 : accountFilter}
               <button
                 type="button"
@@ -428,8 +428,8 @@ function TransactionTable({ transactions }: TransactionTableProps) {
                         )}
                       >
                         {isCashTransaction({ accountName: trx.account, metadata: { paymentMethod: trx.account } })
-                          ? "💵 Tunai (Pegang)"
-                          : "💳 Non-Tunai"}
+                          ? "Tunai (Pegang)"
+                          : "Non-Tunai"}
                       </span>
                     </td>
                     <td className="py-3 px-4 text-right whitespace-nowrap">
@@ -535,8 +535,8 @@ function TransactionTable({ transactions }: TransactionTableProps) {
                           )}
                         >
                           {isCashTransaction({ accountName: trx.account, metadata: { paymentMethod: trx.account } })
-                            ? "💵 Tunai"
-                            : "💳 Non-Tunai"}
+                            ? "Tunai"
+                            : "Non-Tunai"}
                         </span>
                       </div>
                     </div>

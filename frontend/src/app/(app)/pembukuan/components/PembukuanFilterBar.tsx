@@ -257,7 +257,7 @@ export default function PembukuanFilterBar({
               )}
               title="Duit dipegang (Kas Tunai Fisik)"
             >
-              <span>💵 Tunai (Duit Pegang)</span>
+              <span>Tunai (Duit Pegang)</span>
               {kpiData && (
                 <span
                   className={cn(
@@ -285,7 +285,7 @@ export default function PembukuanFilterBar({
               )}
               title="Duit digital (Rekening Bank / E-Wallet / QRIS)"
             >
-              <span>💳 Non-Tunai (Digital)</span>
+              <span>Non-Tunai (Digital)</span>
               {kpiData && (
                 <span
                   className={cn(
@@ -430,8 +430,8 @@ export default function PembukuanFilterBar({
                 className="w-full px-3 py-2 rounded-xl bg-[#0F1419] border border-slate-700 text-white text-xs focus:outline-none focus:border-blue-500 cursor-pointer"
               >
                 <option value="all">Semua Jalur</option>
-                <option value="cash">💵 Tunai (Duit Pegang)</option>
-                <option value="digital">💳 Non-Tunai (Digital)</option>
+                <option value="cash">Tunai (Duit Pegang)</option>
+                <option value="digital">Non-Tunai (Digital)</option>
               </select>
             </div>
 

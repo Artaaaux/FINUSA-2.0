@@ -123,7 +123,7 @@ function TransactionCardList({
                       : "bg-blue-500/15 text-blue-300 border border-blue-500/30"
                   )}
                 >
-                  {isCashTransaction(tx) ? "💵 Tunai" : "💳 Non-Tunai"}
+                  {isCashTransaction(tx) ? "Tunai" : "Non-Tunai"}
                 </span>
                 <span className="text-slate-600">•</span>
                 <span className="text-slate-500 font-mono text-[11px]">
