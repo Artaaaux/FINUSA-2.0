@@ -142,25 +142,30 @@ export default function KpiCards({ summary }: KpiCardsProps) {
 
               {/* Trend Badge & Comparison Text */}
               <div className="flex flex-wrap items-center gap-1 sm:gap-1.5 pt-0.5">
-                <span
-                  className={cn(
-                    "inline-flex items-center gap-0.5 sm:gap-1 px-1.5 py-0.5 rounded-md text-[10px] sm:text-[11px] font-semibold tabular-nums",
-                    isTrendPositive
-                      ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/25"
-                      : "bg-rose-500/15 text-rose-400 border border-rose-500/25"
-                  )}
-                >
-                  {item.trendDirection === "down" ? (
-                    <TrendingDown className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                  ) : (
-                    <TrendingUp className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                  )}
-                  {item.badgeText
-                    ? item.badgeText
-                    : item.trendPercent > 0
-                    ? `${item.trendDirection === "down" ? "-" : "+"}${item.trendPercent.toFixed(1)}%`
-                    : `${item.trendPercent.toFixed(1)}%`}
-                </span>
+                {(() => {
+                  const isDown = item.trendDirection === "down";
+                  return (
+                    <span
+                      className={cn(
+                        "inline-flex items-center gap-0.5 sm:gap-1 px-1.5 py-0.5 rounded-md text-[10px] sm:text-[11px] font-semibold tabular-nums",
+                        isDown
+                          ? "bg-rose-500/15 text-rose-400 border border-rose-500/25"
+                          : "bg-emerald-500/15 text-emerald-400 border border-emerald-500/25"
+                      )}
+                    >
+                      {isDown ? (
+                        <TrendingDown className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                      ) : (
+                        <TrendingUp className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                      )}
+                      {item.badgeText
+                        ? item.badgeText
+                        : item.trendPercent > 0
+                        ? `${isDown ? "Turun " : "Naik "}${item.trendPercent.toFixed(1)}%`
+                        : "Stabil"}
+                    </span>
+                  );
+                })()}
                 <span className="text-[10px] sm:text-[11px] text-slate-400 truncate">
                   {item.trendText}
                 </span>

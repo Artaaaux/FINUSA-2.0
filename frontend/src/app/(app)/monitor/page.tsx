@@ -190,11 +190,11 @@ export default function MonitorPage() {
                 changePercentage: Math.abs(summaryData.balanceChangePercent),
                 isPositive: summaryData.netSavings >= 0,
                 hasComparison: summaryData.hasIncomeComparison || summaryData.hasExpenseComparison,
-                trendDirection: summaryData.netSavings > 0 ? "up" : summaryData.netSavings < 0 ? "down" : "neutral",
-                badgeText: summaryData.netSavings >= 0 ? "Surplus" : "Defisit",
+                trendDirection: summaryData.netSavings >= 0 ? "up" : "down",
+                badgeText: summaryData.netSavings >= 0 ? "Naik" : "Turun",
                 trendText: summaryData.netSavings >= 0 
-                  ? `surplus kas ${periodLabel}` 
-                  : `defisit kas ${periodLabel}`,
+                  ? `saldo bertambah ${periodLabel}` 
+                  : `saldo berkurang ${periodLabel}`,
               },
               income: {
                 title: "Total Pemasukan",
@@ -203,12 +203,12 @@ export default function MonitorPage() {
                 changePercentage: Math.abs(incomeChange),
                 isPositive: incomeChange >= 0,
                 hasComparison: summaryData.hasIncomeComparison,
-                trendDirection: incomeChange > 0 ? "up" : incomeChange < 0 ? "down" : "neutral",
+                trendDirection: incomeChange >= 0 ? "up" : "down",
                 badgeText: summaryData.hasIncomeComparison
-                  ? `${incomeChange >= 0 ? "+" : "-"}${Math.abs(incomeChange).toFixed(1)}%`
-                  : "Kas Masuk",
+                  ? `${incomeChange >= 0 ? "Naik " : "Turun "}${Math.abs(incomeChange)}%`
+                  : "Naik",
                 trendText: summaryData.hasIncomeComparison
-                  ? (incomeChange >= 0 ? `naik ${incomeChange}% dari ${compareLabel}` : `turun ${Math.abs(incomeChange)}% dari ${compareLabel}`)
+                  ? (incomeChange >= 0 ? `naik dari ${compareLabel}` : `turun dari ${compareLabel}`)
                   : `uang masuk ${periodLabel}`,
               },
               expense: {
@@ -216,20 +216,16 @@ export default function MonitorPage() {
                 value: summaryData.totalExpense,
                 previousValue: summaryData.previousExpense,
                 changePercentage: Math.abs(expenseChange),
-                isPositive: summaryData.hasExpenseComparison 
-                  ? expenseChange <= 0 
-                  : (summaryData.totalIncome > 0 ? summaryData.totalExpense / summaryData.totalIncome <= 0.7 : true),
+                isPositive: false,
                 hasComparison: summaryData.hasExpenseComparison,
                 trendDirection: summaryData.hasExpenseComparison
-                  ? (expenseChange > 0 ? "up" : expenseChange < 0 ? "down" : "neutral")
-                  : (summaryData.totalExpense > 0 ? "down" : "neutral"),
+                  ? (expenseChange <= 0 ? "down" : "up")
+                  : "down",
                 badgeText: summaryData.hasExpenseComparison
-                  ? `${expenseChange > 0 ? "+" : expenseChange < 0 ? "-" : ""}${Math.abs(expenseChange).toFixed(1)}%`
-                  : (summaryData.totalIncome > 0 
-                      ? `${((summaryData.totalExpense / summaryData.totalIncome) * 100).toFixed(1)}% omzet`
-                      : "Kas Keluar"),
+                  ? (expenseChange <= 0 ? `Turun ${Math.abs(expenseChange)}%` : `Naik ${expenseChange}%`)
+                  : "Turun",
                 trendText: summaryData.hasExpenseComparison
-                  ? (expenseChange <= 0 ? `lebih hemat ${Math.abs(expenseChange)}% dari ${compareLabel}` : `naik ${expenseChange}% dari ${compareLabel}`)
+                  ? (expenseChange <= 0 ? `lebih hemat dari ${compareLabel}` : `naik dari ${compareLabel}`)
                   : `uang keluar ${periodLabel}`,
               },
               savingRate: {
@@ -240,12 +236,10 @@ export default function MonitorPage() {
                 isPositive: summaryData.savingsRatePercent >= 20,
                 hasComparison: summaryData.hasIncomeComparison,
                 trendDirection: summaryData.savingsRatePercent >= 20 ? "up" : "down",
-                badgeText: summaryData.hasIncomeComparison
-                  ? `${savingChange >= 0 ? "+" : "-"}${Math.abs(savingChange).toFixed(1)}%`
-                  : `${summaryData.savingsRatePercent}% tersimpan`,
+                badgeText: summaryData.savingsRatePercent >= 20 ? "Aman" : "Turun",
                 trendText: summaryData.savingsRatePercent >= 20
-                  ? "Kondisi sehat (ideal min 20%)"
-                  : "Perlu ditingkatkan (ideal min 20%)",
+                  ? `keuangan aman ${periodLabel}`
+                  : `tabungan sedikit ${periodLabel}`,
               },
             },
           };
