@@ -387,11 +387,11 @@ export function useReceiptScanner() {
           matchedCategory = availableCategories.find((c) => c.type === "expense") || availableCategories[0];
         }
 
-        // UNIFIED TRANSACTION CREATION:
-        // Automatically updates accounts table balance, resolves UUID relations, and syncs with Monitor
-        const createdTx = await PembukuanService.createTransaction({
+        // UNIFIED EXPENSE RECORDER:
+        // Titik masuk tunggal pengeluaran yang secara otomatis memvalidasi tanggal aktif,
+        // memperbarui saldo rekening kas, dan menyinkronkan data dengan Monitor Keuangan
+        const createdTx = await PembukuanService.recordExpense({
           amount: groupAmount,
-          type: "expense",
           categoryId: matchedCategory?.id || "",
           categoryName: matchedCategory?.name || categoryName,
           categoryIcon: matchedCategory?.iconName || "Layers",
@@ -402,7 +402,6 @@ export function useReceiptScanner() {
           merchant: extractedData.merchant,
           date: extractedData.date,
           time: scanTime,
-          status: "completed",
           source: "receipt_scan",
           tags: ["ocr-receipt", categoryName.toLowerCase().replace(/\s+/g, "-")],
           metadata: {
@@ -417,15 +416,6 @@ export function useReceiptScanner() {
           createdTxs.push(createdTx);
           if (!primaryExpenseId) {
             primaryExpenseId = createdTx.id;
-          }
-
-          // Broadcast global event for immediate reactive update in Monitor & Catat pages
-          if (typeof window !== "undefined") {
-            window.dispatchEvent(
-              new CustomEvent("finusa:transaction-recorded", {
-                detail: createdTx,
-              })
-            );
           }
         }
 

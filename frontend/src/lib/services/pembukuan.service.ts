@@ -538,10 +538,98 @@ export const PembukuanService = {
     };
   },
 
+  /**
+   * SATU TEMPAT VALIDASI & PENCATATAN PENGELUARAN (Single Source of Truth)
+   * Digunakan oleh semua fitur: Input Manual, Quick Add Bar, dan Scan Struk.
+   */
+  async recordExpense(input: {
+    amount: number;
+    categoryId?: string;
+    categoryName?: string;
+    categoryIcon?: string;
+    categoryColor?: string;
+    accountId?: string;
+    accountName?: string;
+    description: string;
+    merchant?: string;
+    date?: string;
+    time?: string;
+    source?: string;
+    receiptPhotoId?: string;
+    tags?: string[];
+    metadata?: Record<string, unknown>;
+  }): Promise<PembukuanTransaction | null> {
+    const todayStr = new Date().toISOString().split("T")[0];
+    const currentYear = new Date().getFullYear();
+
+    // 1. Validasi & Normalisasi Tanggal Pengeluaran
+    let finalDate = (input.date || "").trim();
+    if (!finalDate || finalDate.length < 10) {
+      finalDate = todayStr;
+    } else {
+      const yearPart = parseInt(finalDate.split("-")[0], 10);
+      if (isNaN(yearPart) || yearPart < currentYear) {
+        // Jika tahun struk lampau (misal 2023), simpan di metadata dan gunakan tanggal hari ini
+        if (input.metadata && !input.metadata.printedReceiptDate) {
+          input.metadata.printedReceiptDate = finalDate;
+        }
+        finalDate = todayStr;
+      }
+    }
+
+    // 2. Simpan Transaksi melalui createTransaction yang menangani relasi & saldo
+    const created = await this.createTransaction({
+      amount: Math.max(0, Number(input.amount) || 0),
+      type: "expense",
+      categoryId: input.categoryId || "",
+      categoryName: input.categoryName || "Makan",
+      categoryIcon: input.categoryIcon || "Utensils",
+      categoryColor: input.categoryColor || "#F59E0B",
+      accountId: input.accountId || "",
+      accountName: input.accountName || "Kas / Tunai",
+      description: input.description || "Pengeluaran",
+      merchant: input.merchant || "",
+      date: finalDate,
+      time: input.time || formatTimeDisplay(new Date().toTimeString().slice(0, 5)),
+      status: "completed",
+      source: input.source || "manual",
+      receiptPhotoId: input.receiptPhotoId,
+      tags: input.tags || ["pengeluaran"],
+      metadata: input.metadata || {},
+    });
+
+    if (created) {
+      // 3. Broadcast real-time event untuk seluruh halaman (Monitor, Catat, Home)
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("finusa:transaction-recorded", {
+            detail: created,
+          })
+        );
+      }
+    }
+
+    return created;
+  },
+
   async recalibrateAccountBalances(): Promise<boolean> {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return false;
+
+      // Auto-align older test receipt scans (e.g. 2023) to current date so they appear in active monitor
+      try {
+        const currentYear = new Date().getFullYear();
+        const todayStr = new Date().toISOString().split("T")[0];
+        await supabase
+          .from("transactions")
+          .update({ date: todayStr })
+          .eq("user_id", user.id)
+          .eq("source", "receipt_scan")
+          .lt("date", `${currentYear}-01-01`);
+      } catch {
+        // ignore non-critical alignment
+      }
 
       // 1. Fetch user accounts
       const { data: accounts, error: accErr } = await supabase

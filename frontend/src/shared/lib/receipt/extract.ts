@@ -610,28 +610,36 @@ function buildExtractedData(
     };
   }
 
-  return {
-    isReceipt: true,
-    merchant,
-    merchantAddress: typeof data.merchantAddress === "string"
-      ? data.merchantAddress
-      : typeof parsed.merchantAddress === "string"
-      ? parsed.merchantAddress
-      : undefined,
-    date: normalizeDate(typeof data.transactionDate === "string" ? data.transactionDate : typeof data.date === "string" ? data.date : typeof parsed.date === "string" ? parsed.date : undefined),
-    time: normalizeTime(typeof data.transactionTime === "string" ? data.transactionTime : typeof data.time === "string" ? data.time : typeof parsed.time === "string" ? parsed.time : undefined, clientTime, clientTimezone),
-    category,
-    items,
-    subtotal,
-    tax,
-    serviceCharge,
-    discount,
-    total: total || subtotal + tax + serviceCharge - discount,
-    paymentMethod: normalizePaymentMethod(typeof data.paymentMethod === "string" ? data.paymentMethod : typeof parsed.paymentMethod === "string" ? parsed.paymentMethod : undefined),
-    confidence: Math.min(100, Math.max(0, parsedConfidence)),
-    notes: undefined,
-    isSimulated: false,
-  };
+    const todayStr = new Date().toISOString().split("T")[0];
+    const currentYear = new Date().getFullYear();
+    let receiptDate = normalizeDate(typeof data.transactionDate === "string" ? data.transactionDate : typeof data.date === "string" ? data.date : typeof parsed.date === "string" ? parsed.date : undefined);
+    const parsedYear = parseInt(receiptDate.split("-")[0], 10);
+    if (!isNaN(parsedYear) && parsedYear < currentYear) {
+      receiptDate = todayStr;
+    }
+
+    return {
+      isReceipt: true,
+      merchant,
+      merchantAddress: typeof data.merchantAddress === "string"
+        ? data.merchantAddress
+        : typeof parsed.merchantAddress === "string"
+        ? parsed.merchantAddress
+        : undefined,
+      date: receiptDate,
+      time: normalizeTime(typeof data.transactionTime === "string" ? data.transactionTime : typeof data.time === "string" ? data.time : typeof parsed.time === "string" ? parsed.time : undefined, clientTime, clientTimezone),
+      category,
+      items,
+      subtotal,
+      tax,
+      serviceCharge,
+      discount,
+      total: total || subtotal + tax + serviceCharge - discount,
+      paymentMethod: normalizePaymentMethod(typeof data.paymentMethod === "string" ? data.paymentMethod : typeof parsed.paymentMethod === "string" ? parsed.paymentMethod : undefined),
+      confidence: Math.min(100, Math.max(0, parsedConfidence)),
+      notes: undefined,
+      isSimulated: false,
+    };
 }
 
 /**

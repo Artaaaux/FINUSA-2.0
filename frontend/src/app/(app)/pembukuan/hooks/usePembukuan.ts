@@ -196,7 +196,9 @@ export function usePembukuan() {
     }
 
     try {
-      const savedTx = await PembukuanService.createTransaction(newTx);
+      const savedTx = newTx.type === "expense"
+        ? await PembukuanService.recordExpense(newTx)
+        : await PembukuanService.createTransaction(newTx);
       if (savedTx) {
         setTransactions((prev) => prev.map((t) => (t.id === tempId ? savedTx : t)));
       }
