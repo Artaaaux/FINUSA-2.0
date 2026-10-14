@@ -228,7 +228,6 @@ export default function CatatPage() {
               filters={filters}
               onFilterChange={(updates) => setFilters((prev) => ({ ...prev, ...updates }))}
               categories={categories}
-              accounts={accounts}
               totalFilteredCount={filteredTransactions.length}
               totalCount={transactions.length}
               selectedIds={selectedIds}

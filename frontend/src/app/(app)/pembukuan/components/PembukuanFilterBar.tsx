@@ -13,14 +13,13 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { FilterState, DatePreset, CategoryItem, TransactionStatus, PembukuanKpiData } from "../types";
-import { AccountOption, formatCurrency } from "../constants";
+import { formatCurrency } from "../constants";
 import { cn } from "@/shared/lib/utils";
 
 interface PembukuanFilterBarProps {
   filters: FilterState;
   onFilterChange: (updates: Partial<FilterState>) => void;
   categories: CategoryItem[];
-  accounts: AccountOption[];
   totalFilteredCount: number;
   totalCount: number;
   selectedIds: string[];
@@ -34,7 +33,6 @@ export default function PembukuanFilterBar({
   filters,
   onFilterChange,
   categories,
-  accounts,
   totalFilteredCount,
   totalCount,
   selectedIds,

@@ -102,7 +102,7 @@ function TransactionTable({ transactions }: TransactionTableProps) {
         }
         return 0;
       });
-  }, [transactions, searchQuery, typeFilter, channelFilter, categoryFilter, accountFilter, sortBy]);
+  }, [transactions, searchQuery, typeFilter, channelFilter, categoryFilter, sortBy]);
 
   // Pagination calculation
   const totalPages = Math.ceil(filteredTransactions.length / pageSize) || 1;

@@ -500,19 +500,22 @@ export default function CameraView({
               </button>
 
               {/* Shutter Button (Classic Camera Shutter) */}
-              <div className="relative flex items-center justify-center">
+              <div className="flex flex-col items-center gap-1.5">
                 <button
                   type="button"
                   onClick={handleMobileShutter}
                   disabled={permission !== "granted"}
                   className={cn(
-                    "relative w-17 h-17 sm:w-18 sm:h-18 rounded-full p-1 border-[4px] border-white/90 hover:border-white transition-all transform active:scale-90 cursor-pointer shadow-[0_0_24px_rgba(255,255,255,0.35)] flex items-center justify-center bg-white/10 backdrop-blur-xs",
+                    "relative w-11 h-11 rounded-full p-1 border-2 border-white/90 hover:border-white transition-all transform active:scale-90 cursor-pointer shadow-[0_0_20px_rgba(255,255,255,0.35)] flex items-center justify-center bg-white/10 backdrop-blur-xs",
                     permission !== "granted" && "opacity-50 cursor-not-allowed"
                   )}
                   aria-label="Ambil Foto Struk"
                 >
                   <div className="w-full h-full rounded-full bg-white hover:bg-slate-100 active:bg-slate-200 transition-all shadow-inner" />
                 </button>
+                <span className="text-[11px] font-medium tracking-tight text-transparent select-none pointer-events-none" aria-hidden="true">
+                  Foto
+                </span>
               </div>
 
               {/* Upload button */}

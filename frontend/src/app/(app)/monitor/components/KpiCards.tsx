@@ -92,7 +92,6 @@ export default function KpiCards({ summary }: KpiCardsProps) {
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5 lg:gap-4">
       {cardItems.map((item, index) => {
         const IconComponent = item.icon;
-        const isTrendPositive = item.isPositive;
         const isHero = index === 0;
 
         return (
