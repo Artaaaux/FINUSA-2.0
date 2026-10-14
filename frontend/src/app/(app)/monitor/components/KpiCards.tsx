@@ -52,7 +52,7 @@ export default function KpiCards({ summary }: KpiCardsProps) {
       badgeText: kpis.income.badgeText,
       isPositive: kpis.income.isPositive,
       trendText: kpis.income.trendText,
-      subInfo: "Total uang masuk periode ini",
+      subInfo: kpis.income.subInfo || "Total uang masuk periode ini",
     },
     {
       id: "expense",
@@ -68,7 +68,7 @@ export default function KpiCards({ summary }: KpiCardsProps) {
       badgeText: kpis.expense.badgeText,
       isPositive: kpis.expense.isPositive,
       trendText: kpis.expense.trendText,
-      subInfo: "Total uang keluar periode ini",
+      subInfo: kpis.expense.subInfo || "Total uang keluar periode ini",
     },
     {
       id: "savingRate",

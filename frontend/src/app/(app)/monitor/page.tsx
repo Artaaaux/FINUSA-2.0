@@ -10,6 +10,7 @@ import KpiCards from "./components/KpiCards";
 import TransactionTable from "./components/TransactionTable";
 import { PembukuanService } from "@/lib/services/pembukuan.service";
 import { AnalyticsService } from "@/lib/services/analytics.service";
+import { formatCurrency } from "./constants";
 
 const IncomeExpenseChart = dynamic(() => import("./components/IncomeExpenseChart"), {
   ssr: false,
@@ -210,6 +211,7 @@ export default function MonitorPage() {
                 trendText: summaryData.hasIncomeComparison
                   ? (incomeChange >= 0 ? `naik dari ${compareLabel}` : `turun dari ${compareLabel}`)
                   : `uang masuk ${periodLabel}`,
+                subInfo: `💵 Tunai: ${formatCurrency(summaryData.cashIncome || 0)} • 💳 Digital: ${formatCurrency(summaryData.digitalIncome || 0)}`,
               },
               expense: {
                 title: "Total Pengeluaran",
@@ -227,6 +229,7 @@ export default function MonitorPage() {
                 trendText: summaryData.hasExpenseComparison
                   ? (expenseChange <= 0 ? `lebih hemat dari ${compareLabel}` : `naik dari ${compareLabel}`)
                   : `uang keluar ${periodLabel}`,
+                subInfo: `💵 Tunai: ${formatCurrency(summaryData.cashExpense || 0)} • 💳 Digital: ${formatCurrency(summaryData.digitalExpense || 0)}`,
               },
               savingRate: {
                 title: "Uang Tersimpan (Tabungan)",

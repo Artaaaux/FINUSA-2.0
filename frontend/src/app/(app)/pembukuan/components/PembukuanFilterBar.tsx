@@ -72,6 +72,7 @@ export default function PembukuanFilterBar({
       status: "all",
       categoryIds: [],
       accountIds: [],
+      paymentChannel: "all",
       minAmount: undefined,
       maxAmount: undefined,
       hasAttachment: undefined,
@@ -82,6 +83,7 @@ export default function PembukuanFilterBar({
     Boolean(filters.searchQuery) ||
     filters.datePreset !== "all" ||
     filters.type !== "all" ||
+    (filters.paymentChannel && filters.paymentChannel !== "all") ||
     filters.status !== "all" ||
     filters.categoryIds.length > 0 ||
     filters.accountIds.length > 0 ||
@@ -254,6 +256,48 @@ export default function PembukuanFilterBar({
                   {t === "all" ? "Semua Tipe" : t === "income" ? "Masuk" : "Keluar"}
                 </button>
               ))}
+            </div>
+
+            {/* Jalur Kas: Tunai (Pegang) vs Non-Tunai (Digital) */}
+            <div className="flex items-center bg-[#0F1419] p-1 rounded-xl border border-slate-700 text-xs">
+              <button
+                type="button"
+                onClick={() => onFilterChange({ paymentChannel: "all", page: 1 })}
+                className={cn(
+                  "px-2.5 py-1 rounded-lg font-semibold transition-all cursor-pointer",
+                  !filters.paymentChannel || filters.paymentChannel === "all"
+                    ? "bg-slate-700 text-white shadow-xs"
+                    : "text-slate-400 hover:text-slate-200"
+                )}
+              >
+                Semua Jalur
+              </button>
+              <button
+                type="button"
+                onClick={() => onFilterChange({ paymentChannel: "cash", page: 1 })}
+                className={cn(
+                  "px-2.5 py-1 rounded-lg font-semibold transition-all cursor-pointer flex items-center gap-1",
+                  filters.paymentChannel === "cash"
+                    ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 shadow-xs"
+                    : "text-slate-400 hover:text-amber-300"
+                )}
+                title="Duit dipegang (Kas Tunai Fisik)"
+              >
+                <span>💵 Tunai (Pegang)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => onFilterChange({ paymentChannel: "digital", page: 1 })}
+                className={cn(
+                  "px-2.5 py-1 rounded-lg font-semibold transition-all cursor-pointer flex items-center gap-1",
+                  filters.paymentChannel === "digital"
+                    ? "bg-blue-500/20 text-blue-300 border border-blue-500/30 shadow-xs"
+                    : "text-slate-400 hover:text-blue-300"
+                )}
+                title="Duit digital (Rekening Bank / E-Wallet / QRIS)"
+              >
+                <span>💳 Non-Tunai (Digital)</span>
+              </button>
             </div>
 
             {/* Results Count & Reset */}

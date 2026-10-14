@@ -14,6 +14,7 @@ import {
   DEFAULT_CATEGORIES,
   PEMBUKUAN_ACCOUNTS,
   AccountOption,
+  isCashTransaction,
 } from "../constants";
 import { PembukuanService } from "@/lib/services/pembukuan.service";
 
@@ -26,6 +27,7 @@ const DEFAULT_FILTERS: FilterState = {
   status: "all",
   categoryIds: [],
   accountIds: [],
+  paymentChannel: "all",
   sortBy: "date_desc",
   page: 1,
   pageSize: 10,
@@ -440,6 +442,13 @@ export function usePembukuan() {
       // Accounts
       if (filters.accountIds.length > 0 && !filters.accountIds.includes(tx.accountId)) return false;
 
+      // Payment Channel (Tunai vs Non-Tunai / Digital)
+      if (filters.paymentChannel && filters.paymentChannel !== "all") {
+        const isCash = isCashTransaction(tx, accounts);
+        if (filters.paymentChannel === "cash" && !isCash) return false;
+        if (filters.paymentChannel === "digital" && isCash) return false;
+      }
+
       // Date Filters
       const now = new Date();
       const pad = (n: number) => String(n).padStart(2, "0");
@@ -474,18 +483,31 @@ export function usePembukuan() {
       if (filters.sortBy === "amount_asc") return a.amount - b.amount;
       return 0;
     });
-  }, [transactions, filters]);
+  }, [transactions, filters, accounts]);
 
   // --- Memoized KPI Data ---
   const kpiData: PembukuanKpiData = useMemo(() => {
     let totalIncome = 0;
     let totalExpense = 0;
+    let cashIncome = 0;
+    let digitalIncome = 0;
+    let cashExpense = 0;
+    let digitalExpense = 0;
     let pendingTotal = 0;
     let pendingCount = 0;
 
     transactions.forEach((t) => {
-      if (t.type === "income") totalIncome += t.amount;
-      if (t.type === "expense") totalExpense += t.amount;
+      const isCash = isCashTransaction(t, accounts);
+      if (t.type === "income") {
+        totalIncome += t.amount;
+        if (isCash) cashIncome += t.amount;
+        else digitalIncome += t.amount;
+      }
+      if (t.type === "expense") {
+        totalExpense += t.amount;
+        if (isCash) cashExpense += t.amount;
+        else digitalExpense += t.amount;
+      }
       if (t.status === "pending") {
         pendingTotal += t.amount;
         pendingCount++;
@@ -500,6 +522,10 @@ export function usePembukuan() {
       totalExpense,
       netCashflow: netProfit,
       netProfit,
+      cashIncome,
+      digitalIncome,
+      cashExpense,
+      digitalExpense,
       pendingTotal,
       pendingCount,
       transactionCount: count,
@@ -511,7 +537,7 @@ export function usePembukuan() {
       netProfitFormatted: `Rp ${netProfit.toLocaleString("id-ID")}`,
       isProfitable: netProfit >= 0,
     };
-  }, [transactions]);
+  }, [transactions, accounts]);
 
   return {
     activeTab,

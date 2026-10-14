@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { Transaction, TransactionType } from "../types";
 import { formatCurrency, formatDateIndo } from "../constants";
+import { isCashTransaction } from "@/app/(app)/pembukuan/constants";
 import TransactionDetailModal from "./TransactionDetailModal";
 import { cn } from "@/shared/lib/utils";
 
@@ -38,6 +39,7 @@ interface TransactionTableProps {
 function TransactionTable({ transactions }: TransactionTableProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<TransactionType>("all");
+  const [channelFilter, setChannelFilter] = useState<"all" | "cash" | "digital">("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [accountFilter, setAccountFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<"date_desc" | "date_asc" | "amount_desc" | "amount_asc">("date_desc");
@@ -86,6 +88,13 @@ function TransactionTable({ transactions }: TransactionTableProps) {
           return false;
         }
 
+        // Channel (Tunai vs Non-Tunai / Digital)
+        if (channelFilter !== "all") {
+          const isCash = isCashTransaction({ accountName: t.account, metadata: { paymentMethod: t.account } });
+          if (channelFilter === "cash" && !isCash) return false;
+          if (channelFilter === "digital" && isCash) return false;
+        }
+
         return true;
       })
       .sort((a, b) => {
@@ -103,7 +112,7 @@ function TransactionTable({ transactions }: TransactionTableProps) {
         }
         return 0;
       });
-  }, [transactions, searchQuery, typeFilter, categoryFilter, accountFilter, sortBy]);
+  }, [transactions, searchQuery, typeFilter, channelFilter, categoryFilter, accountFilter, sortBy]);
 
   // Pagination calculation
   const totalPages = Math.ceil(filteredTransactions.length / pageSize) || 1;
@@ -115,12 +124,14 @@ function TransactionTable({ transactions }: TransactionTableProps) {
   const hasActiveFilters =
     searchQuery !== "" ||
     typeFilter !== "all" ||
+    channelFilter !== "all" ||
     categoryFilter !== "all" ||
     accountFilter !== "all";
 
   const handleResetFilters = () => {
     setSearchQuery("");
     setTypeFilter("all");
+    setChannelFilter("all");
     setCategoryFilter("all");
     setAccountFilter("all");
     setSortBy("date_desc");
@@ -140,33 +151,87 @@ function TransactionTable({ transactions }: TransactionTableProps) {
           </p>
         </div>
 
-        {/* Type Filter Tabs */}
-        <div className="flex items-center p-1 rounded-xl bg-slate-900/90 border border-slate-800 self-start md:self-auto">
-          {[
-            { id: "all" as const, label: "Semua" },
-            { id: "income" as const, label: "Pemasukan" },
-            { id: "expense" as const, label: "Pengeluaran" },
-          ].map((tab) => {
-            const isActive = typeFilter === tab.id;
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => {
-                  setTypeFilter(tab.id);
-                  setCurrentPage(1);
-                }}
-                className={cn(
-                  "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all",
-                  isActive
-                    ? "bg-[#2563EB] text-white shadow-sm"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
-                )}
-              >
-                {tab.label}
-              </button>
-            );
-          })}
+        {/* Filter Tabs: Type & Payment Channel */}
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Type Filter Tabs */}
+          <div className="flex items-center p-1 rounded-xl bg-slate-900/90 border border-slate-800 self-start md:self-auto">
+            {[
+              { id: "all" as const, label: "Semua" },
+              { id: "income" as const, label: "Pemasukan" },
+              { id: "expense" as const, label: "Pengeluaran" },
+            ].map((tab) => {
+              const isActive = typeFilter === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => {
+                    setTypeFilter(tab.id);
+                    setCurrentPage(1);
+                  }}
+                  className={cn(
+                    "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all",
+                    isActive
+                      ? "bg-[#2563EB] text-white shadow-sm"
+                      : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
+                  )}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Payment Channel: Tunai (Pegang) vs Non-Tunai (Digital) */}
+          <div className="flex items-center p-1 rounded-xl bg-slate-900/90 border border-slate-800 self-start md:self-auto text-xs">
+            <button
+              type="button"
+              onClick={() => {
+                setChannelFilter("all");
+                setCurrentPage(1);
+              }}
+              className={cn(
+                "px-2.5 py-1 rounded-lg text-xs font-semibold transition-all",
+                channelFilter === "all"
+                  ? "bg-slate-700 text-white shadow-sm"
+                  : "text-slate-400 hover:text-slate-200"
+              )}
+            >
+              Semua Jalur
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setChannelFilter("cash");
+                setCurrentPage(1);
+              }}
+              className={cn(
+                "px-2.5 py-1 rounded-lg text-xs font-semibold transition-all flex items-center gap-1",
+                channelFilter === "cash"
+                  ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 shadow-sm"
+                  : "text-slate-400 hover:text-amber-300"
+              )}
+              title="Duit dipegang (Kas Tunai)"
+            >
+              <span>💵 Tunai (Pegang)</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setChannelFilter("digital");
+                setCurrentPage(1);
+              }}
+              className={cn(
+                "px-2.5 py-1 rounded-lg text-xs font-semibold transition-all flex items-center gap-1",
+                channelFilter === "digital"
+                  ? "bg-blue-500/20 text-blue-300 border border-blue-500/30 shadow-sm"
+                  : "text-slate-400 hover:text-blue-300"
+              )}
+              title="Duit digital (Rekening / QRIS / E-Wallet)"
+            >
+              <span>💳 Non-Tunai (Digital)</span>
+            </button>
+          </div>
         </div>
       </div>
 

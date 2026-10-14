@@ -449,3 +449,100 @@ export function formatDateIndo(dateStr: string): string {
     return dateStr;
   }
 }
+
+/**
+ * Detects whether a transaction or account is Cash/Tunai (money held in hand)
+ * vs Non-Tunai / Digital (money in bank, e-wallet, or QRIS).
+ */
+export function isCashTransaction(
+  tx: { accountName?: string; accountId?: string; metadata?: Record<string, unknown> },
+  accounts?: Array<{ id: string; name: string; type?: string }>
+): boolean {
+  // 1. Check receipt metadata paymentMethod if present
+  const method = (tx.metadata?.paymentMethod as string)?.toLowerCase();
+  if (method) {
+    if (method.includes("cash") || method.includes("tunai")) return true;
+    if (
+      method.includes("qris") ||
+      method.includes("debit") ||
+      method.includes("kredit") ||
+      method.includes("transfer") ||
+      method.includes("ewallet") ||
+      method.includes("gopay") ||
+      method.includes("ovo") ||
+      method.includes("dana")
+    ) {
+      return false;
+    }
+  }
+
+  // 2. Check matched account in accounts list
+  if (accounts && tx.accountId) {
+    const acc = accounts.find((a) => a.id === tx.accountId);
+    if (acc) {
+      const typeLower = (acc.type || "").toLowerCase();
+      const nameLower = (acc.name || "").toLowerCase();
+
+      // Explicit digital types
+      if (
+        typeLower === "bank" ||
+        typeLower === "e_wallet" ||
+        typeLower === "ewallet" ||
+        typeLower === "savings" ||
+        typeLower === "investment" ||
+        typeLower === "digital"
+      ) {
+        return false;
+      }
+      // Explicit digital names (even if type is cash)
+      if (
+        nameLower.includes("non-tunai") ||
+        nameLower.includes("non tunai") ||
+        nameLower.includes("digital") ||
+        nameLower.includes("qris") ||
+        nameLower.includes("bank") ||
+        nameLower.includes("bca") ||
+        nameLower.includes("mandiri") ||
+        nameLower.includes("bri") ||
+        nameLower.includes("bni") ||
+        nameLower.includes("gopay") ||
+        nameLower.includes("ovo") ||
+        nameLower.includes("dana") ||
+        nameLower.includes("shopeepay") ||
+        nameLower.includes("transfer") ||
+        nameLower.includes("rekening")
+      ) {
+        return false;
+      }
+      // Explicit cash types / names
+      if (typeLower === "cash" || typeLower === "tunai") {
+        return true;
+      }
+    }
+  }
+
+  // 3. Fallback on accountName
+  const accName = (tx.accountName || "").toLowerCase();
+  if (
+    accName.includes("non-tunai") ||
+    accName.includes("non tunai") ||
+    accName.includes("digital") ||
+    accName.includes("qris") ||
+    accName.includes("bank") ||
+    accName.includes("bca") ||
+    accName.includes("mandiri") ||
+    accName.includes("bri") ||
+    accName.includes("bni") ||
+    accName.includes("gopay") ||
+    accName.includes("ovo") ||
+    accName.includes("dana") ||
+    accName.includes("shopeepay") ||
+    accName.includes("transfer") ||
+    accName.includes("rekening")
+  ) {
+    return false;
+  }
+
+  return true; // Default to cash/tunai
+}
+

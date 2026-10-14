@@ -110,6 +110,7 @@ export interface FilterState {
   maxAmount?: number;
   hasAttachment?: boolean;
   sortBy: "date_desc" | "date_asc" | "amount_desc" | "amount_asc";
+  paymentChannel?: "all" | "cash" | "digital";
   page: number;
   pageSize: number;
   viewMode: "table" | "cards";
@@ -119,6 +120,10 @@ export interface PembukuanKpiData {
   totalIncome: number;
   totalExpense: number;
   netCashflow: number;
+  cashIncome: number;
+  digitalIncome: number;
+  cashExpense?: number;
+  digitalExpense?: number;
   pendingTotal: number;
   pendingCount: number;
   completedCount?: number;

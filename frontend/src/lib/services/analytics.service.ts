@@ -1,9 +1,14 @@
 import { PembukuanService } from "./pembukuan.service";
+import { isCashTransaction } from "@/app/(app)/pembukuan/constants";
 
 export interface MonthlyFinancialSummary {
   period: "this_month" | "last_month" | "this_year" | "all";
   totalIncome: number;
   totalExpense: number;
+  cashIncome: number;
+  digitalIncome: number;
+  cashExpense: number;
+  digitalExpense: number;
   netSavings: number;
   savingsRatePercent: number;
   previousIncome: number;
@@ -89,6 +94,10 @@ export const AnalyticsService = {
 
     let totalIncome = 0;
     let totalExpense = 0;
+    let cashIncome = 0;
+    let digitalIncome = 0;
+    let cashExpense = 0;
+    let digitalExpense = 0;
     let previousIncome = 0;
     let previousExpense = 0;
     let afterIncome = 0;
@@ -98,13 +107,18 @@ export const AnalyticsService = {
     const incomeCategoryMap: Record<string, number> = {};
 
     transactions.forEach((tx) => {
+      const isCash = isCashTransaction(tx, accounts);
       if (currentMatch(tx.date)) {
         if (tx.type === "income") {
           totalIncome += tx.amount;
+          if (isCash) cashIncome += tx.amount;
+          else digitalIncome += tx.amount;
           const catName = tx.categoryName || "Penjualan Usaha";
           incomeCategoryMap[catName] = (incomeCategoryMap[catName] || 0) + tx.amount;
         } else if (tx.type === "expense") {
           totalExpense += tx.amount;
+          if (isCash) cashExpense += tx.amount;
+          else digitalExpense += tx.amount;
           const catName = tx.categoryName || "Operasional";
           if (!expenseCategoryMap[catName]) {
             expenseCategoryMap[catName] = { amount: 0, color: tx.categoryColor || "#4B7BFF" };
@@ -234,6 +248,10 @@ export const AnalyticsService = {
       period,
       totalIncome,
       totalExpense,
+      cashIncome,
+      digitalIncome,
+      cashExpense,
+      digitalExpense,
       netSavings,
       savingsRatePercent,
       previousIncome,

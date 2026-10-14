@@ -47,6 +47,7 @@ export interface KpiMetric {
   hasComparison?: boolean;
   trendDirection?: "up" | "down" | "neutral";
   badgeText?: string;
+  subInfo?: string;
 }
 
 export interface DashboardSummary {
