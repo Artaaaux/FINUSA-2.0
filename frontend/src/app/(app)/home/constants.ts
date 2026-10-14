@@ -1,11 +1,4 @@
-export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(Math.abs(amount));
-}
+export { MAX_TRANSACTION_AMOUNT, formatCurrency } from "@/shared/lib/utils";
 
 export function getGreeting(): string {
   const hour = new Date().getHours();

@@ -6,6 +6,7 @@ import {
   FilterState 
 } from "@/app/(app)/pembukuan/types";
 import { DEFAULT_CATEGORIES } from "@/app/(app)/pembukuan/constants";
+import { MAX_TRANSACTION_AMOUNT } from "@/shared/lib/utils";
 
 export interface AccountItem {
   id: string;
@@ -404,7 +405,7 @@ export const PembukuanService = {
 
       return {
         id: t.id,
-        amount: Number(t.amount),
+        amount: Math.min(Number(t.amount) || 0, MAX_TRANSACTION_AMOUNT),
         type: t.type,
         categoryId: t.category_id || "",
         categoryName: t.categories?.name || "Lainnya",
@@ -430,6 +431,8 @@ export const PembukuanService = {
   async createTransaction(tx: Omit<PembukuanTransaction, "id">): Promise<PembukuanTransaction | null> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return null;
+
+    const cleanAmount = Math.min(Math.max(0, Number(tx.amount) || 0), MAX_TRANSACTION_AMOUNT);
 
     let validAccountId: string | null = isValidUUID(tx.accountId) ? tx.accountId : null;
     let validCategoryId: string | null = isValidUUID(tx.categoryId) ? tx.categoryId : null;
@@ -478,7 +481,7 @@ export const PembukuanService = {
         account_id: validAccountId,
         category_id: validCategoryId,
         receipt_photo_id: isValidUUID(tx.receiptPhotoId) ? tx.receiptPhotoId : null,
-        amount: tx.amount,
+        amount: cleanAmount,
         type: tx.type,
         description: tx.description,
         merchant: tx.merchant || "",
@@ -504,7 +507,7 @@ export const PembukuanService = {
 
     // Adjust account balance if accountId is set
     if (validAccountId) {
-      const balanceDelta = tx.type === "income" ? tx.amount : -tx.amount;
+      const balanceDelta = tx.type === "income" ? cleanAmount : -cleanAmount;
       const { data: currentAcc } = await supabase.from("accounts").select("balance").eq("id", validAccountId).single();
       if (currentAcc) {
         await supabase
@@ -660,14 +663,16 @@ export const PembukuanService = {
 
       (transactions || []).forEach((tx) => {
         if (tx.account_id && accountBalances[tx.account_id] !== undefined) {
-          const delta = tx.type === "income" ? Number(tx.amount) : -Number(tx.amount);
+          const clampedAmount = Math.min(Math.max(0, Number(tx.amount) || 0), MAX_TRANSACTION_AMOUNT);
+          const delta = tx.type === "income" ? clampedAmount : -clampedAmount;
           accountBalances[tx.account_id] += delta;
         }
       });
 
       (savingsTx || []).forEach((stx) => {
         if (stx.account_id && accountBalances[stx.account_id] !== undefined) {
-          const delta = stx.type === "deposit" ? -Number(stx.amount) : Number(stx.amount);
+          const clampedAmount = Math.min(Math.max(0, Number(stx.amount) || 0), MAX_TRANSACTION_AMOUNT);
+          const delta = stx.type === "deposit" ? -clampedAmount : clampedAmount;
           accountBalances[stx.account_id] += delta;
         }
       });
@@ -709,7 +714,7 @@ export const PembukuanService = {
     }
 
     const payload: Record<string, unknown> = {};
-    if (updates.amount !== undefined) payload.amount = updates.amount;
+    if (updates.amount !== undefined) payload.amount = Math.min(Math.max(0, Number(updates.amount) || 0), MAX_TRANSACTION_AMOUNT);
     if (updates.type !== undefined) payload.type = updates.type;
     if (updates.description !== undefined) payload.description = updates.description;
     if (updates.merchant !== undefined) payload.merchant = updates.merchant;
@@ -906,7 +911,7 @@ export const PembukuanService = {
       .insert({
         user_id: user.id,
         template_name: rec.templateName || rec.name,
-        amount: rec.amount,
+        amount: Math.min(Math.max(0, Number(rec.amount) || 0), MAX_TRANSACTION_AMOUNT),
         type: rec.type,
         category_id: isValidUUID(rec.categoryId) ? rec.categoryId : null,
         account_id: isValidUUID(rec.accountId) ? rec.accountId : null,

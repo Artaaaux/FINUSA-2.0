@@ -612,26 +612,11 @@ export const MOCK_CATEGORY_BREAKDOWN: CategoryBreakdownPoint[] = [
   },
 ];
 
-export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
+import { MAX_TRANSACTION_AMOUNT, formatCurrency } from "@/shared/lib/utils";
+export { MAX_TRANSACTION_AMOUNT, formatCurrency };
 
 export function formatShortCurrency(amount: number): string {
-  if (Math.abs(amount) >= 1_000_000_000) {
-    return `Rp ${(amount / 1_000_000_000).toFixed(1)} M`;
-  }
-  if (Math.abs(amount) >= 1_000_000) {
-    return `Rp ${(amount / 1_000_000).toFixed(1)} jt`;
-  }
-  if (Math.abs(amount) >= 1_000) {
-    return `Rp ${(amount / 1_000).toFixed(0)} rb`;
-  }
-  return `Rp ${amount}`;
+  return formatCurrency(amount);
 }
 
 export function formatPercentage(value: number): string {

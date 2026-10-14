@@ -18,7 +18,7 @@ import {
   CategoryItem,
   TransactionType,
 } from "../types";
-import { AccountOption, formatCurrency, formatDateIndo } from "../constants";
+import { AccountOption, formatCurrency, formatDateIndo, MAX_TRANSACTION_AMOUNT } from "../constants";
 import { cn } from "@/shared/lib/utils";
 
 interface RecurringTransactionsViewProps {
@@ -99,7 +99,7 @@ export default function RecurringTransactionsView({
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    const parsedAmount = parseFloat(formAmountStr.replace(/[^0-9]/g, ""));
+    const parsedAmount = Math.min(parseFloat(formAmountStr.replace(/[^0-9]/g, "")) || 0, MAX_TRANSACTION_AMOUNT);
     if (!parsedAmount || parsedAmount <= 0 || !formName.trim()) return;
 
     const chosenCat = categories.find((c) => c.id === formCategoryId) || availableCategories[0];
@@ -393,7 +393,15 @@ export default function RecurringTransactionsView({
                   required
                   placeholder="0"
                   value={formAmountStr ? Number(formAmountStr.replace(/\D/g, "")).toLocaleString("id-ID") : ""}
-                  onChange={(e) => setFormAmountStr(e.target.value.replace(/\D/g, ""))}
+                  onChange={(e) => {
+                    const raw = e.target.value.replace(/\D/g, "");
+                    if (!raw) {
+                      setFormAmountStr("");
+                      return;
+                    }
+                    const num = Math.min(Number(raw), MAX_TRANSACTION_AMOUNT);
+                    setFormAmountStr(String(num));
+                  }}
                   className="w-full px-3.5 py-2.5 rounded-xl bg-[#0F1419] border border-slate-700 text-white font-bold tabular-nums focus:outline-none focus:border-blue-500"
                 />
               </div>

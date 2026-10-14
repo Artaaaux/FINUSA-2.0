@@ -22,7 +22,7 @@ import {
   CategoryItem,
   AttachmentItem,
 } from "../types";
-import { AccountOption } from "../constants";
+import { AccountOption, MAX_TRANSACTION_AMOUNT } from "../constants";
 import { cn } from "@/shared/lib/utils";
 
 interface AddTransactionModalProps {
@@ -137,8 +137,11 @@ export default function AddTransactionModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const parsedAmount = parseFloat(amountStr.replace(/[^0-9]/g, ""));
+    let parsedAmount = parseFloat(amountStr.replace(/[^0-9]/g, ""));
     if (!parsedAmount || parsedAmount <= 0) return;
+    if (parsedAmount > MAX_TRANSACTION_AMOUNT) {
+      parsedAmount = MAX_TRANSACTION_AMOUNT;
+    }
 
     const chosenCat = categories.find((c) => c.id === categoryId) || availableCategories[0] || { id: "", name: type === "income" ? "Pemasukan" : "Pengeluaran" };
     const chosenAcc = accounts.find((a) => a.id === accountId) || accounts[0] || { id: "", name: "Rekening Kas" };
@@ -258,7 +261,12 @@ export default function AddTransactionModal({
                   value={amountStr ? Number(amountStr.replace(/\D/g, "")).toLocaleString("id-ID") : ""}
                   onChange={(e) => {
                     const raw = e.target.value.replace(/\D/g, "");
-                    setAmountStr(raw);
+                    const num = Number(raw);
+                    if (num > MAX_TRANSACTION_AMOUNT) {
+                      setAmountStr(String(MAX_TRANSACTION_AMOUNT));
+                    } else {
+                      setAmountStr(raw);
+                    }
                   }}
                   className="w-full px-4 py-3 rounded-xl bg-[#0F1419] border border-slate-700 text-white font-extrabold text-lg tabular-nums focus:outline-none focus:border-blue-500"
                 />

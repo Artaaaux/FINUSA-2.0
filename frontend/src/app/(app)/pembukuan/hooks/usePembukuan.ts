@@ -15,6 +15,8 @@ import {
   PEMBUKUAN_ACCOUNTS,
   AccountOption,
   isCashTransaction,
+  MAX_TRANSACTION_AMOUNT,
+  formatCurrency,
 } from "../constants";
 import { PembukuanService } from "@/lib/services/pembukuan.service";
 
@@ -65,7 +67,12 @@ export function usePembukuan() {
         ]);
 
         if (dbTx) {
-          setTransactions(dbTx);
+          setTransactions(
+            dbTx.map((t) => ({
+              ...t,
+              amount: Math.min(Number(t.amount) || 0, MAX_TRANSACTION_AMOUNT),
+            }))
+          );
         }
 
         if (dbCat && dbCat.length > 0) {
@@ -162,12 +169,14 @@ export function usePembukuan() {
                        categories.find((c) => c.type === (data.type || "expense")) || 
                        categories[0];
 
+    const cleanAmount = Math.min(Math.max(0, Number(data.amount) || 0), MAX_TRANSACTION_AMOUNT);
+
     const newTx: PembukuanTransaction = {
       id: tempId,
       date: data.date || todayStr,
       time: data.time || timeStr,
       type: data.type || "expense",
-      amount: Math.max(0, Number(data.amount) || 0),
+      amount: cleanAmount,
       categoryId: data.categoryId || defaultCat?.id || "",
       categoryName: data.categoryName || defaultCat?.name || "Lainnya",
       categoryIcon: data.categoryIcon || defaultCat?.iconName || "Layers",
@@ -187,7 +196,7 @@ export function usePembukuan() {
     };
 
     setTransactions((prev) => [newTx, ...prev]);
-    showToast("Transaksi Berhasil Disimpan", `Tercatat Rp ${newTx.amount.toLocaleString("id-ID")}`, "success");
+    showToast("Transaksi Berhasil Disimpan", `Tercatat ${formatCurrency(newTx.amount)}`, "success");
 
     if (typeof window !== "undefined") {
       window.dispatchEvent(
@@ -213,13 +222,18 @@ export function usePembukuan() {
   }, [showToast, accounts, categories, refreshAccounts]);
 
   const updateTransaction = useCallback(async (id: string, updates: Partial<PembukuanTransaction>) => {
+    const sanitizedUpdates = { ...updates };
+    if (sanitizedUpdates.amount !== undefined) {
+      sanitizedUpdates.amount = Math.min(Math.max(0, Number(sanitizedUpdates.amount) || 0), MAX_TRANSACTION_AMOUNT);
+    }
+
     setTransactions((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, ...updates, updatedAt: new Date().toISOString() } : t))
+      prev.map((t) => (t.id === id ? { ...t, ...sanitizedUpdates, updatedAt: new Date().toISOString() } : t))
     );
     showToast("Transaksi Diperbarui", undefined, "info");
 
     try {
-      await PembukuanService.updateTransaction(id, updates);
+      await PembukuanService.updateTransaction(id, sanitizedUpdates);
       await refreshAccounts();
     } catch (e) {
       console.warn("Could not update transaction in Supabase:", e);
@@ -532,9 +546,9 @@ export function usePembukuan() {
       incomeTrend: 0,
       expenseTrend: 0,
       profitTrend: 0,
-      totalIncomeFormatted: `Rp ${totalIncome.toLocaleString("id-ID")}`,
-      totalExpenseFormatted: `Rp ${totalExpense.toLocaleString("id-ID")}`,
-      netProfitFormatted: `Rp ${netProfit.toLocaleString("id-ID")}`,
+      totalIncomeFormatted: formatCurrency(totalIncome),
+      totalExpenseFormatted: formatCurrency(totalExpense),
+      netProfitFormatted: formatCurrency(netProfit),
       isProfitable: netProfit >= 0,
     };
   }, [transactions, accounts]);

@@ -13,7 +13,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { FilterState, DatePreset, CategoryItem, TransactionStatus, PembukuanKpiData } from "../types";
-import { AccountOption } from "../constants";
+import { AccountOption, formatCurrency } from "../constants";
 import { cn } from "@/shared/lib/utils";
 
 interface PembukuanFilterBarProps {
@@ -268,8 +268,8 @@ export default function PembukuanFilterBar({
                   )}
                 >
                   {filters.type === "expense"
-                    ? `Rp ${(kpiData.cashExpense || 0).toLocaleString("id-ID")}`
-                    : `Rp ${(kpiData.cashIncome || 0).toLocaleString("id-ID")}`}
+                    ? formatCurrency(kpiData.cashExpense || 0)
+                    : formatCurrency(kpiData.cashIncome || 0)}
                 </span>
               )}
             </button>
@@ -296,8 +296,8 @@ export default function PembukuanFilterBar({
                   )}
                 >
                   {filters.type === "expense"
-                    ? `Rp ${(kpiData.digitalExpense || 0).toLocaleString("id-ID")}`
-                    : `Rp ${(kpiData.digitalIncome || 0).toLocaleString("id-ID")}`}
+                    ? formatCurrency(kpiData.digitalExpense || 0)
+                    : formatCurrency(kpiData.digitalIncome || 0)}
                 </span>
               )}
             </button>

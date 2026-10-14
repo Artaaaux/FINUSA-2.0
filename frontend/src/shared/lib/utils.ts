@@ -5,36 +5,47 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const MAX_TRANSACTION_AMOUNT = 1_000_000_000_000; // 1 Triliun
+
 /**
- * Format number to Indonesian Rupiah standard (e.g. Rp 1.500.000)
+ * Format number to Indonesian Rupiah standard:
+ * - Batas maksimum di angka 1 Triliun (1.000.000.000.000)
+ * - Ketika angka >= 100 Juta, disingkat menjadi JT, M, T (misal: "Rp 200 JT", "Rp 1,5 M", "Rp 1 T")
+ * - Ketika angka < 100 Juta, ditampilkan nominal penuh (misal: "Rp 10.000.000", "Rp 25.000")
  */
-export function formatRupiah(amount: number): string {
+export function formatCurrency(amount: number): string {
   if (isNaN(amount) || amount === null || amount === undefined) return "Rp 0";
-  return new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
+
+  const isNegative = amount < 0;
+  const clampedAbs = Math.min(Math.abs(amount), MAX_TRANSACTION_AMOUNT);
+  const sign = isNegative ? "- " : "";
+
+  if (clampedAbs >= 100_000_000) {
+    if (clampedAbs >= 1_000_000_000_000) {
+      const val = clampedAbs / 1_000_000_000_000;
+      const formatted = val % 1 === 0 ? val.toString() : val.toFixed(1).replace(".", ",");
+      return `${sign}Rp ${formatted} T`;
+    }
+    if (clampedAbs >= 1_000_000_000) {
+      const val = clampedAbs / 1_000_000_000;
+      const formatted = val % 1 === 0 ? val.toString() : val.toFixed(1).replace(".", ",");
+      return `${sign}Rp ${formatted} M`;
+    }
+    const val = clampedAbs / 1_000_000;
+    const formatted = val % 1 === 0 ? val.toString() : val.toFixed(1).replace(".", ",");
+    return `${sign}Rp ${formatted} JT`;
+  }
+
+  return `${isNegative ? "- " : ""}Rp ${Math.round(clampedAbs).toLocaleString("id-ID")}`;
 }
+
+export const formatRupiah = formatCurrency;
 
 /**
  * Format number to compact Indonesian Rupiah (e.g. Rp 1,5 jt or Rp 500 rb)
  */
 export function formatRupiahCompact(amount: number): string {
-  if (isNaN(amount) || amount === null || amount === undefined) return "Rp 0";
-  const abs = Math.abs(amount);
-  const sign = amount < 0 ? "-" : "";
-  if (abs >= 1_000_000_000) {
-    return `${sign}Rp ${(abs / 1_000_000_000).toLocaleString("id-ID", { maximumFractionDigits: 1 })} M`;
-  }
-  if (abs >= 1_000_000) {
-    return `${sign}Rp ${(abs / 1_000_000).toLocaleString("id-ID", { maximumFractionDigits: 1 })} jt`;
-  }
-  if (abs >= 1_000) {
-    return `${sign}Rp ${(abs / 1_000).toLocaleString("id-ID", { maximumFractionDigits: 0 })} rb`;
-  }
-  return formatRupiah(amount);
+  return formatCurrency(amount);
 }
 
 /**
