@@ -39,10 +39,13 @@ const benefits = [
 export function SavingsGoalsSection() {
   return (
     <section 
-      aria-label="Fitur Target Finansial Finusa" 
+      aria-label="Fitur Tabungan Impian Finusa" 
       className="py-16 lg:py-24 relative overflow-hidden section-deferred" 
-      id="tujuan"
+      id="tabungan-impian"
     >
+      {/* Backward-compatibility anchor */}
+      <div id="tujuan" className="absolute -top-24 pointer-events-none" aria-hidden="true" />
+
       {/* Ambient background gradients (Hardware-Accelerated Radial) */}
       <div 
         aria-hidden="true" 
@@ -76,7 +79,7 @@ export function SavingsGoalsSection() {
               variant="sky" 
               className="mb-6 sm:mb-8"
             >
-              Fitur Target Finansial
+              Tabungan Impian
             </SectionBadge>
 
             {/* Section Heading */}

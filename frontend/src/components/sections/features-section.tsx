@@ -28,14 +28,14 @@ const coreFeatures = [
   },
   {
     icon: PiggyBank,
-    title: 'Nabung untuk Tujuan',
+    title: 'Tabungan Impian',
     desc: 'Buat target tabungan spesifik sesuai mimpimu — beli laptop kuliah, dana darurat, tiket konser, hingga rencana traveling impian.',
     badge: 'TARGET CERDAS',
     color: 'text-amber-400',
     bg: 'from-amber-500/20 to-amber-600/20 border-amber-400/30',
     hoverBorder: 'hover:border-amber-500/40',
-    link: '#tujuan',
-    actionText: 'Lihat Fitur Nabung'
+    link: '#tabungan-impian',
+    actionText: 'Lihat Tabungan Impian'
   },
   {
     icon: Sparkles,
