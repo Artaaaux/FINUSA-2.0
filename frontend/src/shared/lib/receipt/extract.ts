@@ -670,7 +670,7 @@ export async function extractReceiptData(
       mimeType,
       visionPrompt,
       RECEIPT_EXTRACTION_SYSTEM_PROMPT,
-      { timeoutMs: 45000 }
+      { timeoutMs: 38000 }
     );
 
     const parsed = extractJsonFromModelResponse(rawResponse);

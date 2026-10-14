@@ -94,9 +94,9 @@ export async function POST(req: NextRequest) {
     console.info(`[RECEIPT_SCAN:START] User: ${user.id} | RawSize: ${Math.round(imageBuffer.length / 1024)}KB | Type: ${mimeType}`);
 
     const optimizedOcr = await optimizeReceiptImage(imageBuffer, {
-      maxWidth: 1120,
-      maxHeight: 1120,
-      quality: 85,
+      maxWidth: 960,
+      maxHeight: 960,
+      quality: 80,
       format: "jpeg",
       enhance: true,
     });
@@ -146,13 +146,17 @@ export async function POST(req: NextRequest) {
     });
   } catch (error: unknown) {
     console.error("Receipt Scan API Error:", error);
-    const err = error as { message?: string; code?: string };
+    const err = error as { message?: string; code?: string; statusCode?: number };
+    const isTimeout = err.code === "TIMEOUT" || err.statusCode === 408;
+
     return NextResponse.json(
       {
-        error: err.message || "Terjadi kesalahan saat memproses gambar struk.",
-        code: err.code || "OCR_PROCESSING_FAILED",
+        error: isTimeout
+          ? "Server AI sedang mengalami antrean padat (waktu pemrosesan habis). Silakan coba scan ulang struk Anda atau gunakan input manual."
+          : err.message || "Terjadi kesalahan saat memproses gambar struk.",
+        code: isTimeout ? "SCAN_TIMEOUT" : err.code || "OCR_PROCESSING_FAILED",
       },
-      { status: 500 }
+      { status: isTimeout ? 504 : 500 }
     );
   }
 }

@@ -169,7 +169,12 @@ export class NvidiaModelsClient {
     try {
       return await this.callWithRetry(messages, activeVisionModel, callOpts);
     } catch (primaryErr: unknown) {
-      if (activeVisionModel !== FALLBACK_VISION_MODEL) {
+      const isTimeout =
+        primaryErr instanceof NvidiaModelsError &&
+        (primaryErr.code === "TIMEOUT" || primaryErr.statusCode === 408);
+
+      // Do not fallback to 90B model on timeout, as 90B is significantly heavier and will also time out
+      if (!isTimeout && activeVisionModel !== FALLBACK_VISION_MODEL) {
         console.warn(
           `Primary vision model (${activeVisionModel}) failed, attempting fallback to ${FALLBACK_VISION_MODEL}:`,
           primaryErr
