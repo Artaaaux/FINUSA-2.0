@@ -103,7 +103,7 @@ export default function CategoryBreakdown({ data = [] }: CategoryBreakdownProps)
           </div>
           <p className="text-xs font-semibold text-slate-300">Belum Ada Data Pengeluaran</p>
           <p className="text-[11px] text-slate-500 max-w-xs mt-0.5">
-            Pengeluaran yang dicatat di Buku Kas atau AI Scan akan dikelompokkan secara visual di sini.
+            Pengeluaran yang dicatat di Buku Kas atau Struk Scan akan dikelompokkan secara visual di sini.
           </p>
         </div>
       ) : (

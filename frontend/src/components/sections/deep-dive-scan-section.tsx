@@ -105,11 +105,13 @@ export function DeepDiveAIScanSection() {
   return (
     <section 
       ref={containerRef}
-      id="ai-scan"
+      id="struk-scan"
       data-anim-region
-      aria-label="Finusa AI Receipt Scanner"
+      aria-label="Finusa Struk Scanner"
       className="py-16 sm:py-24 lg:py-28 relative overflow-hidden section-deferred" 
     >
+      {/* Anchor alias for backward compatibility */}
+      <div id="ai-scan" className="absolute -top-24 pointer-events-none" aria-hidden="true" />
       {/* Ambient Radial Lighting Effects (Hardware-Accelerated) */}
       <div 
         aria-hidden="true"
@@ -131,7 +133,7 @@ export function DeepDiveAIScanSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           
-          {/* LEFT: Visual Presentation of Finusa AI OCR Receipt Scanner */}
+          {/* LEFT: Visual Presentation of Finusa OCR Receipt Scanner */}
           <Reveal 
             from="left"
             margin="-60px"
@@ -143,10 +145,10 @@ export function DeepDiveAIScanSection() {
               
               {/* Scanner Enclosure Header */}
               <div className="flex items-center justify-between mb-5 px-1 relative z-20">
-                {/* Left: AI Vision OCR Indicator */}
+                {/* Left: Struk Scan OCR Indicator */}
                 <div className="flex items-center gap-2 text-cyan-300 font-semibold text-xs sm:text-sm tracking-wider uppercase">
                   <Sparkles className="w-4 h-4 text-cyan-300" />
-                  <span>AI VISION OCR</span>
+                  <span>STRUK SCAN OCR</span>
                 </div>
 
                 {/* Right: Status Pill */}
@@ -201,7 +203,7 @@ export function DeepDiveAIScanSection() {
               icon={<Sparkles className="w-3.5 h-3.5 text-cyan-300" />}
               className="mb-5"
             >
-              Finusa AI Scan
+              Finusa Struk Scan
             </SectionBadge>
 
             {/* Main Headline */}
@@ -253,7 +255,7 @@ export function DeepDiveAIScanSection() {
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
                 <span className="text-slate-300 font-medium">
-                  AI Vision OCR · Deteksi toko, item &amp; total
+                  Struk Scan OCR · Deteksi toko, item &amp; total
                 </span>
               </div>
             </div>

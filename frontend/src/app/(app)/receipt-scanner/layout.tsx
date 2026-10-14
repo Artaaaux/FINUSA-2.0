@@ -1,9 +1,9 @@
 import React from "react";
 
 export const metadata = {
-  title: "Receipt Scanner OCR AI - FINUSA",
+  title: "Struk Scan - FINUSA",
   description:
-    "Pindai struk belanja otomatis dengan AI Vision dan catat pengeluaran finansial secara instan.",
+    "Pindai struk belanja otomatis dan catat pengeluaran finansial secara instan.",
 };
 
 export default function ReceiptScannerLayout({

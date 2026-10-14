@@ -65,7 +65,7 @@ export function HeroSection() {
               style={{ ['--hero-delay' as string]: '200ms' }}
               className="hero-enter-up text-base sm:text-lg text-slate-300/90 max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal"
             >
-              Finusa hadir untuk membantumu mengatur pemasukan, pengeluaran, menabung, dan mencapai tujuan finansial — dengan bantuan AI yang siap bekerja untukmu.
+              Kelola keuangan lebih cerdas dengan Finusa. Catat pengeluaran harian, scan struk otomatis, capai target tabungan, dan sinkronkan ke Google Sheets.
             </p>
 
             {/* Call to Actions */}
@@ -181,10 +181,10 @@ export function HeroSection() {
                       {/* Welcome Bar */}
                       <div className="flex items-center justify-between">
                         <div>
-                          <h4 className="text-sm font-bold text-white flex items-center gap-1.5">
+                          <div className="text-sm font-bold text-white flex items-center gap-1.5">
                             <span>Halo, Pengguna</span>
                             <Hand className="w-3.5 h-3.5 text-amber-400" />
-                          </h4>
+                          </div>
                           <p className="text-[11px] text-slate-400">Yuk, atur keuanganmu hari ini!</p>
                         </div>
                         <span className="text-[10px] px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 font-mono">
@@ -308,7 +308,7 @@ export function HeroSection() {
               </div>
             </div>
 
-            {/* Layer 2: Floating AI Scan Struk Feature Showcase (Foreground Left Float) */}
+            {/* Layer 2: Floating Struk Scan Feature Showcase (Foreground Left Float) */}
             <div className="absolute -bottom-8 -left-2 sm:-left-8 z-30 animate-float-card-left gpu-layer pointer-events-auto">
               <div className="w-[280px] sm:w-80 rounded-2xl bg-[#061536]/85 backdrop-blur-md border border-cyan-400/40 p-3.5 shadow-glass-float transition-all duration-300 hover:border-cyan-400/70 hover:shadow-[0_20px_50px_rgba(0,210,255,0.3)]">
                 <div className="flex items-center justify-between pb-2 border-b border-white/10">
@@ -317,7 +317,7 @@ export function HeroSection() {
                       <Camera className="w-3.5 h-3.5" />
                     </div>
                     <div>
-                      <h5 className="text-xs font-bold text-white">AI Scan</h5>
+                      <div className="text-xs font-bold text-white">Struk Scan</div>
                       <p className="text-[9px] text-cyan-300">Scan struk &amp; catat otomatis</p>
                     </div>
                   </div>

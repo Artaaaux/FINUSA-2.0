@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export function Footer() {
   return (
@@ -10,13 +11,11 @@ export function Footer() {
           {/* Brand Column */}
           <div className="md:col-span-2 space-y-4">
             <Link href="/" className="inline-block">
-              <img 
+              <Image 
                 src="/Assets/logo-full-320.webp" 
                 alt="FINUSA Finance Nusantara" 
                 width={160}
                 height={40}
-                loading="lazy"
-                decoding="async"
                 className="h-10 w-auto object-contain brightness-110" 
               />
             </Link>
@@ -27,30 +26,30 @@ export function Footer() {
 
           {/* Links 1 - Produk */}
           <div className="space-y-3.5">
-            <p className="text-xs font-bold text-white uppercase tracking-wider font-sans">Produk</p>
+            <p className="text-xs font-bold text-white uppercase tracking-wider font-sans">Produk &amp; Modul</p>
             <ul className="space-y-2.5 text-sm text-slate-400">
               <li>
-                <Link href="/receipt-scanner" className="hover:text-cyan-400 transition-colors">
-                  AI Scan Struk
+                <Link href="/bantuan/cara-pakai-scan-ai" className="hover:text-cyan-400 transition-colors">
+                  Struk Scan
                 </Link>
               </li>
               <li>
-                <Link href="/home" className="hover:text-cyan-400 transition-colors">
-                  Dashboard Keuangan
+                <Link href="#fitur" className="hover:text-cyan-400 transition-colors">
+                  Fitur Unggulan
                 </Link>
               </li>
               <li>
-                <Link href="/nabung" className="hover:text-cyan-400 transition-colors">
-                  Target Nabung
+                <Link href="/bantuan/konsep-tabungan" className="hover:text-cyan-400 transition-colors">
+                  Target Tabungan
                 </Link>
               </li>
               <li>
-                <Link href="/monitor" className="hover:text-cyan-400 transition-colors">
+                <Link href="/bantuan/ringkasan-arus-kas" className="hover:text-cyan-400 transition-colors">
                   Monitor Likuiditas
                 </Link>
               </li>
               <li>
-                <Link href="/catat" className="hover:text-cyan-400 transition-colors">
+                <Link href="/bantuan/alur-catat-transaksi" className="hover:text-cyan-400 transition-colors">
                   Buku Catat Kas
                 </Link>
               </li>
@@ -59,7 +58,7 @@ export function Footer() {
 
           {/* Links 2 - Bantuan */}
           <div className="space-y-3.5">
-            <p className="text-xs font-bold text-white uppercase tracking-wider font-sans">Bantuan</p>
+            <p className="text-xs font-bold text-white uppercase tracking-wider font-sans">Bantuan &amp; Panduan</p>
             <ul className="space-y-2.5 text-sm text-slate-400">
               <li>
                 <Link href="/bantuan" className="hover:text-cyan-400 transition-colors">
@@ -67,13 +66,18 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/help" className="hover:text-cyan-400 transition-colors">
-                  Panduan Pengguna
+                <Link href="/bantuan" className="hover:text-cyan-400 transition-colors">
+                  Dokumentasi Fitur
                 </Link>
               </li>
               <li>
-                <Link href="/template" className="hover:text-cyan-400 transition-colors">
+                <Link href="/bantuan/menghubungkan-google-sheets" className="hover:text-cyan-400 transition-colors">
                   Template Spreadsheet
+                </Link>
+              </li>
+              <li>
+                <Link href="/bantuan/tips-akurasi-scan-ai" className="hover:text-cyan-400 transition-colors">
+                  Tips Scan Struk
                 </Link>
               </li>
             </ul>

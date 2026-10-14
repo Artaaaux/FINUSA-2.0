@@ -82,7 +82,7 @@ export const NotificationService = {
           {
             id: "welcome-onboarding",
             title: "Selamat Datang di FINUSA",
-            desc: "Mulai catat transaksi pertama Anda di menu Catat atau gunakan fitur Scan Struk AI.",
+            desc: "Mulai catat transaksi pertama Anda di menu Catat atau gunakan fitur Struk Scan.",
             time: "Hari ini",
             type: "info",
             isRead: readIds.has("welcome-onboarding"),

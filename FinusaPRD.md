@@ -56,11 +56,11 @@
   - *Kartu Merah (Kas Keluar):* Total pengeluaran kas keluar bulan berjalan.
   - *Kartu Biru (Rasio Tabungan):* Persentase tersimpan dari total pemasukan.
   - *Kartu Kuning (Pos Terbesar):* Kategori pengeluaran tertinggi sebagai fokus efisiensi belanja.
-- **Akses Cepat Modul:** Tombol pintas ke Scan Struk AI, Catat Kas, Monitor Arus Kas, Target Tabungan, dan Template Sheets.
+- **Akses Cepat Modul:** Tombol pintas ke Struk Scan, Catat Kas, Monitor Arus Kas, Target Tabungan, dan Template Sheets.
 - **Glance Target Tabungan & Aktivitas Terakhir:** Ringkasan progres celengan impian dan riwayat mutasi transaksi terkini.
 - **Tips Finansial Harian:** Edukasi mikro literasi keuangan yang berganti secara dinamis setiap hari.
 
-### 3.2 Scan Struk AI (`/receipt-scanner` & `/ai`) — *Core MVP*
+### 3.2 Struk Scan (`/receipt-scanner` & `/ai`) — *Core MVP*
 - **Kamera Langsung & Upload Gambar:** Mendukung pengambilan foto langsung dari kamera HP/laptop serta unggah file gambar (.jpg, .png, .webp).
 - **Smart OCR Engine (Google Gemini Vision):** Pemrosesan visual berbasis multimodal AI untuk mendeteksi:
   - Nama Toko / Merchant
@@ -114,7 +114,7 @@
 - **Kontrol & Privasi Data:** Opsi ekspor data lengkap (JSON/CSV) dan fitur penghapusan/pengosongan riwayat kas secara mandiri.
 
 ### 3.8 Halaman Publik & Bantuan
-- **Landing Page (`/`):** Tampilan modern berlatar gelap hangat (`#0F1419`), trust ticker, showcase fitur inti, deep-dive Scan Struk AI, perbandingan interaktif, dan CTA pendaftaran gratis.
+- **Landing Page (`/`):** Tampilan modern berlatar gelap hangat (`#0F1419`), trust ticker, showcase fitur inti, deep-dive Struk Scan, perbandingan interaktif, dan CTA pendaftaran gratis.
 - **Edukasi Perbandingan (`/perbandingan`):** Halaman simulasi kebocoran finansial harian dan solusi alokasi kompartemen FINUSA.
 - **Pusat Bantuan (`/help` & `/bantuan`):** Dokumentasi fitur, panduan langkah demi langkah, dan FAQ.
 - **Otentikasi (`/auth/*`):** Alur Login, Signup, Lupa Password, Reset Password terenkripsi berbasis Supabase Auth.
@@ -147,9 +147,9 @@
 
 | Modul / Fitur | Deskripsi | Status |
 |---|---|---|
-| **Landing Page Modern** | Desain responsif, showcase modul nyata, penonjolan Scan Struk AI, copy bebas jargon | **SELESAI** |
+| **Landing Page Modern** | Desain responsif, showcase modul nyata, penonjolan Struk Scan, copy bebas jargon | **SELESAI** |
 | **Otentikasi & Akun** | Signup, login, reset password via email, Supabase Auth session | **SELESAI** |
-| **Scan Struk AI (MVP Core)** | Kamera/upload, ekstraksi Gemini Vision, konfirmasi item, simpan ke database | **SELESAI** |
+| **Struk Scan (MVP Core)** | Kamera/upload, ekstraksi Vision OCR, konfirmasi item, simpan ke database | **SELESAI** |
 | **Dashboard Home** | 4 Summary cards, quick access, glance tabungan, tips finansial harian | **SELESAI** |
 | **Catat & Pembukuan** | Buku kas, kategori pos, jadwal berulang, quick add, ekspor CSV/JSON/PDF | **SELESAI** |
 | **Target Tabungan (Nabung)** | Kompartemen impian, progress ring, milestone celebration, auto-save simulator | **SELESAI** |

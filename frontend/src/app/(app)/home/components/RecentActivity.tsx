@@ -99,14 +99,14 @@ export default function RecentActivity() {
           </div>
           <p className="text-xs font-semibold text-slate-300">Belum Ada Transaksi Tercatat</p>
           <p className="text-[11px] text-slate-500 max-w-xs mx-auto">
-            Gunakan fitur Scan AI untuk scan struk otomatis atau catat transaksi manual di Catat.
+            Gunakan fitur Struk Scan untuk scan struk otomatis atau catat transaksi manual di Catat.
           </p>
           <div className="flex items-center justify-center gap-2 pt-1">
             <Link
               href="/receipt-scanner"
               className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors"
             >
-              Scan Struk AI
+              Struk Scan
             </Link>
             <Link
               href="/catat"

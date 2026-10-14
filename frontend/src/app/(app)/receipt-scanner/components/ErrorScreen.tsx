@@ -54,7 +54,7 @@ export default function ErrorScreen({
       case "ocr_failed":
         return {
           title: "Gagal Membaca Data Struk",
-          desc: "AI tidak dapat mengenali format struk belanja ini. Kamu bisa mencoba memotret ulang atau mengisi rincian secara manual.",
+          desc: "Sistem tidak dapat mengenali format struk belanja ini. Kamu bisa mencoba memotret ulang atau mengisi rincian secara manual.",
           icon: <AlertTriangle className="w-8 h-8 text-rose-400" />,
           iconBg: "bg-rose-500/10 border-rose-500/20",
         };

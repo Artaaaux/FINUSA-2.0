@@ -14,13 +14,13 @@ import {
   Sparkles
 } from "lucide-react";
 
-// Featured Main Card (Card 1: Scan AI)
+// Featured Main Card (Card 1: Struk Scan)
 const featuredFeature = {
   id: "receipt-scanner",
-  title: "Scan Struk AI",
-  tag: "OCR AI",
+  title: "Struk Scan",
+  tag: "OCR",
   action: "Pindai & Catat Otomatis",
-  desc: "Foto atau upload struk belanjaan kamu. AI FINUSA akan memindai toko, tanggal, dan total pengeluaran secara otomatis ke pembukuan.",
+  desc: "Foto atau upload struk belanjaan kamu. FINUSA akan memindai toko, tanggal, dan total pengeluaran secara otomatis ke pembukuan.",
   icon: <ScanLine className="w-6 h-6 text-blue-400" aria-hidden="true" />,
   badgeClass: "text-blue-400 bg-blue-500/10 border-blue-500/25",
   iconBg: "bg-blue-500/15 border-blue-500/30",
@@ -88,7 +88,7 @@ export default function QuickAccess() {
       {/* Main Layout Matching User Sketch: 1 Big Card on Left + 4 Stacked Horizontal Cards on Right */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-stretch">
         
-        {/* LEFT COLUMN: Main Featured Card (Scan AI) */}
+        {/* LEFT COLUMN: Main Featured Card (Struk Scan) */}
         <div className="lg:col-span-5 flex">
           <Link
             href={featuredFeature.href}

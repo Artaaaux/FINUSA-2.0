@@ -6,14 +6,14 @@ import { Reveal } from '@/components/ui/reveal'
 const coreFeatures = [
   {
     icon: ScanLine,
-    title: 'AI Scan Struk',
-    desc: 'Cukup foto struk belanja, AI Finusa akan otomatis membaca item, nominal, tanggal, dan mencatat pengeluaran tanpa repot mengetik manual.',
+    title: 'Struk Scan',
+    desc: 'Cukup foto struk belanja, Finusa akan otomatis membaca item, nominal, tanggal, dan mencatat pengeluaran tanpa repot mengetik manual.',
     badge: 'SCAN OTOMATIS',
     color: 'text-cyan-300',
     bg: 'from-cyan-500/20 to-emerald-500/20 border-cyan-400/30',
     hoverBorder: 'hover:border-cyan-500/40',
-    link: '/receipt-scanner',
-    actionText: 'Coba Scan Struk'
+    link: '#struk-scan',
+    actionText: 'Lihat Demo Scan'
   },
   {
     icon: BarChart3,
@@ -23,8 +23,8 @@ const coreFeatures = [
     color: 'text-blue-400',
     bg: 'from-blue-600/20 to-cyan-500/20 border-blue-400/30',
     hoverBorder: 'hover:border-blue-500/40',
-    link: '/home',
-    actionText: 'Buka Dashboard'
+    link: '#langkah-cerdas',
+    actionText: 'Pelajari Cara Kerja'
   },
   {
     icon: PiggyBank,
@@ -34,8 +34,8 @@ const coreFeatures = [
     color: 'text-amber-400',
     bg: 'from-amber-500/20 to-amber-600/20 border-amber-400/30',
     hoverBorder: 'hover:border-amber-500/40',
-    link: '/nabung',
-    actionText: 'Atur Target'
+    link: '#tujuan',
+    actionText: 'Lihat Fitur Nabung'
   },
   {
     icon: Sparkles,
@@ -45,8 +45,8 @@ const coreFeatures = [
     color: 'text-emerald-400',
     bg: 'from-emerald-500/20 to-teal-500/20 border-emerald-400/30',
     hoverBorder: 'hover:border-emerald-500/40',
-    link: '/monitor',
-    actionText: 'Lihat Analisis'
+    link: '/bantuan/ringkasan-arus-kas',
+    actionText: 'Baca Panduan'
   }
 ]
 

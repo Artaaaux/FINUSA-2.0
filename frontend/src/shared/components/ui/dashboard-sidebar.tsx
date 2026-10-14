@@ -28,7 +28,7 @@ export type NavItemData = {
 
 const finusaNavItems: NavItemData[] = [
   { id: 'home', title: 'Home', icon: LayoutDashboard, href: "/home" },
-  { id: 'receipt-scanner', title: 'Scan', icon: ScanLine, href: "/receipt-scanner", badge: 'AI' },
+  { id: 'receipt-scanner', title: 'Scan', icon: ScanLine, href: "/receipt-scanner" },
   { id: 'monitor', title: 'Monitor', icon: Activity, href: "/monitor" },
   { id: 'nabung', title: 'Nabung', icon: CreditCard, href: "/nabung" },
   { id: 'catat', title: 'Catat', icon: FolderKanban, href: "/catat" },

@@ -54,7 +54,7 @@ export default function ProcessingScreen({ imageSrc }: ProcessingScreenProps) {
           Memproses...
         </h3>
         <p className="text-xs text-slate-400">
-          AI sedang memproses data struk kamu
+          Sedang memproses data struk kamu
         </p>
       </div>
     </div>

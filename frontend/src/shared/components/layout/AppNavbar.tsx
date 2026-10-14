@@ -245,7 +245,7 @@ export default function AppNavbar({ isCollapsed }: { isCollapsed: boolean }) {
     { title: "Catat Transaksi Baru", category: "Aksi Cepat", href: "/catat", icon: FolderKanban },
     { title: "Monitor Likuiditas & Kas", category: "Menu Utama", href: "/monitor", icon: Activity },
     { title: "Nabung & Alokasi Target", category: "Menu Utama", href: "/nabung", icon: CreditCard },
-    { title: "Scan Struk Belanja (OCR)", category: "Alat AI", href: "/receipt-scanner", icon: ScanLine },
+    { title: "Scan Struk Belanja (OCR)", category: "Struk Scan", href: "/receipt-scanner", icon: ScanLine },
     { title: "Template Spreadsheet Keuangan", category: "Alat", href: "/template", icon: Blocks },
     { title: "Pengaturan Akun & Profil", category: "Sistem", href: "/settings", icon: Settings },
     { title: "Panduan & Bantuan", category: "Dukungan", href: "/help", icon: HelpCircle },

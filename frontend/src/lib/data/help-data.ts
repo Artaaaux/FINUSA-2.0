@@ -337,13 +337,13 @@ export const HELP_CATEGORIES: HelpCategory[] = [
   },
   {
     id: "scan-ai",
-    title: "Scan Struk AI (AI Scan)",
+    title: "Struk Scan",
     articles: [
       {
         id: "cara-pakai-scan-ai",
         categoryId: "scan-ai",
-        categoryTitle: "Scan Struk AI (AI Scan)",
-        title: "Cara Menggunakan Scan Struk AI",
+        categoryTitle: "Struk Scan",
+        title: "Cara Menggunakan Struk Scan",
         description: "Panduan memindai nota dan struk belanja secara instan menggunakan kamera HP atau unggahan file gambar.",
         readTime: "3 menit",
         purpose: "Mengekstrak data transaksi belanja (nama toko, tanggal, total nominal, pos kategori, dan rincian belanja) secara otomatis tanpa mengetik angka satu per satu.",
@@ -351,7 +351,7 @@ export const HELP_CATEGORIES: HelpCategory[] = [
           {
             stepNumber: 1,
             title: "Buka Menu Scan di Navigasi Utama",
-            instruction: "Klik menu 'Scan' berlogo AI pada bilah navigasi utama (atau akses langsung /receipt-scanner).",
+            instruction: "Klik menu 'Scan' pada bilah navigasi utama (atau akses langsung /receipt-scanner).",
             details: [
               "Layar pemindai kamera interaktif akan langsung terbuka."
             ]
@@ -367,10 +367,10 @@ export const HELP_CATEGORIES: HelpCategory[] = [
           },
           {
             stepNumber: 3,
-            title: "Pratinjau Foto & Jalankan Pemrosesan AI",
+            title: "Pratinjau Foto & Jalankan Pemindaian",
             instruction: "Periksa foto struk pada layar pratinjau. Pastikan teks harga dan nama toko terbaca jelas, lalu klik 'Proses Scan Struk'.",
             details: [
-              "Mesin AI Vision OCR FINUSA akan memproses teks struk dalam hitungan detik.",
+              "Mesin OCR FINUSA akan memproses teks struk dalam hitungan detik.",
               "Sistem mengekstrak nama merchant, tanggal transaksi, rincian barang, pajak, diskon, dan grand total."
             ]
           },
@@ -425,7 +425,7 @@ export const HELP_CATEGORIES: HelpCategory[] = [
           }
         ],
         screenshotPlaceholder: {
-          title: "Layar Pemindai Scan Struk AI",
+          title: "Layar Pemindai Struk Scan",
           caption: "Antarmuka kamera pemindai struk dengan tombol ambil foto dan unggah file gambar."
         },
         bestPractices: [
@@ -446,11 +446,11 @@ export const HELP_CATEGORIES: HelpCategory[] = [
       {
         id: "tips-akurasi-scan-ai",
         categoryId: "scan-ai",
-        categoryTitle: "Scan Struk AI (AI Scan)",
+        categoryTitle: "Struk Scan",
         title: "Tips Memotret Struk agar Akurat",
         description: "Pedoman teknik pengambilan gambar struk kertas thermal dan kasir ritel di Indonesia.",
         readTime: "3 menit",
-        purpose: "Memaksimalkan akurasi pembacaan AI OCR hingga 98%+ sehingga tidak perlu banyak melakukan koreksi manual.",
+        purpose: "Memaksimalkan akurasi pembacaan OCR hingga 98%+ sehingga tidak perlu banyak melakukan koreksi manual.",
         steps: [
           {
             stepNumber: 1,
@@ -491,16 +491,16 @@ export const HELP_CATEGORIES: HelpCategory[] = [
       {
         id: "koreksi-data-scan-ai",
         categoryId: "scan-ai",
-        categoryTitle: "Scan Struk AI (AI Scan)",
+        categoryTitle: "Struk Scan",
         title: "Koreksi Data & Penyesuaian Item Hasil Scan",
         description: "Cara mengedit rincian barang, diskon belanja, dan pos kategori pada layar konfirmasi sebelum disimpan.",
         readTime: "2 menit",
-        purpose: "Memberikan kontrol penuh kepada pengguna untuk memvalidasi dan menyempurnakan hasil pembacaan AI.",
+        purpose: "Memberikan kontrol penuh kepada pengguna untuk memvalidasi dan menyempurnakan hasil pembacaan pemindai.",
         steps: [
           {
             stepNumber: 1,
             title: "Periksa Ringkasan Total",
-            instruction: "Setelah AI selesai memproses struk, halaman akan masuk ke layar 'Konfirmasi Data Struk'.",
+            instruction: "Setelah sistem selesai memproses struk, halaman akan masuk ke layar 'Konfirmasi Data Struk'.",
             details: [
               "Cek apakah nominal Grand Total cocok dengan yang Anda bayarkan di kasir."
             ]
@@ -568,7 +568,7 @@ export const HELP_CATEGORIES: HelpCategory[] = [
         ],
         bestPractices: [
           "Catat transaksi seketika setelah bertransaksi di kasir agar tidak menumpuk di ingatan.",
-          "Gunakan Scan Struk AI jika transaksi mengeluarkan nota/struk fisik."
+          "Gunakan Struk Scan jika transaksi mengeluarkan nota/struk fisik."
         ],
         troubleshooting: [
           {

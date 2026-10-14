@@ -321,7 +321,7 @@ export default function ConfirmScreen({
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-slate-300 font-medium flex items-center gap-1.5">
                     <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-                    Alokasi Kategori Otomatis AI
+                    Alokasi Kategori Otomatis
                   </span>
                   <span className="text-[11px] text-slate-400">
                     Item akan dipisah ke pengeluaran masing-masing
@@ -565,7 +565,7 @@ export default function ConfirmScreen({
             </div>
           </div>
 
-          {/* AI Notice Disclaimer Banner */}
+          {/* Struk Scan Notice Disclaimer Banner */}
           <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-start gap-3 shadow-md">
             <div className="p-1.5 rounded-xl bg-amber-500/20 text-amber-400 flex-shrink-0 mt-0.5">
               <AlertTriangle className="w-4 h-4" />
@@ -573,7 +573,7 @@ export default function ConfirmScreen({
             <div className="space-y-0.5">
               <p className="text-xs font-bold text-amber-300">Peringatan</p>
               <p className="text-xs text-amber-200/90 leading-relaxed">
-                Scan AI ini masih versi awal dan pasti ada kesalahan, cek kembali detail pembayaran.
+                Fitur Struk Scan ini masih versi awal dan pasti ada kesalahan, cek kembali detail pembayaran.
               </p>
             </div>
           </div>

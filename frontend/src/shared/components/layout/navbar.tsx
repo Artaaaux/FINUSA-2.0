@@ -1,19 +1,21 @@
 "use client";
 
 import * as React from "react";
-import { Menu, X, ArrowRight } from "lucide-react";
+import { Menu, X, ArrowRight, Home, Sparkles, Lightbulb, Target, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface MenuItem {
   label: string;
   href: string;
+  icon: React.ElementType;
 }
 
 const navItems: MenuItem[] = [
-  { label: "Beranda", href: "#beranda" },
-  { label: "Fitur", href: "#fitur" },
-  { label: "Langkah Cerdas", href: "#langkah-cerdas" },
-  { label: "Tujuan", href: "#tujuan" },
+  { label: "Beranda", href: "#beranda", icon: Home },
+  { label: "Fitur", href: "#fitur", icon: Sparkles },
+  { label: "Langkah Cerdas", href: "#langkah-cerdas", icon: Lightbulb },
+  { label: "Tujuan", href: "#tujuan", icon: Target },
 ];
 
 export function Navbar() {
@@ -48,6 +50,17 @@ export function Navbar() {
     return () => {
       document.body.style.overflow = "";
     };
+  }, [isOpen]);
+
+  // Close drawer on Escape key
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen]);
 
   // Scrollspy to update active item
@@ -96,123 +109,121 @@ export function Navbar() {
   };
 
   return (
-    <header 
-      style={{ contain: 'layout style', transform: 'translateZ(0)' }}
-      className={`fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,box-shadow] duration-300 ${
-        isOpen
-          ? "bg-[#020817] border-b border-white/[0.08]"
-          : isScrolled 
-          ? "bg-[#020817]/90 backdrop-blur-xl border-b border-white/[0.08] shadow-lg shadow-black/20" 
-          : "bg-[#020817]/70 backdrop-blur-md border-b border-white/[0.05]"
-      }`}
-    >
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
-        
-        {/* Brand Logo: Clean Logo Mark */}
-        <a 
-          href="#beranda" 
-          onClick={(e) => handleNavClick(e, navItems[0])}
-          className="flex items-center gap-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-xl"
-          aria-label="Finusa Beranda"
-        >
-          <div className="relative w-10 h-10 flex items-center justify-center p-1 rounded-xl bg-white/[0.03] border border-white/10 group-hover:border-blue-500/40 transition-colors duration-300 shadow-sm">
-            <img 
-              src="/Assets/logo-mark-80.webp" 
-              alt="Finusa Icon" 
-              width={40}
-              height={40}
-              decoding="async"
-              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
-            />
-          </div>
-          <span className="text-xl sm:text-2xl font-bold tracking-tight text-white font-sans">
-            Finusa
-          </span>
-        </a>
-
-        {/* Desktop Navigation Links: Stitch Glass Pill */}
-        <nav 
-          aria-label="Navigasi Utama"
-          className="hidden md:flex items-center gap-1.5 bg-navy-900/60 p-1.5 rounded-full border border-white/[0.08] backdrop-blur-md shadow-inner"
-        >
-          {navItems.map((item) => {
-            const isActive = activeItem === item.label;
-            return (
-              <a
-                key={item.label}
-                href={item.href}
-                onClick={(e) => handleNavClick(e, item)}
-                className={`px-5 py-1.5 text-sm font-medium rounded-full transition-all duration-200 ${
-                  isActive
-                    ? "bg-blue-600/25 text-blue-400 border border-blue-500/35 shadow-[0_0_15px_rgba(22,135,255,0.25)] font-semibold"
-                    : "text-slate-300 hover:text-white hover:bg-white/[0.06] border border-transparent"
-                }`}
-              >
-                {item.label}
-              </a>
-            );
-          })}
-        </nav>
-
-        {/* Right Actions */}
-        <div className="flex items-center gap-3 sm:gap-4">
-          <Link
-            href="/auth/login"
-            className="hidden sm:inline-flex px-5 py-2 rounded-xl text-sm font-medium text-slate-200 hover:text-white hover:bg-white/[0.08] transition border border-transparent hover:border-white/10"
-          >
-            Masuk
-          </Link>
+    <>
+      <header 
+        className={`fixed inset-x-0 top-0 z-40 transition-[background-color,border-color,box-shadow] duration-300 ${
+          isScrolled 
+            ? "bg-[#020817]/90 backdrop-blur-xl border-b border-white/[0.08] shadow-lg shadow-black/20" 
+            : "bg-[#020817]/70 backdrop-blur-md border-b border-white/[0.05]"
+        }`}
+      >
+        <div className="max-w-[1400px] mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
           
-          <Link
-            href="/auth/signup"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 shadow-[0_0_20px_rgba(22,135,255,0.4)] hover:shadow-[0_0_25px_rgba(22,135,255,0.6)] transition transform active:scale-95 duration-200"
+          {/* Brand Logo: Clean Logo Mark */}
+          <a 
+            href="#beranda" 
+            onClick={(e) => handleNavClick(e, navItems[0])}
+            className="flex items-center gap-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-xl"
+            aria-label="Finusa Beranda"
           >
-            <span>Mulai Gratis</span>
-            <ArrowRight className="w-4 h-4 ml-0.5" />
-          </Link>
+            <div className="relative w-10 h-10 flex items-center justify-center p-1 rounded-xl bg-white/[0.03] border border-white/10 group-hover:border-blue-500/40 transition-colors duration-300 shadow-sm">
+              <Image 
+                src="/Assets/logo-mark-80.webp" 
+                alt="Finusa Icon" 
+                width={40}
+                height={40}
+                className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+              />
+            </div>
+            <span className="text-xl sm:text-2xl font-bold tracking-tight text-white font-sans">
+              Finusa
+            </span>
+          </a>
 
-          {/* Mobile Hamburger Button */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="rounded-xl p-2.5 text-slate-300 hover:text-white bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 md:hidden transition"
-            aria-label={isOpen ? "Tutup menu" : "Buka menu"}
+          {/* Desktop Navigation Links: Stitch Glass Pill */}
+          <nav 
+            aria-label="Navigasi Utama"
+            className="hidden md:flex items-center gap-1.5 bg-navy-900/60 p-1.5 rounded-full border border-white/[0.08] backdrop-blur-md shadow-inner"
           >
-            {isOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
+            {navItems.map((item) => {
+              const isActive = activeItem === item.label;
+              return (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  onClick={(e) => handleNavClick(e, item)}
+                  className={`px-5 py-1.5 text-sm font-medium rounded-full transition-all duration-200 ${
+                    isActive
+                      ? "bg-blue-600/25 text-blue-400 border border-blue-500/35 shadow-[0_0_15px_rgba(22,135,255,0.25)] font-semibold"
+                      : "text-slate-300 hover:text-white hover:bg-white/[0.06] border border-transparent"
+                  }`}
+                >
+                  {item.label}
+                </a>
+              );
+            })}
+          </nav>
+
+          {/* Right Actions */}
+          <div className="flex items-center gap-3 sm:gap-4">
+            <Link
+              href="/auth/login"
+              className="hidden sm:inline-flex px-5 py-2 rounded-xl text-sm font-medium text-slate-200 hover:text-white hover:bg-white/[0.08] transition border border-transparent hover:border-white/10"
+            >
+              Masuk
+            </Link>
+            
+            <Link
+              href="/auth/signup"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 shadow-[0_0_20px_rgba(22,135,255,0.4)] hover:shadow-[0_0_25px_rgba(22,135,255,0.6)] transition transform active:scale-95 duration-200"
+            >
+              <span>Mulai Gratis</span>
+              <ArrowRight className="w-4 h-4 ml-0.5" />
+            </Link>
+
+            {/* Mobile Hamburger Button */}
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="rounded-xl p-2.5 text-slate-300 hover:text-white bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 md:hidden transition cursor-pointer"
+              aria-label={isOpen ? "Tutup menu" : "Buka menu"}
+            >
+              {isOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
+          </div>
+
         </div>
-
-      </div>
+      </header>
 
       {/* Mobile Slide-in Drawer */}
       <div
-        className={`fixed inset-0 z-40 md:hidden ${
-          isOpen ? "visible" : "invisible delay-300"
+        className={`fixed inset-0 z-50 md:hidden ${
+          isOpen ? "visible pointer-events-auto" : "invisible pointer-events-none delay-300"
         }`}
         aria-hidden={!isOpen}
       >
-        {/* Backdrop: hanya overlay gelap ringan, tanpa blur untuk performa */}
+        {/* Backdrop: overlay blur menyelimuti layar landing page */}
         <div
-          className={`absolute inset-0 bg-black/60 transition-opacity duration-300 ${
+          className={`fixed inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-300 ${
             isOpen ? "opacity-100" : "opacity-0"
           }`}
           onClick={() => setIsOpen(false)}
         />
 
-        {/* Drawer: frosted glass dengan blur ringan & opasitas pekat agar tidak tembus pandang */}
+        {/* Drawer: frosted glass dengan backdrop-blur */}
         <aside
-          className={`absolute right-0 top-0 flex h-full w-[300px] flex-col border-l border-white/[0.08] bg-[#020817]/90 backdrop-blur-xl transition-transform duration-300 ease-out shadow-[-24px_0_60px_rgba(0,0,0,0.8)] ${
+          className={`fixed right-0 top-0 bottom-0 flex h-full h-[100dvh] w-[300px] max-w-[85vw] flex-col border-l border-white/[0.1] bg-[#020817]/95 backdrop-blur-2xl transition-transform duration-300 ease-out shadow-[-24px_0_60px_rgba(0,0,0,0.8)] ${
             isOpen ? "translate-x-0" : "translate-x-full"
           }`}
         >
           {/* Drawer Header */}
           <div className="flex items-center justify-between border-b border-white/10 px-6 py-5">
             <div className="flex items-center gap-2.5">
-              <img src="/Assets/logo-mark-80.webp" alt="Finusa" width={32} height={32} decoding="async" className="w-8 h-8 object-contain" />
-              <span className="font-bold text-lg text-white">Finusa</span>
+              <Image src="/Assets/logo-mark-80.webp" alt="Finusa" width={32} height={32} className="w-8 h-8 object-contain" />
+              <span className="font-bold text-lg text-white font-sans">Finusa</span>
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="rounded-lg p-2 text-slate-400 hover:bg-white/5 hover:text-white transition"
+              className="rounded-xl p-2 text-slate-400 hover:text-white hover:bg-white/[0.08] border border-transparent hover:border-white/10 transition cursor-pointer"
               aria-label="Tutup menu"
             >
               <X size={20} />
@@ -220,26 +231,47 @@ export function Navbar() {
           </div>
 
           {/* Nav Links */}
-          <nav className="flex flex-1 flex-col gap-1.5 px-4 py-6 overflow-y-auto">
-            {navItems.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                onClick={(e) => handleNavClick(e, item)}
-                className={`flex items-center justify-between rounded-xl px-4 py-3 text-sm font-medium transition-all ${
-                  activeItem === item.label
-                    ? "bg-blue-600/20 text-blue-400 border border-blue-500/30 font-semibold"
-                    : "text-slate-300 hover:bg-white/5 hover:text-white"
-                }`}
-              >
-                <span>{item.label}</span>
-                <span className="text-xs text-slate-500">→</span>
-              </a>
-            ))}
+          <nav className="flex flex-1 flex-col gap-2 px-4 py-6 overflow-y-auto">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeItem === item.label;
+              return (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  onClick={(e) => handleNavClick(e, item)}
+                  className={`flex items-center justify-between rounded-xl px-3.5 py-3 text-sm font-medium transition-all group ${
+                    isActive
+                      ? "bg-blue-600/20 text-blue-400 border border-blue-500/30 font-semibold shadow-sm"
+                      : "text-slate-300 hover:bg-white/5 hover:text-white border border-transparent"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
+                        isActive
+                          ? "bg-blue-500/20 text-blue-400 border border-blue-500/30 shadow-[0_0_12px_rgba(22,135,255,0.25)]"
+                          : "bg-white/[0.04] text-slate-400 border border-white/5 group-hover:text-white group-hover:bg-white/[0.08] group-hover:border-white/10"
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                    </div>
+                    <span className="tracking-tight">{item.label}</span>
+                  </div>
+                  <ChevronRight
+                    className={`w-4 h-4 transition-all ${
+                      isActive
+                        ? "text-blue-400 translate-x-0.5"
+                        : "text-slate-500 group-hover:text-slate-300 group-hover:translate-x-0.5"
+                    }`}
+                  />
+                </a>
+              );
+            })}
           </nav>
 
           {/* Drawer Footer Actions */}
-          <div className="border-t border-white/10 p-5 space-y-3 bg-[#030f2b]">
+          <div className="border-t border-white/10 p-5 space-y-3 bg-[#020817]/80 backdrop-blur-xl">
             <Link
               href="/auth/login"
               onClick={() => setIsOpen(false)}
@@ -250,15 +282,15 @@ export function Navbar() {
             <Link
               href="/auth/signup"
               onClick={() => setIsOpen(false)}
-              className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 py-3 text-sm font-semibold text-white shadow-glow-blue transition active:scale-95"
+              className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 py-3 text-sm font-semibold text-white shadow-[0_0_20px_rgba(22,135,255,0.4)] transition active:scale-95 duration-200"
             >
               <span>Mulai Gratis</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4 ml-0.5" />
             </Link>
           </div>
         </aside>
       </div>
-    </header>
+    </>
   );
 }
 

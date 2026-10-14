@@ -84,10 +84,10 @@ export function AIScanOverlay({ isDetected, isCompleted }: AIScanOverlayProps) {
         )}
       >
         <div className="glass-card-sm-scan p-3.5 rounded-2xl pointer-events-auto">
-          {/* AI Processing / Verified Badge */}
+          {/* Struk Processing / Verified Badge */}
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-cyan-500/15 border border-cyan-400/30 text-[10px] font-medium text-cyan-300 mb-2.5">
             <Sparkles className="w-3 h-3 text-cyan-300" />
-            <span>{isCompleted ? 'AI Terverifikasi' : 'AI sedang membaca...'}</span>
+            <span>{isCompleted ? 'Struk Terverifikasi' : 'Sedang membaca struk...'}</span>
           </div>
 
           {/* Total Amount Extracted */}

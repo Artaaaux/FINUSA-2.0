@@ -13,7 +13,7 @@ const stepsData: StepItem[] = [
   },
   {
     step: '02',
-    title: 'Finusa AI Memindai',
+    title: 'Finusa Memindai',
     desc: 'Finusa mengenali nama merchant, rincian barang, tanggal belanja, dan total transaksi secara otomatis.',
     icon: <Cpu className="w-8 h-8 drop-shadow-[0_0_10px_rgba(34,211,238,0.5)] stroke-[1.8]" />
   },

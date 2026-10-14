@@ -143,12 +143,6 @@ export function HelpCenterLayout({ isAppShell = false }: HelpCenterLayoutProps) 
 
             <div className="flex items-center gap-3">
               <Link
-                href="/perbandingan"
-                className="hidden sm:inline-flex items-center gap-1 text-xs text-slate-400 hover:text-slate-200 transition-colors"
-              >
-                Perbandingan Fitur
-              </Link>
-              <Link
                 href="/auth/signup"
                 className="px-3 py-1.5 rounded-lg bg-blue-600 text-xs font-semibold text-white hover:bg-blue-500 transition-colors"
               >

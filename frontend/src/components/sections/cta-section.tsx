@@ -36,7 +36,7 @@ export function CtaSection() {
           </h2>
 
           <p className="text-slate-300 text-base sm:text-lg max-w-xl mx-auto mt-4 relative z-10 leading-relaxed">
-            Bergabung bersama ribuan pelajar, fresh graduate, dan profesional muda Indonesia yang sudah hemat waktu dengan Finusa AI.
+            Bergabung bersama ribuan pelajar, fresh graduate, dan profesional muda Indonesia yang sudah hemat waktu dengan Finusa.
           </p>
 
           <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4 relative z-10">

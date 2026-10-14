@@ -78,7 +78,7 @@ export default function CameraView({
         <div className="flex items-center gap-2">
           <div className="px-3 py-1 rounded-full bg-blue-500/20 border border-blue-500/30 text-blue-400 text-xs font-semibold flex items-center gap-1.5 shadow-sm">
             <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-            Scanner AI
+            Struk Scan
           </div>
         </div>
 

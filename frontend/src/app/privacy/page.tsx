@@ -3,14 +3,33 @@ import Link from "next/link";
 import { Shield, ArrowLeft, Lock, Database, Eye, Mail } from "lucide-react";
 import { Metadata } from "next";
 
+import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
+
 export const metadata: Metadata = {
   title: "Kebijakan Privasi (Privacy Policy) - FINUSA",
   description: "Kebijakan Privasi dan Perlindungan Data Pengguna Aplikasi FINUSA.",
+  alternates: {
+    canonical: "https://finusa.web.id/privacy",
+  },
+  openGraph: {
+    title: "Kebijakan Privasi (Privacy Policy) - FINUSA",
+    description: "Kebijakan Privasi dan Perlindungan Data Pengguna Aplikasi FINUSA.",
+    url: "https://finusa.web.id/privacy",
+    siteName: "FINUSA",
+    locale: "id_ID",
+    type: "website",
+  },
 };
 
 export default function PrivacyPolicyPage() {
   return (
     <div className="min-h-screen bg-[#0B0F19] text-slate-200 py-12 px-4 sm:px-6 lg:px-8 font-sans">
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Beranda", url: "https://finusa.web.id" },
+          { name: "Kebijakan Privasi", url: "https://finusa.web.id/privacy" },
+        ]}
+      />
       <div className="max-w-4xl mx-auto space-y-8 bg-[#161B26] p-6 sm:p-10 rounded-2xl border border-slate-800 shadow-2xl">
         {/* Back Link */}
         <div>
