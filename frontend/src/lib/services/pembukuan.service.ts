@@ -450,17 +450,22 @@ export const PembukuanService = {
       }
     }
 
-    // If categoryId is not a valid UUID, attempt to resolve from user's categories
+    // If categoryId is not a valid UUID, attempt to resolve from categories (user or system defaults)
     if (!validCategoryId) {
       const { data: userCategories } = await supabase
         .from("categories")
         .select("id, name, type")
-        .eq("user_id", user.id)
-        .limit(20);
+        .eq("is_active", true)
+        .limit(50);
 
       if (userCategories && userCategories.length > 0) {
         const matched = tx.categoryName
-          ? userCategories.find((c) => c.name.toLowerCase().includes(tx.categoryName.toLowerCase()))
+          ? userCategories.find(
+              (c) =>
+                c.name.toLowerCase().trim() === tx.categoryName.toLowerCase().trim() ||
+                c.name.toLowerCase().includes(tx.categoryName.toLowerCase()) ||
+                tx.categoryName.toLowerCase().includes(c.name.toLowerCase())
+            )
           : null;
         validCategoryId = matched?.id || userCategories.find((c) => c.type === tx.type)?.id || userCategories[0].id;
       }
@@ -482,6 +487,7 @@ export const PembukuanService = {
         status: tx.status || "completed",
         source: tx.source || "manual",
         tags: tx.tags || [],
+        metadata: tx.metadata || {},
         is_reconciled: tx.isReconciled || false,
       })
       .select(`

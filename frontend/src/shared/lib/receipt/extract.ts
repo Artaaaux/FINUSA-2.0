@@ -124,15 +124,69 @@ export function looksLikeReceiptText(text: string): boolean {
  * Normalizes Indonesian date formats to ISO YYYY-MM-DD
  */
 function normalizeDate(rawDate?: string): string {
-  if (!rawDate) return new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split("T")[0];
+  if (!rawDate || !rawDate.trim()) return today;
 
-  // If already YYYY-MM-DD
-  if (/^\d{4}-\d{2}-\d{2}$/.test(rawDate)) {
-    return rawDate;
+  const trimmed = rawDate.trim();
+
+  // If already ISO YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+    return trimmed;
+  }
+
+  // Handle DD/MM/YYYY or DD-MM-YYYY or DD.MM.YYYY
+  const dmyMatch = trimmed.match(/^(\d{1,2})[\/\.-](\d{1,2})[\/\.-](\d{2,4})$/);
+  if (dmyMatch) {
+    let day = parseInt(dmyMatch[1], 10);
+    let month = parseInt(dmyMatch[2], 10);
+    let year = parseInt(dmyMatch[3], 10);
+    if (year < 100) year += 2000;
+
+    // Check if month and day might be flipped (if month > 12 and day <= 12)
+    if (month > 12 && day <= 12) {
+      const temp = day;
+      day = month;
+      month = temp;
+    }
+
+    if (month >= 1 && month <= 12 && day >= 1 && day <= 31) {
+      const pad = (n: number) => String(n).padStart(2, "0");
+      return `${year}-${pad(month)}-${pad(day)}`;
+    }
+  }
+
+  // Handle Indonesian month names: e.g. "14 Oktober 2026", "14 Okt 2026", "14-Okt-2026"
+  const monthMap: Record<string, string> = {
+    jan: "01", januari: "01", january: "01",
+    feb: "02", februari: "02", february: "02",
+    mar: "03", maret: "03", march: "03",
+    apr: "04", april: "04",
+    mei: "05", may: "05",
+    jun: "06", juni: "06", june: "06",
+    jul: "07", juli: "07", july: "07",
+    agu: "08", agt: "08", agustus: "08", august: "08",
+    sep: "09", september: "09",
+    okt: "10", oktober: "10", october: "10",
+    nov: "11", november: "11",
+    des: "12", desember: "12", december: "12",
+  };
+
+  const textMonthMatch = trimmed.match(/(\d{1,2})\s*[-/\s]\s*([a-zA-Z]+)\s*[-/\s]\s*(\d{2,4})/);
+  if (textMonthMatch) {
+    const day = parseInt(textMonthMatch[1], 10);
+    const mStr = textMonthMatch[2].toLowerCase();
+    let year = parseInt(textMonthMatch[3], 10);
+    if (year < 100) year += 2000;
+
+    const matchedMonth = Object.keys(monthMap).find((k) => mStr.startsWith(k));
+    if (matchedMonth && day >= 1 && day <= 31) {
+      const pad = (n: number) => String(n).padStart(2, "0");
+      return `${year}-${monthMap[matchedMonth]}-${pad(day)}`;
+    }
   }
 
   try {
-    const d = new Date(rawDate);
+    const d = new Date(trimmed);
     if (!isNaN(d.getTime())) {
       return d.toISOString().split("T")[0];
     }
@@ -141,7 +195,7 @@ function normalizeDate(rawDate?: string): string {
   }
 
   // Fallback to today
-  return new Date().toISOString().split("T")[0];
+  return today;
 }
 
 /**

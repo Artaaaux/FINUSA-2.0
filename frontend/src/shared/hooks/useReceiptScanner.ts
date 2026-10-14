@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth/hooks";
 import type { ExtractedReceiptData, ReceiptItem } from "@/shared/lib/receipt/types";
 import { getCurrentScanTime } from "@/shared/lib/receipt/utils";
 import { useImageOptimizer } from "./useImageOptimizer";
+import { PembukuanService } from "@/lib/services/pembukuan.service";
 
 export type ScannerStep =
   | "camera"
@@ -308,7 +309,7 @@ export function useReceiptScanner() {
     []
   );
 
-  // Save to Supabase (Transactions primary, Expenses as backup history)
+  // Save to Supabase (Unified via PembukuanService to synchronize accounts balance and Monitor analytics)
   const saveExpense = useCallback(async () => {
     if (!extractedData) return;
 
@@ -336,39 +337,33 @@ export function useReceiptScanner() {
       }
 
       let primaryExpenseId: string | null = null;
-      let userCategories: Array<{ id: string; name: string }> = [];
-      let userAccounts: Array<{ id: string; name: string }> = [];
 
-      if (userId) {
-        try {
-          const [{ data: cats }, { data: accs }] = await Promise.all([
-            supabase.from("categories").select("id, name").eq("user_id", userId),
-            supabase.from("accounts").select("id, name").eq("user_id", userId),
-          ]);
-          if (cats) userCategories = cats;
-          if (accs) userAccounts = accs;
-        } catch (catErr) {
-          console.warn("Could not fetch user categories/accounts:", catErr);
-        }
-      }
+      // Fetch user accounts & categories via PembukuanService to guarantee seeding & default values
+      const [availableAccounts, availableCategories] = await Promise.all([
+        PembukuanService.getAccounts(),
+        PembukuanService.getCategories(),
+      ]);
 
       // Match account based on selected paymentMethod
-      let matchedAccountId: string | null = null;
-      if (userAccounts.length > 0) {
-        if (extractedData.paymentMethod) {
-          const pm = extractedData.paymentMethod.toLowerCase();
-          const found = userAccounts.find(
-            (a) => a.name.toLowerCase().includes(pm) || pm.includes(a.name.toLowerCase())
-          );
-          matchedAccountId = found?.id || userAccounts[0]?.id || null;
-        } else {
-          matchedAccountId = userAccounts[0]?.id || null;
-        }
+      let matchedAccount = availableAccounts.length > 0 ? availableAccounts[0] : null;
+      if (extractedData.paymentMethod && availableAccounts.length > 0) {
+        const pm = extractedData.paymentMethod.toLowerCase().trim();
+        let targetKeywords: string[] = [pm];
+        if (pm.includes("cash") || pm.includes("tunai")) targetKeywords = ["cash", "tunai", "kas"];
+        else if (pm.includes("qris")) targetKeywords = ["qris"];
+        else if (pm.includes("wallet") || pm.includes("gopay") || pm.includes("ovo") || pm.includes("dana") || pm.includes("shopee")) targetKeywords = ["wallet", "e-wallet", "qris"];
+        else if (pm.includes("transfer") || pm.includes("bank") || pm.includes("debit") || pm.includes("non-tunai")) targetKeywords = ["non-tunai", "bank", "bca", "mandiri", "bri"];
+
+        const found = availableAccounts.find((a) => {
+          const accName = a.name.toLowerCase();
+          const accType = (a.type || "").toLowerCase();
+          return targetKeywords.some((kw) => accName.includes(kw) || accType.includes(kw));
+        });
+        matchedAccount = found || availableAccounts.find((a) => a.is_default) || availableAccounts[0];
       }
 
       const scanTime = extractedData.time || getCurrentScanTime();
-
-      let transactionInsertSuccess = false;
+      const createdTxs: unknown[] = [];
 
       for (const [categoryName, group] of Object.entries(categoryGroups)) {
         const groupAmount = group.total > 0 ? group.total : extractedData.total;
@@ -378,83 +373,101 @@ export function useReceiptScanner() {
             : `Belanja di ${extractedData.merchant}`;
         const description = `${itemNames} (${extractedData.merchant})`;
 
-        // PRIMARY: Insert into transactions table (read by Home, Monitor, Catat, Pembukuan)
-        if (userId) {
-          // Fuzzy category matching: exact match first, then partial/case-insensitive match
-          const catLower = categoryName.toLowerCase();
-          let matchedCategory = userCategories.find(
-            (c) => c.name.toLowerCase() === catLower
+        // Find or match category
+        const catLower = categoryName.toLowerCase().trim();
+        let matchedCategory = availableCategories.find(
+          (c) => c.name.toLowerCase().trim() === catLower
+        );
+        if (!matchedCategory) {
+          matchedCategory = availableCategories.find(
+            (c) => c.name.toLowerCase().includes(catLower) || catLower.includes(c.name.toLowerCase())
           );
-          if (!matchedCategory) {
-            matchedCategory = userCategories.find(
-              (c) => c.name.toLowerCase().includes(catLower) || catLower.includes(c.name.toLowerCase())
-            );
-          }
-
-          const { data: txData, error: txError } = await supabase.from("transactions").insert({
-            user_id: userId,
-            account_id: matchedAccountId,
-            amount: groupAmount,
-            type: "expense",
-            category_id: matchedCategory?.id || null,
-            description,
-            merchant: extractedData.merchant,
-            date: extractedData.date,
-            time: scanTime,
-            status: "completed",
-            source: "receipt_scan",
-            tags: ["ocr-receipt", categoryName.toLowerCase().replace(/\s+/g, "-")],
-            metadata: {
-              items: group.items,
-              merchant: extractedData.merchant,
-              paymentMethod: extractedData.paymentMethod,
-              categoryName,
-            },
-          }).select("id").single();
-
-          if (txError) {
-            console.error("Failed to insert scan transaction:", txError.message, txError.details);
-            throw new Error(`Gagal menyimpan transaksi: ${txError.message}`);
-          }
-
-          transactionInsertSuccess = true;
-
-          if (!primaryExpenseId && txData?.id) {
-            primaryExpenseId = txData.id;
-          }
+        }
+        if (!matchedCategory) {
+          matchedCategory = availableCategories.find((c) => c.type === "expense") || availableCategories[0];
         }
 
-        // SECONDARY: Also insert into expenses table as backup/history
-        const expensePayload: Record<string, unknown> = {
+        // UNIFIED TRANSACTION CREATION:
+        // Automatically updates accounts table balance, resolves UUID relations, and syncs with Monitor
+        const createdTx = await PembukuanService.createTransaction({
           amount: groupAmount,
-          category: categoryName,
+          type: "expense",
+          categoryId: matchedCategory?.id || "",
+          categoryName: matchedCategory?.name || categoryName,
+          categoryIcon: matchedCategory?.iconName || "Layers",
+          categoryColor: matchedCategory?.colorClass || "#4B7BFF",
+          accountId: matchedAccount?.id || "",
+          accountName: matchedAccount?.name || extractedData.paymentMethod || "Rekening Kas",
           description,
           merchant: extractedData.merchant,
           date: extractedData.date,
           time: scanTime,
-          items: group.items,
+          status: "completed",
           source: "receipt_scan",
-        };
+          tags: ["ocr-receipt", categoryName.toLowerCase().replace(/\s+/g, "-")],
+          metadata: {
+            items: group.items,
+            merchant: extractedData.merchant,
+            paymentMethod: extractedData.paymentMethod,
+            categoryName,
+          },
+        });
 
-        if (userId) {
-          expensePayload.user_id = userId;
+        if (createdTx) {
+          createdTxs.push(createdTx);
+          if (!primaryExpenseId) {
+            primaryExpenseId = createdTx.id;
+          }
+
+          // Broadcast global event for immediate reactive update in Monitor & Catat pages
+          if (typeof window !== "undefined") {
+            window.dispatchEvent(
+              new CustomEvent("finusa:transaction-recorded", {
+                detail: createdTx,
+              })
+            );
+          }
         }
 
-        try {
-          await supabase
-            .from("expenses")
-            .insert(expensePayload)
-            .select("id")
-            .single();
-        } catch (expErr) {
-          // Expenses table is backup only — log but don't fail
-          console.warn("Could not insert into expenses table (non-critical):", expErr);
+        // SECONDARY (non-critical backup): Also insert into legacy expenses table if userId present
+        if (userId) {
+          try {
+            await supabase.from("expenses").insert({
+              user_id: userId,
+              amount: groupAmount,
+              category: categoryName,
+              description,
+              merchant: extractedData.merchant,
+              date: extractedData.date,
+              time: scanTime,
+              items: group.items,
+              source: "receipt_scan",
+            });
+          } catch (expErr) {
+            console.warn("Could not insert into expenses backup table (non-critical):", expErr);
+          }
         }
       }
 
-      if (!transactionInsertSuccess && !userId) {
-        // No user ID available — fallback to local success
-        console.warn("No userId available, transaction saved to expenses only");
+      // Recalibrate accounts balances so Monitor and Home balances are 100% synchronized
+      await PembukuanService.recalibrateAccountBalances();
+
+      // Update localStorage cache for instant display in Catat
+      if (typeof window !== "undefined" && createdTxs.length > 0) {
+        try {
+          const raw = localStorage.getItem("finusa_pembukuan_transactions");
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) {
+              localStorage.setItem(
+                "finusa_pembukuan_transactions",
+                JSON.stringify([...createdTxs, ...parsed])
+              );
+            }
+          }
+        } catch {
+          // ignore localStorage error
+        }
       }
 
       setSavedExpenseId(primaryExpenseId || `exp-${Date.now()}`);

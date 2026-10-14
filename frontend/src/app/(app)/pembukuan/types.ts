@@ -48,6 +48,7 @@ export interface PembukuanTransaction {
   receiptPhotoId?: string;
   attachments?: AttachmentItem[];
   recurringId?: string;
+  metadata?: Record<string, unknown>;
   isReconciled?: boolean;
   reconciledAt?: string;
   createdAt?: string;

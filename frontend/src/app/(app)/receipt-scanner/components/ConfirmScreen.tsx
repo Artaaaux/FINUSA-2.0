@@ -220,16 +220,53 @@ export default function ConfirmScreen({
 
               {/* Date */}
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-slate-300 flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                  Tanggal Transaksi
-                </label>
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-medium text-slate-300 flex items-center gap-1.5">
+                    <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                    Tanggal Transaksi
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const now = new Date();
+                      const pad = (n: number) => String(n).padStart(2, "0");
+                      onUpdateData({ date: `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}` });
+                    }}
+                    className="text-[11px] text-blue-400 hover:text-blue-300 hover:underline font-medium cursor-pointer transition-colors"
+                    title="Gunakan tanggal hari ini agar langsung terbaca di monitor bulan berjalan"
+                  >
+                    Set Hari Ini
+                  </button>
+                </div>
                 <input
                   type="date"
                   value={data.date}
                   onChange={(e) => onUpdateData({ date: e.target.value })}
                   className="w-full px-3.5 py-2.5 rounded-xl bg-[#0F172A] border border-slate-700 text-white text-sm focus:outline-none focus:border-blue-500 transition-colors"
                 />
+                {(() => {
+                  const now = new Date();
+                  const pad = (n: number) => String(n).padStart(2, "0");
+                  const curMonth = `${now.getFullYear()}-${pad(now.getMonth() + 1)}`;
+                  const isCurrentMonth = data.date ? data.date.startsWith(curMonth) : true;
+                  if (!isCurrentMonth) {
+                    return (
+                      <p className="text-[11px] text-amber-400/90 flex items-center justify-between pt-0.5">
+                        <span>💡 Tanggal struk di luar bulan berjalan</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onUpdateData({ date: `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}` });
+                          }}
+                          className="font-bold underline text-amber-300 hover:text-white transition-colors"
+                        >
+                          Ubah ke Hari Ini
+                        </button>
+                      </p>
+                    );
+                  }
+                  return null;
+                })()}
               </div>
 
               {/* Time */}

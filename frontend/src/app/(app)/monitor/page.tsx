@@ -249,6 +249,21 @@ export default function MonitorPage() {
     }
 
     loadData();
+
+    // Listen to transaction events across the app for instant synchronization
+    const handleTransactionRecorded = () => {
+      loadData();
+    };
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("finusa:transaction-recorded", handleTransactionRecorded);
+    }
+
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("finusa:transaction-recorded", handleTransactionRecorded);
+      }
+    };
   }, [selectedPeriod]);
 
   return (
