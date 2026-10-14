@@ -514,7 +514,6 @@ export default function ConfirmScreen({
                   <option value="">-- Pilih Metode Pembayaran --</option>
                   <option value="E-Wallet">E-Wallet</option>
                   <option value="QRIS">QRIS</option>
-                  <option value="Transfer Bank">Transfer / Non-Tunai</option>
                   <option value="Cash">Cash</option>
                 </select>
                 {!data.paymentMethod && (

@@ -1,23 +1,9 @@
-export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
+import { formatCurrency } from "@/shared/lib/utils";
+
+export { formatCurrency };
 
 export function formatShortCurrency(amount: number): string {
-  if (amount >= 1000000000) {
-    return `Rp ${(amount / 1000000000).toFixed(1).replace(".0", "")}M`;
-  }
-  if (amount >= 1000000) {
-    return `Rp ${(amount / 1000000).toFixed(1).replace(".0", "")}jt`;
-  }
-  if (amount >= 1000) {
-    return `Rp ${(amount / 1000).toFixed(0)}rb`;
-  }
-  return `Rp ${amount}`;
+  return formatCurrency(amount);
 }
 
 export function calculateDaysRemaining(targetDate: string): number {

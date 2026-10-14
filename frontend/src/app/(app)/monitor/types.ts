@@ -20,7 +20,7 @@ export interface Transaction {
 export interface Account {
   id: string;
   name: string;
-  type: "cash" | "e_wallet" | "savings" | "investment";
+  type: "cash" | "bank" | "e_wallet" | "savings" | "investment";
   balance: number;
   accountNumber: string;
   institution: string;

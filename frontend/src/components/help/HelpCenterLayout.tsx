@@ -19,7 +19,6 @@ import {
   CheckCircle2,
   HelpCircle,
   FileText,
-  Image as ImageIcon,
 } from "lucide-react";
 
 interface HelpCenterLayoutProps {
@@ -427,29 +426,6 @@ export function HelpCenterLayout({ isAppShell = false }: HelpCenterLayoutProps) 
               </section>
             )}
 
-            {/* Section: Screenshot Container Placeholder (Siap Diisi Foto Belakangan Sesuai Instruksi User) */}
-            <section className="mb-12">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
-                <ImageIcon className="h-4 w-4 text-slate-400" />
-                Area Pratinjau Tampilan Antarmuka
-              </h2>
-
-              <div className="rounded-xl border-2 border-dashed border-slate-800 bg-[#0C1018] p-8 sm:p-12 text-center relative overflow-hidden">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-slate-900 border border-slate-800 text-slate-500 mb-3">
-                  <ImageIcon className="h-6 w-6" />
-                </div>
-                <h3 className="text-sm font-semibold text-slate-300 mb-1">
-                  {currentArticle.screenshotPlaceholder?.title || "Pratinjau Layar Fitur"}
-                </h3>
-                <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
-                  {currentArticle.screenshotPlaceholder?.caption ||
-                    "Slot dokumentasi visual antarmuka FINUSA. Aset tangkapan layar dapat disematkan di sini pada pembaruan mendatang."}
-                </p>
-                <div className="mt-4 inline-flex items-center px-2.5 py-1 rounded bg-slate-900 text-[11px] font-mono text-slate-500 border border-slate-800">
-                  Slot Tangkapan Layar: {currentArticle.id}.png
-                </div>
-              </div>
-            </section>
 
             {/* Section: Tips & Praktik Terbaik */}
             {currentArticle.bestPractices && currentArticle.bestPractices.length > 0 && (

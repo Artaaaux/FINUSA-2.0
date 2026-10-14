@@ -584,7 +584,7 @@ export const HELP_CATEGORIES: HelpCategory[] = [
         title: "Input Manual Pemasukan, Pengeluaran & Transfer",
         description: "Panduan mengisi transaksi secara manual dengan pemilihan kategori, metode pembayaran, dan catatan.",
         readTime: "3 menit",
-        purpose: "Mencatat transaksi harian non-struk seperti pembayaran QRIS, biaya parkir, penerimaan gaji, dan pemindahan saldo rekening.",
+        purpose: "Mencatat transaksi harian non-struk seperti pembayaran QRIS, biaya parkir, penerimaan gaji, dan pemindahan saldo kas / dompet digital.",
         steps: [
           {
             stepNumber: 1,
@@ -593,13 +593,13 @@ export const HELP_CATEGORIES: HelpCategory[] = [
             details: [
               "Pengeluaran mengurangi saldo kas bebas.",
               "Pemasukan menambah saldo kas bebas.",
-              "Transfer memindahkan saldo antar rekening tanpa mempengaruhi total kekayaan bersih."
+              "Transfer memindahkan saldo antar pos kas / dompet digital tanpa mempengaruhi total kekayaan bersih."
             ]
           },
           {
             stepNumber: 2,
             title: "Isi Data Transaksi",
-            instruction: "Masukkan nominal, pilih kategori (misal: Makan & Minum, Transportasi, Tagihan), rekening pembayaran, dan tanggal.",
+            instruction: "Masukkan nominal, pilih kategori (misal: Makan & Minum, Transportasi, Tagihan), metode pembayaran, dan tanggal.",
             details: [
               "Tambahkan catatan opsional jika transaksi memerlukan penanda khusus."
             ]
@@ -618,7 +618,7 @@ export const HELP_CATEGORIES: HelpCategory[] = [
             name: "Jenis Mutasi",
             required: true,
             type: "Pilihan Tab",
-            description: "Pengeluaran, Pemasukan, atau Transfer Antar Rekening."
+            description: "Pengeluaran, Pemasukan, atau Transfer Antar Pos Kas."
           },
           {
             name: "Nominal (Rp)",
@@ -633,10 +633,10 @@ export const HELP_CATEGORIES: HelpCategory[] = [
             description: "Kelompok anggaran pengeluaran atau sumber pemasukan."
           },
           {
-            name: "Metode / Rekening",
+            name: "Metode Pembayaran",
             required: true,
             type: "Pilihan Dropdown",
-            description: "Sumber pembayaran (Tunai, BCA, Mandiri, GoPay, QRIS, dll)."
+            description: "Sumber pembayaran (Tunai, QRIS, GoPay, E-Wallet, dll)."
           },
           {
             name: "Tanggal",

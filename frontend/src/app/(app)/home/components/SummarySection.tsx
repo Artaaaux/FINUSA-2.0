@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { ArrowUpRight, ArrowDownRight, PiggyBank, AlertTriangle } from "lucide-react";
 import { SummaryCard } from "./SummaryCard";
 import { AnalyticsService, MonthlyFinancialSummary } from "@/lib/services/analytics.service";
+import { formatCurrency } from "@/shared/lib/utils";
 
 export function SummarySection() {
   const [summary, setSummary] = useState<MonthlyFinancialSummary | null>(null);
@@ -20,16 +21,9 @@ export function SummarySection() {
     loadData();
   }, []);
 
-  const formatShortRupiah = (num: number) => {
-    if (num >= 1_000_000_000) return `Rp ${(num / 1_000_000_000).toFixed(1)}M`;
-    if (num >= 1_000_000) return `Rp ${(num / 1_000_000).toFixed(1)}Jt`;
-    if (num >= 1_000) return `Rp ${(num / 1_000).toFixed(0)}Rb`;
-    return `Rp ${num.toLocaleString("id-ID")}`;
-  };
-
   const highestExpenseCategory = summary?.categoryBreakdown?.[0]?.name || "Terkendali";
-  const pemasukanFormatted = summary ? formatShortRupiah(summary.totalIncome) : "Rp 0";
-  const pengeluaranFormatted = summary ? formatShortRupiah(summary.totalExpense) : "Rp 0";
+  const pemasukanFormatted = summary ? formatCurrency(summary.totalIncome) : "Rp 0";
+  const pengeluaranFormatted = summary ? formatCurrency(summary.totalExpense) : "Rp 0";
   const savingsRateFormatted = summary ? `${summary.savingsRatePercent}%` : "0%";
 
   return (

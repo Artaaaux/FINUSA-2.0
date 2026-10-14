@@ -9,6 +9,7 @@ import {
   FileText 
 } from "lucide-react";
 import { SettingsService } from "@/lib/services/settings.service";
+import { formatCurrency } from "@/shared/lib/utils";
 
 interface DataExportModalProps {
   isOpen: boolean;
@@ -145,9 +146,9 @@ export default function DataExportModal({
           `Rentang Waktu: ${rangeText}`,
           "=========================================",
           `Total Transaksi: ${filteredTransactions.length}`,
-          `Total Pemasukan: Rp ${totalIncome.toLocaleString("id-ID")}`,
-          `Total Pengeluaran: Rp ${totalExpense.toLocaleString("id-ID")}`,
-          `Surplus/Defisit: Rp ${(totalIncome - totalExpense).toLocaleString("id-ID")}`,
+          `Total Pemasukan: ${formatCurrency(totalIncome)}`,
+          `Total Pengeluaran: ${formatCurrency(totalExpense)}`,
+          `Surplus/Defisit: ${formatCurrency(totalIncome - totalExpense)}`,
           `Total Target Tabungan: ${realData.savingsGoals.length}`,
           "=========================================",
         ].join("\n");

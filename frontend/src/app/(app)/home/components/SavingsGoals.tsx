@@ -14,6 +14,7 @@ import {
   Target,
 } from "lucide-react";
 import { SavingsService } from "@/lib/services/savings.service";
+import { formatCurrency } from "@/shared/lib/utils";
 
 interface GoalItem {
   id: string;
@@ -31,15 +32,6 @@ interface GoalItem {
   badgeClass: string;
   iconContainerClass: string;
   ringStrokeColor: string;
-}
-
-function formatCurrency(amount: number) {
-  return new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
 }
 
 function CircularProgressRing({ progress, strokeColor }: { progress: number; strokeColor: string }) {

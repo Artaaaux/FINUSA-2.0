@@ -15,43 +15,27 @@ export interface AccountOption {
 
 export const PEMBUKUAN_ACCOUNTS: AccountOption[] = [
   {
-    id: "acc-kas-utama",
-    name: "Kas Utama Usaha",
-    type: "Kas",
-    accountNumber: "Kas Primer",
-    balance: 24500000,
-    color: "from-blue-600 to-indigo-600",
-  },
-  {
-    id: "acc-operasional",
-    name: "Kas Operasional Harian",
-    type: "Kas",
-    accountNumber: "Kas Harian",
-    balance: 12850000,
-    color: "from-sky-500 to-blue-600",
-  },
-  {
-    id: "acc-simpanan",
-    name: "Kas Simpanan & Cadangan",
-    type: "Simpanan",
-    accountNumber: "Pos Cadangan",
-    balance: 8400000,
-    color: "from-teal-500 to-emerald-600",
+    id: "acc-cash",
+    name: "Cash / Tunai",
+    type: "cash",
+    accountNumber: "Kas Fisik",
+    balance: 0,
+    color: "from-amber-500 to-orange-600",
   },
   {
     id: "acc-qris",
-    name: "QRIS & Dompet Digital",
-    type: "E-Wallet",
+    name: "QRIS",
+    type: "e_wallet",
     accountNumber: "Merchant QRIS",
-    balance: 3150000,
+    balance: 0,
     color: "from-cyan-500 to-blue-500",
   },
   {
-    id: "acc-kas",
-    name: "Kas Tunai Fisik (Laci)",
-    type: "Tunai",
-    accountNumber: "Laci Kasir",
-    balance: 1950000,
+    id: "acc-ewallet",
+    name: "E-Wallet",
+    type: "e_wallet",
+    accountNumber: "Dompet Digital",
+    balance: 0,
     color: "from-emerald-500 to-teal-600",
   },
 ];
@@ -460,6 +444,8 @@ export function isCashTransaction(
       method.includes("debit") ||
       method.includes("kredit") ||
       method.includes("transfer") ||
+      method.includes("tf") ||
+      method.includes("bank") ||
       method.includes("ewallet") ||
       method.includes("gopay") ||
       method.includes("ovo") ||
@@ -483,7 +469,9 @@ export function isCashTransaction(
         typeLower === "ewallet" ||
         typeLower === "savings" ||
         typeLower === "investment" ||
-        typeLower === "digital"
+        typeLower === "digital" ||
+        typeLower === "non-tunai" ||
+        typeLower === "non tunai"
       ) {
         return false;
       }
@@ -494,6 +482,8 @@ export function isCashTransaction(
         nameLower.includes("digital") ||
         nameLower.includes("qris") ||
         nameLower.includes("bank") ||
+        nameLower.includes("transfer") ||
+        nameLower.includes("tf") ||
         nameLower.includes("bca") ||
         nameLower.includes("mandiri") ||
         nameLower.includes("bri") ||
@@ -502,7 +492,6 @@ export function isCashTransaction(
         nameLower.includes("ovo") ||
         nameLower.includes("dana") ||
         nameLower.includes("shopeepay") ||
-        nameLower.includes("transfer") ||
         nameLower.includes("rekening")
       ) {
         return false;
@@ -522,6 +511,8 @@ export function isCashTransaction(
     accName.includes("digital") ||
     accName.includes("qris") ||
     accName.includes("bank") ||
+    accName.includes("transfer") ||
+    accName.includes("tf") ||
     accName.includes("bca") ||
     accName.includes("mandiri") ||
     accName.includes("bri") ||
@@ -530,7 +521,6 @@ export function isCashTransaction(
     accName.includes("ovo") ||
     accName.includes("dana") ||
     accName.includes("shopeepay") ||
-    accName.includes("transfer") ||
     accName.includes("rekening")
   ) {
     return false;

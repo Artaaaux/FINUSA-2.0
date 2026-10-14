@@ -317,7 +317,7 @@ export default function AddTransactionModal({
                   >
                     {accounts.map((acc) => (
                       <option key={acc.id} value={acc.id}>
-                        {acc.name} ({acc.type})
+                        {acc.name}
                       </option>
                     ))}
                   </select>

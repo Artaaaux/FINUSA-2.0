@@ -281,7 +281,7 @@ export default function PembukuanFilterBar({
                   ? "bg-blue-500/25 text-blue-300 border border-blue-500/50 shadow-sm ring-1 ring-blue-500/40"
                   : "bg-slate-900/80 text-slate-400 hover:text-blue-300 border border-slate-800"
               )}
-              title="Duit digital (Rekening Bank / E-Wallet / QRIS)"
+              title="Duit digital (E-Wallet / QRIS)"
             >
               <span>Non-Tunai (Digital)</span>
               {kpiData && (

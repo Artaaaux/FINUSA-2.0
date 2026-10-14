@@ -7,39 +7,32 @@ import {
 
 export const ACCOUNT_OPTIONS: AccountOption[] = [
   {
-    id: "acc-kas-utama",
-    name: "Kas Utama Finansial",
-    type: "Kas Utama",
-    balance: 42500000,
-    accountNumber: "Kas Primer",
-  },
-  {
-    id: "acc-operasional",
-    name: "Rekening Operasional Harian",
-    type: "Kas Harian",
-    balance: 28200000,
-    accountNumber: "Pos Operasional",
-  },
-  {
-    id: "acc-simpanan",
-    name: "Pos Tabungan & Cadangan",
-    type: "Simpanan",
-    balance: 15600000,
-    accountNumber: "Celengan Digital",
-  },
-  {
-    id: "acc-gopay",
-    name: "GoPay & E-Wallet",
-    type: "E-Wallet",
-    balance: 3450000,
-    accountNumber: "0812-9833-2190",
-  },
-  {
     id: "acc-cash",
-    name: "Kas Tunai & Dompet Fisik",
-    type: "Kas Tunai",
-    balance: 1200000,
-    accountNumber: "KAS-MANUAL",
+    name: "Cash / Tunai",
+    type: "cash",
+    balance: 0,
+    accountNumber: "Kas Fisik",
+  },
+  {
+    id: "acc-tf-bank",
+    name: "Transfer Bank",
+    type: "bank",
+    balance: 0,
+    accountNumber: "Rekening Bank",
+  },
+  {
+    id: "acc-qris",
+    name: "QRIS",
+    type: "e_wallet",
+    balance: 0,
+    accountNumber: "Merchant QRIS",
+  },
+  {
+    id: "acc-ewallet",
+    name: "E-Wallet",
+    type: "e_wallet",
+    balance: 0,
+    accountNumber: "Dompet Digital",
   },
 ];
 

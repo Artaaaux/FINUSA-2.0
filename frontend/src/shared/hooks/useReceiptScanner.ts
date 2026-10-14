@@ -352,7 +352,7 @@ export function useReceiptScanner() {
         if (pm.includes("cash") || pm.includes("tunai")) targetKeywords = ["cash", "tunai", "kas"];
         else if (pm.includes("qris")) targetKeywords = ["qris"];
         else if (pm.includes("wallet") || pm.includes("gopay") || pm.includes("ovo") || pm.includes("dana") || pm.includes("shopee")) targetKeywords = ["wallet", "e-wallet", "qris"];
-        else if (pm.includes("transfer") || pm.includes("bank") || pm.includes("debit") || pm.includes("non-tunai")) targetKeywords = ["non-tunai", "bank", "bca", "mandiri", "bri"];
+        else if (pm.includes("transfer") || pm.includes("bank") || pm.includes("debit") || pm.includes("non-tunai") || pm.includes("tf")) targetKeywords = ["transfer", "tf", "bank", "non-tunai", "bca", "mandiri", "bri"];
 
         const found = availableAccounts.find((a) => {
           const accName = a.name.toLowerCase();
