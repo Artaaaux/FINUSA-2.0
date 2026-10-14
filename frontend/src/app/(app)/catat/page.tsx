@@ -235,6 +235,7 @@ export default function CatatPage() {
               onClearSelection={() => setSelectedIds([])}
               onBulkDelete={bulkDeleteTransactions}
               onBulkUpdateStatus={bulkUpdateStatus}
+              kpiData={kpiData}
             />
           </motion.div>
 

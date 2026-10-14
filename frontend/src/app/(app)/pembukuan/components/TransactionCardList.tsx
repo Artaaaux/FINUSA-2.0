@@ -9,7 +9,7 @@ import {
   Edit3,
 } from "lucide-react";
 import { PembukuanTransaction } from "../types";
-import { formatCurrency, formatDateIndo } from "../constants";
+import { formatCurrency, formatDateIndo, isCashTransaction } from "../constants";
 import { cn } from "@/shared/lib/utils";
 
 interface TransactionCardListProps {
@@ -113,8 +113,18 @@ function TransactionCardList({
 
             {/* Bottom Row: Account, Date, Status & Actions */}
             <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between gap-2 text-xs">
-              <div className="flex items-center gap-2">
-                <span className="text-slate-400 font-medium">{tx.accountName}</span>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-slate-300 font-medium">{tx.accountName}</span>
+                <span
+                  className={cn(
+                    "text-[9px] font-semibold px-1.5 py-0.2 rounded shrink-0",
+                    isCashTransaction(tx)
+                      ? "bg-amber-500/15 text-amber-300 border border-amber-500/30"
+                      : "bg-blue-500/15 text-blue-300 border border-blue-500/30"
+                  )}
+                >
+                  {isCashTransaction(tx) ? "💵 Tunai" : "💳 Non-Tunai"}
+                </span>
                 <span className="text-slate-600">•</span>
                 <span className="text-slate-500 font-mono text-[11px]">
                   {formatDateIndo(tx.date)}

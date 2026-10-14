@@ -13,7 +13,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { PembukuanTransaction } from "../types";
-import { formatCurrency, formatDateIndo } from "../constants";
+import { formatCurrency, formatDateIndo, isCashTransaction } from "../constants";
 import { cn } from "@/shared/lib/utils";
 
 interface TransactionTableProps {
@@ -186,9 +186,19 @@ function TransactionTable({
                     </span>
                   </td>
 
-                  {/* Account */}
-                  <td className="py-3.5 px-4 whitespace-nowrap text-slate-300 font-medium">
-                    {tx.accountName}
+                  {/* Account & Channel */}
+                  <td className="py-3.5 px-4 whitespace-nowrap">
+                    <p className="text-xs text-slate-200 font-medium">{tx.accountName}</p>
+                    <span
+                      className={cn(
+                        "inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.2 rounded mt-0.5",
+                        isCashTransaction(tx)
+                          ? "bg-amber-500/10 text-amber-300 border border-amber-500/20"
+                          : "bg-blue-500/10 text-blue-300 border border-blue-500/20"
+                      )}
+                    >
+                      {isCashTransaction(tx) ? "💵 Tunai (Pegang)" : "💳 Non-Tunai"}
+                    </span>
                   </td>
 
                   {/* Status Badge */}

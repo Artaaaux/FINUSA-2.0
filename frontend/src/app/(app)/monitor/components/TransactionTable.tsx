@@ -48,14 +48,21 @@ function TransactionTable({ transactions }: TransactionTableProps) {
 
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
 
-  // Extract unique categories & accounts for dropdowns
+  // Extract unique categories & specific non-cash accounts for dropdowns
   const availableCategories = useMemo(() => {
     const set = new Set(transactions.map((t) => t.category));
     return Array.from(set);
   }, [transactions]);
 
-  const availableAccounts = useMemo(() => {
-    const set = new Set(transactions.map((t) => t.account));
+  // Clean distinct non-cash accounts so cash isn't duplicated
+  const specificNonCashAccounts = useMemo(() => {
+    const set = new Set<string>();
+    transactions.forEach((t) => {
+      const isCash = isCashTransaction({ accountName: t.account, metadata: { paymentMethod: t.account } });
+      if (!isCash && t.account && t.account.trim()) {
+        set.add(t.account);
+      }
+    });
     return Array.from(set);
   }, [transactions]);
 
@@ -83,16 +90,16 @@ function TransactionTable({ transactions }: TransactionTableProps) {
           return false;
         }
 
-        // Account
-        if (accountFilter !== "all" && t.account !== accountFilter) {
-          return false;
-        }
-
         // Channel (Tunai vs Non-Tunai / Digital)
         if (channelFilter !== "all") {
           const isCash = isCashTransaction({ accountName: t.account, metadata: { paymentMethod: t.account } });
           if (channelFilter === "cash" && !isCash) return false;
           if (channelFilter === "digital" && isCash) return false;
+        }
+
+        // Account (Specific non-cash account)
+        if (accountFilter !== "all" && accountFilter !== "cash" && accountFilter !== "digital") {
+          if (t.account !== accountFilter) return false;
         }
 
         return true;
@@ -188,6 +195,7 @@ function TransactionTable({ transactions }: TransactionTableProps) {
               type="button"
               onClick={() => {
                 setChannelFilter("all");
+                setAccountFilter("all");
                 setCurrentPage(1);
               }}
               className={cn(
@@ -203,6 +211,7 @@ function TransactionTable({ transactions }: TransactionTableProps) {
               type="button"
               onClick={() => {
                 setChannelFilter("cash");
+                setAccountFilter("cash");
                 setCurrentPage(1);
               }}
               className={cn(
@@ -219,6 +228,7 @@ function TransactionTable({ transactions }: TransactionTableProps) {
               type="button"
               onClick={() => {
                 setChannelFilter("digital");
+                setAccountFilter("digital");
                 setCurrentPage(1);
               }}
               className={cn(
@@ -237,7 +247,7 @@ function TransactionTable({ transactions }: TransactionTableProps) {
 
       {/* Control Bar: Search + Dropdown Filters + Sort */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-2.5">
-        {/* Search Input (5 Cols on LG) */}
+        {/* Search Input (4 Cols on LG) */}
         <div className="lg:col-span-4 relative">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
@@ -280,22 +290,34 @@ function TransactionTable({ transactions }: TransactionTableProps) {
           </select>
         </div>
 
-        {/* Account Dropdown (3 Cols on LG) */}
+        {/* Account / Channel Dropdown (3 Cols on LG) */}
         <div className="lg:col-span-3">
           <select
             value={accountFilter}
             onChange={(e) => {
-              setAccountFilter(e.target.value);
+              const val = e.target.value;
+              setAccountFilter(val);
+              if (val === "all" || val === "cash" || val === "digital") {
+                setChannelFilter(val as "all" | "cash" | "digital");
+              } else {
+                setChannelFilter("digital");
+              }
               setCurrentPage(1);
             }}
             className="w-full px-3 py-2 rounded-xl bg-slate-900/80 border border-slate-800 text-xs text-slate-300 focus:outline-none focus:border-blue-500 cursor-pointer"
           >
-            <option value="all">Semua Rekening</option>
-            {availableAccounts.map((a) => (
-              <option key={a} value={a}>
-                {a}
-              </option>
-            ))}
+            <option value="all">Semua Jalur & Rekening</option>
+            <option value="cash">💵 Tunai (Duit Pegang)</option>
+            <option value="digital">💳 Non-Tunai (Digital / Bank / QRIS)</option>
+            {specificNonCashAccounts.length > 0 && (
+              <optgroup label="Rekening / Bank Tertentu">
+                {specificNonCashAccounts.map((a) => (
+                  <option key={a} value={a}>
+                    💳 {a}
+                  </option>
+                ))}
+              </optgroup>
+            )}
           </select>
         </div>
 
@@ -350,10 +372,21 @@ function TransactionTable({ transactions }: TransactionTableProps) {
               </button>
             </span>
           )}
-          {accountFilter !== "all" && (
+          {(channelFilter !== "all" || accountFilter !== "all") && (
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-800 text-blue-300 border border-slate-700 text-[11px]">
-              Akun: {accountFilter}
-              <button type="button" onClick={() => setAccountFilter("all")}>
+              Jalur:{" "}
+              {accountFilter === "cash" || channelFilter === "cash"
+                ? "💵 Tunai (Pegang)"
+                : accountFilter === "digital" || channelFilter === "digital"
+                ? "💳 Non-Tunai (Digital)"
+                : accountFilter}
+              <button
+                type="button"
+                onClick={() => {
+                  setAccountFilter("all");
+                  setChannelFilter("all");
+                }}
+              >
                 <X className="w-3 h-3" />
               </button>
             </span>
@@ -414,8 +447,20 @@ function TransactionTable({ transactions }: TransactionTableProps) {
                         {trx.category}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-slate-400 whitespace-nowrap font-medium">
-                      {trx.account}
+                    <td className="py-3 px-4 whitespace-nowrap">
+                      <p className="text-xs text-slate-300 font-medium">{trx.account}</p>
+                      <span
+                        className={cn(
+                          "inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.2 rounded mt-0.5",
+                          isCashTransaction({ accountName: trx.account, metadata: { paymentMethod: trx.account } })
+                            ? "bg-amber-500/10 text-amber-300 border border-amber-500/20"
+                            : "bg-blue-500/10 text-blue-300 border border-blue-500/20"
+                        )}
+                      >
+                        {isCashTransaction({ accountName: trx.account, metadata: { paymentMethod: trx.account } })
+                          ? "💵 Tunai (Pegang)"
+                          : "💳 Non-Tunai"}
+                      </span>
                     </td>
                     <td className="py-3 px-4 text-right whitespace-nowrap">
                       <span
@@ -506,10 +551,24 @@ function TransactionTable({ transactions }: TransactionTableProps) {
                       <h4 className="text-xs font-bold text-slate-200 truncate">
                         {trx.description}
                       </h4>
-                      <span className="text-[11px] text-slate-400 block truncate">
-                        {trx.merchant ? `${trx.merchant} • ` : ""}
-                        {trx.account}
-                      </span>
+                      <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
+                        <span className="text-[11px] text-slate-400 truncate">
+                          {trx.merchant ? `${trx.merchant} • ` : ""}
+                          {trx.account}
+                        </span>
+                        <span
+                          className={cn(
+                            "text-[9px] font-semibold px-1 py-0.2 rounded shrink-0",
+                            isCashTransaction({ accountName: trx.account, metadata: { paymentMethod: trx.account } })
+                              ? "bg-amber-500/15 text-amber-300 border border-amber-500/25"
+                              : "bg-blue-500/15 text-blue-300 border border-blue-500/25"
+                          )}
+                        >
+                          {isCashTransaction({ accountName: trx.account, metadata: { paymentMethod: trx.account } })
+                            ? "💵 Tunai"
+                            : "💳 Non-Tunai"}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
