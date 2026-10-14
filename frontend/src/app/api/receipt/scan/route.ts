@@ -89,15 +89,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 1. Optimize image for AI Vision & OCR (vertical receipt ratio, ~50-80KB)
+    // 1. Optimize image for AI Vision (1120px = native 2x2 tile grid of most vision models; enhance faded thermal text)
     const startTime = Date.now();
     console.info(`[RECEIPT_SCAN:START] User: ${user.id} | RawSize: ${Math.round(imageBuffer.length / 1024)}KB | Type: ${mimeType}`);
 
     const optimizedOcr = await optimizeReceiptImage(imageBuffer, {
-      maxWidth: 800,
-      maxHeight: 1200,
-      quality: 75,
+      maxWidth: 1120,
+      maxHeight: 1120,
+      quality: 85,
       format: "jpeg",
+      enhance: true,
     });
 
     // 2. Extract Receipt Data using NVIDIA Multimodal Vision AI Model
@@ -111,14 +112,17 @@ export async function POST(req: NextRequest) {
     const duration = ((Date.now() - startTime) / 1000).toFixed(2);
 
     // 3. Validate if image is actually a valid receipt
-    if (extractedData.isReceipt === false || extractedData.confidence < 40) {
+    // (confidence rules are handled inside extractReceiptData; a readable receipt with low confidence
+    //  is still sent to the confirm screen where the user can correct it)
+    if (extractedData.isReceipt === false) {
       const isBlurry =
+        extractedData.rejectionCode === "UNREADABLE" ||
         extractedData.rejectionReason?.toLowerCase().includes("buram") ||
         extractedData.rejectionReason?.toLowerCase().includes("blurry") ||
         extractedData.rejectionReason?.toLowerCase().includes("terbaca");
 
       console.info(
-        `[RECEIPT_SCAN:REJECTED] User: ${user.id} | Reason: "${extractedData.rejectionReason || "Not a receipt"}" | Conf: ${extractedData.confidence}% | Duration: ${duration}s`
+        `[RECEIPT_SCAN:REJECTED] User: ${user.id} | Code: ${extractedData.rejectionCode || "-"} | Reason: "${extractedData.rejectionReason || "Not a receipt"}" | Conf: ${extractedData.confidence}% | Img: ${optimizedOcr.resolution} ${Math.round(optimizedOcr.sizeBytes / 1024)}KB | Duration: ${duration}s`
       );
 
       return NextResponse.json(

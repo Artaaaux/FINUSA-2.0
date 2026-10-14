@@ -9,6 +9,8 @@ export interface ReceiptItem {
 
 export interface ExtractedReceiptData {
   isReceipt?: boolean;
+  /** SCREEN | NO_DOCUMENT | NOT_FINANCIAL | UNREADABLE | NOT_RECEIPT */
+  rejectionCode?: string;
   rejectionReason?: string;
   merchant: string;
   merchantAddress?: string;

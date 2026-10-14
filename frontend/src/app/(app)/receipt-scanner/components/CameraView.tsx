@@ -39,6 +39,7 @@ export default function CameraView({
   } = useCamera();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const guideRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     startCamera();
@@ -48,7 +49,7 @@ export default function CameraView({
   }, [startCamera, stopCamera]);
 
   const handleShutter = () => {
-    const dataUrl = takeSnapshot();
+    const dataUrl = takeSnapshot(guideRef.current);
     if (dataUrl) {
       onCapture(dataUrl);
     }
@@ -62,7 +63,7 @@ export default function CameraView({
   };
 
   return (
-    <div className="relative w-full h-full min-h-[520px] sm:min-h-[600px] flex flex-col bg-[#0A0E14] rounded-2xl overflow-hidden border border-slate-800 shadow-2xl">
+    <div className="relative w-full max-w-xl lg:max-w-2xl mx-auto h-[calc(100dvh-170px)] min-h-[520px] max-h-[720px] lg:h-[620px] flex flex-col bg-[#0A0E14] rounded-2xl overflow-hidden border border-slate-800 shadow-2xl">
       {/* Hidden File Input */}
       <input
         ref={fileInputRef}
@@ -129,9 +130,12 @@ export default function CameraView({
         />
 
         {/* Viewfinder Overlay Mask */}
-        <div className="absolute inset-0 pointer-events-none flex items-center justify-center p-6">
+        <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-center p-4 sm:p-6">
           {/* Guide Frame (Dana / OVO E-Wallet Style) */}
-          <div className="relative w-full max-w-sm aspect-[3/4] sm:aspect-[3/4.2] rounded-3xl border border-blue-500/30 overflow-hidden shadow-[0_0_0_9999px_rgba(10,14,20,0.72)]">
+          <div
+            ref={guideRef}
+            className="relative w-full max-w-[min(290px,76vw)] sm:max-w-[340px] aspect-[3/4] max-h-[56vh] rounded-3xl border border-blue-500/35 overflow-hidden shadow-[0_0_0_9999px_rgba(10,14,20,0.72)]"
+          >
             {/* Glowing Corner Brackets */}
             <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-blue-400 rounded-tl-2xl shadow-[0_0_12px_rgba(59,130,246,0.8)]" />
             <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-blue-400 rounded-tr-2xl shadow-[0_0_12px_rgba(59,130,246,0.8)]" />
@@ -140,9 +144,9 @@ export default function CameraView({
 
             {/* Animated Laser Scanning Line */}
             <motion.div
-              className="absolute inset-x-0 top-[5%] h-1 bg-gradient-to-r from-transparent via-blue-400 to-transparent shadow-[0_0_16px_rgba(59,130,246,1)] transform-gpu will-change-transform"
+              className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-blue-400 to-transparent shadow-[0_0_16px_rgba(59,130,246,1)] transform-gpu will-change-transform z-10"
               animate={{
-                y: [0, 340, 0],
+                top: ["5%", "90%", "5%"],
                 opacity: [0.6, 1, 0.6],
               }}
               transition={{
@@ -165,8 +169,8 @@ export default function CameraView({
         </div>
 
         {/* Center Guidance Caption */}
-        <div className="absolute bottom-28 inset-x-0 z-20 flex justify-center px-4 pointer-events-none">
-          <div className="px-4 py-2 rounded-full bg-slate-950/90 border border-slate-700/60 text-slate-200 text-xs sm:text-sm font-medium text-center shadow-lg">
+        <div className="absolute bottom-3 sm:bottom-4 inset-x-0 z-20 flex justify-center px-4 pointer-events-none">
+          <div className="px-3.5 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-slate-700/60 text-slate-200 text-xs font-medium text-center shadow-lg">
             Posisikan struk belanja di dalam kotak pemindai
           </div>
         </div>
@@ -221,45 +225,47 @@ export default function CameraView({
       </div>
 
       {/* Bottom Shutter & Action Bar */}
-      <div className="relative z-20 px-6 py-5 bg-[#0F1419] border-t border-slate-800/80 flex items-center justify-between">
-        {/* Gallery / File Upload Button */}
-        <button
-          onClick={() => fileInputRef.current?.click()}
-          className="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-colors cursor-pointer group"
-          aria-label="Upload dari galeri"
-        >
-          <div className="w-11 h-11 rounded-xl bg-slate-800/80 group-hover:bg-slate-700/80 border border-slate-700 flex items-center justify-center transition-all">
-            <ImageIcon className="w-5 h-5 text-slate-300 group-hover:text-blue-400" />
-          </div>
-          <span className="text-[11px] font-medium">Galeri</span>
-        </button>
-
-        {/* Main Capture Shutter Button */}
-        <div className="relative flex items-center justify-center">
+      <div className="relative z-20 px-6 py-3.5 sm:py-4 bg-[#0F1419] border-t border-slate-800/80">
+        <div className="w-full max-w-xs sm:max-w-sm mx-auto flex items-center justify-between">
+          {/* Gallery / File Upload Button */}
           <button
-            onClick={handleShutter}
-            disabled={permission !== "granted"}
-            className={cn(
-              "relative w-24 h-24 sm:w-28 sm:h-28 rounded-full p-2 border-4 border-white transition-all transform active:scale-95 cursor-pointer shadow-[0_0_25px_rgba(255,255,255,0.25)] flex items-center justify-center",
-              permission !== "granted" && "opacity-50 cursor-not-allowed"
-            )}
-            aria-label="Ambil Foto Struk"
+            onClick={() => fileInputRef.current?.click()}
+            className="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-colors cursor-pointer group"
+            aria-label="Upload dari galeri"
           >
-            <div className="w-full h-full rounded-full bg-white hover:bg-slate-100 transition-all shadow-inner" />
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-slate-800/80 group-hover:bg-slate-700/80 border border-slate-700 flex items-center justify-center transition-all">
+              <ImageIcon className="w-5 h-5 text-slate-300 group-hover:text-blue-400" />
+            </div>
+            <span className="text-[11px] font-medium">Galeri</span>
+          </button>
+
+          {/* Main Capture Shutter Button */}
+          <div className="relative flex items-center justify-center">
+            <button
+              onClick={handleShutter}
+              disabled={permission !== "granted"}
+              className={cn(
+                "relative w-16 h-16 sm:w-[72px] sm:h-[72px] rounded-full p-1.5 border-[3.5px] border-white/90 hover:border-white transition-all transform active:scale-90 cursor-pointer shadow-[0_0_20px_rgba(255,255,255,0.25)] flex items-center justify-center bg-white/10 backdrop-blur-xs",
+                permission !== "granted" && "opacity-50 cursor-not-allowed"
+              )}
+              aria-label="Ambil Foto Struk"
+            >
+              <div className="w-full h-full rounded-full bg-white hover:bg-slate-100 active:bg-slate-200 transition-all shadow-inner" />
+            </button>
+          </div>
+
+          {/* Upload Fallback Button */}
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-colors cursor-pointer group"
+            aria-label="Upload File Struk"
+          >
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-slate-800/80 group-hover:bg-slate-700/80 border border-slate-700 flex items-center justify-center transition-all">
+              <Upload className="w-5 h-5 text-slate-300 group-hover:text-purple-400" />
+            </div>
+            <span className="text-[11px] font-medium">Upload</span>
           </button>
         </div>
-
-        {/* Upload Fallback Button */}
-        <button
-          onClick={() => fileInputRef.current?.click()}
-          className="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-colors cursor-pointer group"
-          aria-label="Upload File Struk"
-        >
-          <div className="w-11 h-11 rounded-xl bg-slate-800/80 group-hover:bg-slate-700/80 border border-slate-700 flex items-center justify-center transition-all">
-            <Upload className="w-5 h-5 text-slate-300 group-hover:text-purple-400" />
-          </div>
-          <span className="text-[11px] font-medium">Upload</span>
-        </button>
       </div>
     </div>
   );

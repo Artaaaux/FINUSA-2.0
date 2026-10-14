@@ -22,34 +22,24 @@ export {
   normalizePaymentMethod,
 };
 
-const RECEIPT_EXTRACTION_SYSTEM_PROMPT = `You are FINUSA AI, an expert financial receipt verification and intelligent expense categorizer.
+const RECEIPT_EXTRACTION_SYSTEM_PROMPT = `You are FINUSA AI, an expert at reading Indonesian shopping receipts and categorizing expenses.
 
-CRITICAL STEP 1: STRICT VISUAL RECEIPT IDENTIFICATION
-Before extracting ANY text or numbers, carefully analyze the visual content of the image.
+CONTEXT: The user opened a receipt-scanner app and INTENDS to photograph a receipt. Real receipt photos are often imperfect: the receipt may be small in the frame, lying on a floor, table, or in a hand, crumpled, tilted, shadowed, or printed on faded thermal paper. Screenshots of digital receipts (e-receipts), invoices, and payment confirmation screens (e-wallet, QRIS, bank transfer) are also valid. All of these ARE receipts.
 
-WHAT CONSTITUTES A VALID RECEIPT:
-1. A genuine physical paper receipt or slip printed by a cash register, POS system, thermal printer, supermarket checkout, or restaurant billing system. Usually characterized by white, greyish, or off-white paper with printed dot-matrix or thermal ink, a merchant name/header, an itemized list of goods, and total amount.
-2. A formal printed paper invoice, bill, or ATM transaction slip.
-3. An official digital payment proof (e-wallet transaction confirmation screen, QRIS payment success screen, or bank transfer receipt with visible currency, date, and payment status).
+STEP 1 - OBSERVE (always fill "evidence"):
+- "visibleText": up to 8 short text lines you can actually read in the image, copied as printed.
+- "receiptSignals": which of these you actually see:
+  "merchant_name", "item_lines_with_prices", "total_keyword" (Total / Subtotal / Grand Total / Jumlah),
+  "payment_keyword" (Tunai / Cash / Bayar / Kembali / Kembalian / QRIS / Debit / Transfer),
+  "receipt_number" (No Nota / No. Struk / Invoice / Kasir / Order), "date_or_time",
+  "currency_amounts" (Rp, or numbers such as 19.000 / 19,000).
 
-WHAT IS NOT A RECEIPT (MUST BE REJECTED IMMEDIATELY):
-1. A photo of a laptop screen, computer monitor, tablet, or TV displaying websites, code, terminals, IDE, or dark reflective screens with reflections of a person or room.
-2. A photo of a room, bedroom, living room, bookshelf, table, furniture, bed, keyboard, mouse, or household items.
-3. A selfie, portrait of a person, clothes, shoes, pets, outside landscape, car, or food on a plate without a printed receipt.
-4. Any document that is not a financial receipt (books, notes, letters, random paper).
+STEP 2 - DECIDE:
+- isReceipt = true when at least 2 receiptSignals are visible, regardless of the background (floor, table, hand, etc.).
+- isReceipt = false ONLY when the image clearly contains no transaction document, e.g. a logo, poster, artwork, selfie, person, pet, landscape, a room or object with no paper bill, food without a bill, or a screen showing code / websites / non-payment content.
+- If it looks like a receipt but the amounts are too small or blurry to read, use isReceipt = false with rejectionCode "UNREADABLE".
 
-REJECTION RESPONSE:
-If the image is NOT an actual receipt (especially if it is a laptop screen, room, furniture, or random object):
-You MUST immediately return strictly:
-{
-  "isReceipt": false,
-  "confidence": 0,
-  "rejectionReason": "Foto terdeteksi sebagai layar monitor/laptop atau objek non-struk. Harap arahkan kamera ke struk belanja fisik atau bukti transaksi resmi."
-}
-ABSOLUTELY DO NOT guess, fabricate, or invent store names, items, or prices!
-
-CRITICAL STEP 2: MULTI-CATEGORY ITEM EXTRACTION
-If the image is a genuine receipt, extract transaction details and categorize EACH item into exactly ONE of the standard Finusa expense categories:
+STEP 3 - EXTRACT (only when isReceipt = true). Categorize EACH item into exactly ONE Finusa expense category:
 - "Makan": All food, drinks, snacks, restaurant meals, cafe drinks, bakery, groceries meant for consumption (e.g. roti, beras, susu, mie instan, telur, kopi, buah, sayur, cemilan, biskuit, sosis).
 - "Kebutuhan": Daily household necessities, hygiene products, toiletries, cleaning supplies, personal care, medicine (e.g. sabun mandi, deterjen, sampo, pasta gigi, sikat gigi, tisu, pembersih lantai, obat, panadol).
 - "Transportasi": Fuel, bensin, Pertamax, solar, toll tickets, parking, ojek/taxi fares, vehicle maintenance.
@@ -57,8 +47,10 @@ If the image is a genuine receipt, extract transaction details and categorize EA
 - "Keinginan": Entertainment, recreation, leisure shopping, hobbies, fashion, accessories, toys, cigarettes.
 - "Lainnya": General items that do not fit the above categories.
 
-Output JSON format strictly:
+OUTPUT - a single JSON object.
+When it IS a receipt:
 {
+  "evidence": { "visibleText": ["Ayam Geprek Murah", "Total 19,000"], "receiptSignals": ["merchant_name", "total_keyword", "currency_amounts"] },
   "isReceipt": true,
   "merchant": "Actual Store or Merchant Name",
   "date": "YYYY-MM-DD",
@@ -73,16 +65,60 @@ Output JSON format strictly:
     }
   ],
   "total": 15000,
-  "paymentMethod": "E-Wallet | QRIS | Transfer Bank | Cash | (leave empty string \"\" if not detected on receipt)",
+  "paymentMethod": "E-Wallet | QRIS | Transfer Bank | Cash | (leave empty string \\"\\" if not detected on receipt)",
   "confidence": 95
 }
 
+When it is NOT a receipt (no other fields):
+{
+  "evidence": { "visibleText": ["..."], "receiptSignals": [] },
+  "isReceipt": false,
+  "rejectionCode": "SCREEN | NO_DOCUMENT | NOT_FINANCIAL | UNREADABLE"
+}
+rejectionCode meaning: SCREEN = photo of a monitor/laptop/TV showing non-payment content; NO_DOCUMENT = no paper bill or document visible (logo, person, room, object); NOT_FINANCIAL = a document or text that is not a transaction (book, letter, notes, poster, menu); UNREADABLE = looks like a receipt but its text cannot be read.
+
 STRICT RULES:
 1. Output ONLY a valid JSON object. No conversational prose or markdown wrap outside JSON.
-2. Format all prices and totals as raw numbers without currency symbols (Rp) or commas.
+2. Format all prices and totals as raw numbers without currency symbols (Rp) or thousand separators.
 3. For "time", strictly format as 24-hour "HH:MM" (e.g. "14:30"). NEVER confuse prices, subtotals, or amounts (such as 20,000 or 20.000) with time! If no valid transaction time is printed on the receipt, output "" (empty string).
 4. For "paymentMethod", choose ONLY from: "E-Wallet", "QRIS", "Transfer Bank", "Cash". If unknown or not printed on the receipt, output "" (empty string).
-5. NEVER invent dummy transactions if the photo is not a receipt.`;
+5. Only extract what is actually printed. NEVER invent stores, items, or prices.`;
+
+/**
+ * User-facing (Indonesian) rejection messages, mapped from the model's rejectionCode.
+ * Kept server-side so the model can never "copy" a rejection sentence without looking at the image.
+ */
+export const REJECTION_MESSAGES: Record<string, string> = {
+  SCREEN:
+    "Foto terdeteksi sebagai layar monitor/laptop yang tidak menampilkan bukti transaksi. Arahkan kamera ke struk belanja fisik atau bukti pembayaran resmi.",
+  NO_DOCUMENT:
+    "Tidak terlihat struk belanja pada foto. Pastikan struk berada di dalam kotak pemindai.",
+  NOT_FINANCIAL:
+    "Dokumen pada foto bukan struk belanja atau bukti transaksi keuangan.",
+  UNREADABLE:
+    "Struk terdeteksi, tetapi teksnya buram atau terlalu kecil untuk terbaca. Dekatkan kamera, pastikan cahaya cukup, lalu foto ulang.",
+};
+
+const DEFAULT_REJECTION_MESSAGE = "Foto yang diambil bukan struk belanja atau bukti transaksi keuangan.";
+
+/**
+ * Deterministic keyword heuristic: does a raw text transcription look like a receipt?
+ * Used as a second opinion before rejecting a photo.
+ */
+export function looksLikeReceiptText(text: string): boolean {
+  if (!text) return false;
+  const t = text.toLowerCase();
+  const keywordPatterns = [
+    /\b(sub\s*total|total|grand\s*total|jumlah)\b/,
+    /\b(tunai|cash|bayar|kembali|kembalian|change|qris|debit|kredit|transfer|ovo|gopay|dana|shopeepay)\b/,
+    /\b(nota|struk|kasir|cashier|invoice|receipt|order|trx|transaksi)\b/,
+    /\b(rp\.?|idr)\s*\d/,
+    /\b(ppn|pajak|tax|diskon|discount|service|qty)\b/,
+  ];
+  const keywordHits = keywordPatterns.filter((p) => p.test(t)).length;
+  const amountMatches = t.match(/\b\d{1,3}(?:[.,]\d{3})+\b/g) || [];
+  return (keywordHits >= 2 && amountMatches.length >= 2) || (keywordHits >= 1 && amountMatches.length >= 3);
+}
 
 /**
  * Normalizes Indonesian date formats to ISO YYYY-MM-DD
@@ -352,17 +388,6 @@ async function performOcr(imageInput: string): Promise<string> {
     try {
       const workerOptions: Record<string, unknown> = {};
 
-      try {
-        const req = createRequire(import.meta.url);
-        const tesseractEntry = req.resolve("tesseract.js/package.json");
-        const workerPath = path.join(path.dirname(tesseractEntry), "dist", "worker.min.js");
-        if (fs.existsSync(workerPath)) {
-          workerOptions.workerPath = workerPath;
-        }
-      } catch {
-        // fallback if require.resolve is unavailable
-      }
-
       // Check for local traineddata files to avoid remote CDN download delay
       const candidateDirs = [
         process.cwd(),
@@ -406,17 +431,26 @@ function buildExtractedData(
   clientTimezone?: string
 ): ExtractedReceiptData {
   const isReceiptExplicit = parsed.isReceipt !== false && parsed.is_receipt !== false;
-  const rejectionReason = typeof parsed.rejectionReason === "string"
+  const rawCode = typeof parsed.rejectionCode === "string"
+    ? parsed.rejectionCode
+    : typeof parsed.rejection_code === "string"
+    ? parsed.rejection_code
+    : "";
+  const rejectionCode = rawCode.trim().toUpperCase() || undefined;
+  const modelReason = typeof parsed.rejectionReason === "string"
     ? parsed.rejectionReason
     : typeof parsed.rejection_reason === "string"
     ? parsed.rejection_reason
     : undefined;
+  const rejectionReason =
+    (rejectionCode && REJECTION_MESSAGES[rejectionCode]) || modelReason || DEFAULT_REJECTION_MESSAGE;
 
   // If the model explicitly identified this is not a receipt
   if (!isReceiptExplicit) {
     return {
       isReceipt: false,
-      rejectionReason: rejectionReason || "Foto yang diambil bukan struk belanja atau bukti transaksi keuangan.",
+      rejectionCode: rejectionCode && REJECTION_MESSAGES[rejectionCode] ? rejectionCode : "NOT_RECEIPT",
+      rejectionReason,
       merchant: "",
       date: normalizeDate(),
       time: clientTime || getCurrentScanTime(clientTimezone),
@@ -497,11 +531,15 @@ function buildExtractedData(
     parsedConfidence = Math.round(parsedConfidence * 100);
   }
 
-  // Sanity check: If total is 0, no items, or confidence is very low, treat as invalid receipt
-  if ((items.length === 0 && total <= 0) || parsedConfidence < 30) {
+  // Sanity check: the model said "receipt" but nothing usable was extracted -> treat as unreadable receipt.
+  // Sanity check: A genuine financial receipt MUST have at least one non-zero monetary transaction value.
+  // If total is 0 and no item has a positive price, it is arbitrary text or a logo/document, not a transaction.
+  const hasMonetaryValue = total > 0 || items.some((i) => i.price > 0 || i.totalPrice > 0);
+  if (!hasMonetaryValue) {
     return {
       isReceipt: false,
-      rejectionReason: rejectionReason || "Tidak ditemukan rincian transaksi struk belanja yang valid.",
+      rejectionCode: "NOT_FINANCIAL",
+      rejectionReason: REJECTION_MESSAGES.NOT_FINANCIAL,
       merchant: rawMerchant,
       date: normalizeDate(typeof parsed.date === "string" ? parsed.date : undefined),
       time: clientTime || getCurrentScanTime(clientTimezone),
@@ -561,18 +599,68 @@ export async function extractReceiptData(
     ? base64Image
     : `data:${mimeType};base64,${base64Image}`;
 
-  // PRIMARY METHOD: Direct NVIDIA Multimodal Vision Analysis (Fast ~2-4s, Serverless-safe, No Tesseract worker issues)
+  // PRIMARY METHOD: Direct NVIDIA Multimodal Vision Analysis (Serverless-safe, No Tesseract worker issues)
+  const startedAt = Date.now();
   try {
-    const visionPrompt = `Verify and extract data from this image. If this image is NOT an actual receipt or invoice, output {"isReceipt": false, "confidence": 0, "rejectionReason": "Foto bukan struk belanja atau bukti transaksi keuangan."}. Do NOT invent data. Output strictly the requested JSON object starting with '{' and ending with '}'.`;
+    const visionPrompt = `Follow STEP 1, STEP 2 and STEP 3 for the attached image and return the JSON object.`;
     const rawResponse = await client.analyzeImage(
       imageUrl,
       mimeType,
       visionPrompt,
-      RECEIPT_EXTRACTION_SYSTEM_PROMPT
+      RECEIPT_EXTRACTION_SYSTEM_PROMPT,
+      { timeoutMs: 45000 }
     );
 
     const parsed = extractJsonFromModelResponse(rawResponse);
-    return buildExtractedData(parsed, clientTime, clientTimezone);
+    const firstPass = buildExtractedData(parsed, clientTime, clientTimezone);
+    if (firstPass.isReceipt !== false) {
+      return firstPass;
+    }
+
+    console.info(
+      `[RECEIPT_SCAN:AI_REJECT_PASS1] Code: ${firstPass.rejectionCode} | Evidence: ${JSON.stringify(parsed.evidence ?? null).slice(0, 400)} | Raw: ${rawResponse.slice(0, 200).replace(/\s+/g, " ")}`
+    );
+
+    // SECOND OPINION: before rejecting, transcribe all text and check for receipt keywords.
+    // A false rejection is far more costly to the user than a few extra seconds.
+    const elapsedMs = Date.now() - startedAt;
+    const remainingMs = 50000 - elapsedMs;
+    if (remainingMs < 15000) {
+      return firstPass;
+    }
+
+    try {
+      const transcription = await client.analyzeImage(
+        imageUrl,
+        mimeType,
+        "Transcribe ALL text visible in this image exactly as printed, line by line. Output plain text only, no commentary. If there is no readable text, output NO_TEXT.",
+        undefined,
+        { jsonMode: false, maxTokens: 1024, timeoutMs: Math.min(20000, remainingMs - 5000) }
+      );
+
+      const receiptLike = looksLikeReceiptText(transcription);
+      console.info(
+        `[RECEIPT_SCAN:AI_SECOND_OPINION] ReceiptLike: ${receiptLike} | Text: ${transcription.slice(0, 200).replace(/\s+/g, " ")}`
+      );
+
+      if (!receiptLike) {
+        return firstPass;
+      }
+
+      const textPrompt = `The user photographed a document and this is a text transcription of everything visible in the photo. Apply STEP 1, STEP 2 and STEP 3 to this transcription (treat it as the image content) and return the JSON object:\n\n"""\n${transcription}\n"""`;
+      const rawTextResponse = await client.analyzeText(textPrompt, RECEIPT_EXTRACTION_SYSTEM_PROMPT, {
+        timeoutMs: Math.max(10000, 50000 - (Date.now() - startedAt)),
+      });
+      const secondPass = buildExtractedData(
+        extractJsonFromModelResponse(rawTextResponse),
+        clientTime,
+        clientTimezone
+      );
+      return secondPass.isReceipt !== false ? secondPass : firstPass;
+    } catch (secondOpinionErr: unknown) {
+      console.warn("[RECEIPT_SCAN:AI_SECOND_OPINION] failed, keeping first-pass result:", secondOpinionErr);
+      return firstPass;
+    }
   } catch (visionErr: unknown) {
     console.warn("Direct NVIDIA Vision extraction failed, attempting OCR fallback:", visionErr);
 
@@ -584,7 +672,7 @@ export async function extractReceiptData(
         throw new Error("Gagal membaca teks dari gambar struk (OCR Kosong). Pastikan gambar struk jelas dan tidak blur.");
       }
 
-      const textPrompt = `Below is raw OCR text extracted from a potential receipt. If this text is NOT from an actual receipt or invoice, return {"isReceipt": false, "confidence": 0, "rejectionReason": "Teks tidak mencerminkan transaksi struk belanja."}. Otherwise, structurize this text into the requested JSON schema:\n\n"""\n${ocrText}\n"""`;
+      const textPrompt = `Below is raw OCR text extracted from a photo the user took with a receipt scanner. Apply STEP 1, STEP 2 and STEP 3 to this text (treat it as the image content) and return the JSON object:\n\n"""\n${ocrText}\n"""`;
       const rawTextResponse = await client.analyzeText(
         textPrompt,
         RECEIPT_EXTRACTION_SYSTEM_PROMPT

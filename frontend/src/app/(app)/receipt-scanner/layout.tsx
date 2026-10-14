@@ -11,5 +11,9 @@ export default function ReceiptScannerLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="w-full min-h-[calc(100vh-120px)]">{children}</div>;
+  return (
+    <div className="w-full min-h-[calc(100dvh-150px)] lg:min-h-[calc(100vh-120px)] flex flex-col justify-center">
+      {children}
+    </div>
+  );
 }

@@ -23,6 +23,8 @@ export async function optimizeReceiptImage(
     maxHeight?: number;
     quality?: number;
     format?: "jpeg" | "webp";
+    /** Stretch contrast + mild sharpen (improves legibility of faded thermal receipts for AI) */
+    enhance?: boolean;
   } = {}
 ): Promise<OptimizedImageResult> {
   const {
@@ -30,6 +32,7 @@ export async function optimizeReceiptImage(
     maxHeight = 1000,
     quality = 80,
     format = "jpeg",
+    enhance = false,
   } = options;
 
   let pipeline = sharp(input).rotate(); // auto-rotate based on EXIF
@@ -40,6 +43,10 @@ export async function optimizeReceiptImage(
     fit: "inside",
     withoutEnlargement: true,
   });
+
+  if (enhance) {
+    pipeline = pipeline.normalise().sharpen({ sigma: 1 });
+  }
 
   let outputBuffer: Buffer;
   let mimeType: string;
@@ -54,12 +61,15 @@ export async function optimizeReceiptImage(
     mimeType = "image/jpeg";
   }
 
-  // If buffer is still > 150KB and quality was 80, do a second pass with quality 65
-  if (outputBuffer.length > 150 * 1024 && quality > 65) {
+  // If buffer is still too large, do a second pass with lower quality.
+  // AI-bound (enhanced) images get a larger budget so small receipt text is not destroyed by compression.
+  const maxBytes = enhance ? 400 * 1024 : 150 * 1024;
+  const secondPassQuality = enhance ? 75 : 60;
+  if (outputBuffer.length > maxBytes && quality > 65) {
     if (format === "webp") {
-      outputBuffer = await sharp(outputBuffer).webp({ quality: 60 }).toBuffer();
+      outputBuffer = await sharp(outputBuffer).webp({ quality: secondPassQuality }).toBuffer();
     } else {
-      outputBuffer = await sharp(outputBuffer).jpeg({ quality: 60, mozjpeg: true }).toBuffer();
+      outputBuffer = await sharp(outputBuffer).jpeg({ quality: secondPassQuality, mozjpeg: true }).toBuffer();
     }
   }
 

@@ -191,10 +191,16 @@ export function useReceiptScanner() {
         throw error;
       }
 
-      if (!json.extractedData || json.extractedData.isReceipt === false || json.extractedData.confidence < 40) {
+      if (!json.extractedData || json.extractedData.isReceipt === false) {
         const reason = json.extractedData?.rejectionReason || "Foto yang diambil bukan struk belanja atau bukti transaksi keuangan.";
         setErrorMessage(reason);
-        setErrorType(reason.toLowerCase().includes("buram") || reason.toLowerCase().includes("terbaca") ? "blurry" : "not_receipt");
+        setErrorType(
+          json.extractedData?.rejectionCode === "UNREADABLE" ||
+            reason.toLowerCase().includes("buram") ||
+            reason.toLowerCase().includes("terbaca")
+            ? "blurry"
+            : "not_receipt"
+        );
         setStep("error");
         return;
       }

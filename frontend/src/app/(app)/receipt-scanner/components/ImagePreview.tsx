@@ -15,7 +15,7 @@ export default function ImagePreview({
   onConfirm,
 }: ImagePreviewProps) {
   return (
-    <div className="relative w-full max-w-2xl mx-auto flex flex-col bg-[#0F1419] rounded-2xl overflow-hidden border border-slate-800 shadow-2xl">
+    <div className="relative w-full max-w-xl lg:max-w-2xl mx-auto h-[calc(100dvh-170px)] min-h-[520px] max-h-[720px] lg:h-[620px] flex flex-col bg-[#0F1419] rounded-2xl overflow-hidden border border-slate-800 shadow-2xl">
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800/80 bg-[#161c28]">
         <div className="flex items-center gap-3">
@@ -46,22 +46,22 @@ export default function ImagePreview({
       </div>
 
       {/* Image Display */}
-      <div className="relative flex-1 min-h-[380px] sm:min-h-[480px] bg-[#0A0E14] flex items-center justify-center p-4">
-        <div className="relative w-full max-w-sm max-h-[460px] rounded-xl overflow-hidden border border-slate-700/80 shadow-xl bg-black">
+      <div className="relative flex-1 min-h-[320px] bg-[#0A0E14] flex items-center justify-center p-4">
+        <div className="relative max-w-[min(340px,85vw)] max-h-[50vh] rounded-xl overflow-hidden border border-slate-700/80 shadow-xl bg-black flex items-center justify-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={imageSrc}
             alt="Preview Struk"
-            className="w-full h-auto max-h-[460px] object-contain mx-auto"
+            className="max-w-full max-h-[50vh] w-auto h-auto object-contain mx-auto block"
           />
         </div>
       </div>
 
       {/* Bottom Action Controls */}
-      <div className="p-5 bg-[#161c28] border-t border-slate-800/80 flex flex-col sm:flex-row gap-3 items-center justify-between">
+      <div className="p-4 sm:p-5 bg-[#161c28] border-t border-slate-800/80 flex flex-col sm:flex-row gap-3 items-center justify-between">
         <button
           onClick={onRetake}
-          className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-slate-700 bg-slate-800/60 hover:bg-slate-700/60 text-slate-300 hover:text-white text-sm font-semibold transition-all cursor-pointer"
+          className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-slate-700 bg-slate-800/60 hover:bg-slate-700/60 text-slate-300 hover:text-white text-sm font-semibold transition-all cursor-pointer text-center"
         >
           Ambil Ulang
         </button>

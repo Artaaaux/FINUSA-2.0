@@ -57,7 +57,7 @@ export default function ReceiptScannerPage() {
   };
 
   return (
-    <div className="w-full py-2">
+    <div className="w-full py-1 sm:py-2 flex flex-col justify-center items-center">
       <AnimatePresence mode="wait">
         {step === "camera" && (
           <motion.div key="camera" {...pageTransition}>
