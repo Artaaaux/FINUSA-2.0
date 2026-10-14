@@ -60,7 +60,7 @@ export default function ReceiptScannerPage() {
     <div className="w-full py-1 sm:py-2 flex flex-col justify-center items-center">
       <AnimatePresence mode="wait">
         {step === "camera" && (
-          <motion.div key="camera" {...pageTransition}>
+          <motion.div key="camera" {...pageTransition} className="w-full flex justify-center">
             <CameraView
               onCapture={handleCapture}
               onFileUpload={handleFileUpload}
@@ -69,7 +69,7 @@ export default function ReceiptScannerPage() {
         )}
 
         {step === "preview" && capturedImage && (
-          <motion.div key="preview" {...pageTransition}>
+          <motion.div key="preview" {...pageTransition} className="w-full flex justify-center">
             <ImagePreview
               imageSrc={capturedImage}
               onRetake={resetScanner}
@@ -79,13 +79,13 @@ export default function ReceiptScannerPage() {
         )}
 
         {step === "processing" && (
-          <motion.div key="processing" {...pageTransition}>
+          <motion.div key="processing" {...pageTransition} className="w-full flex justify-center">
             <ProcessingScreen imageSrc={capturedImage} />
           </motion.div>
         )}
 
         {step === "confirm" && extractedData && (
-          <motion.div key="confirm" {...pageTransition}>
+          <motion.div key="confirm" {...pageTransition} className="w-full flex justify-center">
             <ConfirmScreen
               imageSrc={capturedImage}
               data={extractedData}
@@ -101,7 +101,7 @@ export default function ReceiptScannerPage() {
         )}
 
         {step === "success" && extractedData && (
-          <motion.div key="success" {...pageTransition}>
+          <motion.div key="success" {...pageTransition} className="w-full flex justify-center">
             <SuccessScreen
               data={extractedData}
               expenseId={savedExpenseId}
@@ -111,7 +111,7 @@ export default function ReceiptScannerPage() {
         )}
 
         {step === "error" && (
-          <motion.div key="error" {...pageTransition}>
+          <motion.div key="error" {...pageTransition} className="w-full flex justify-center">
             <ErrorScreen
               errorType={errorType}
               errorMessage={errorMessage}
