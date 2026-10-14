@@ -6,9 +6,11 @@ export async function middleware(request: NextRequest) {
   const { supabaseResponse, user } = await updateSession(request);
 
   if (!user) {
+    console.info(`[AUTH_GUARD:REDIRECT] Path: ${request.nextUrl.pathname} -> /auth/login`);
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
+  console.info(`[APP:ACCESS] User: ${user.id} | Path: ${request.nextUrl.pathname}`);
   return supabaseResponse;
 }
 

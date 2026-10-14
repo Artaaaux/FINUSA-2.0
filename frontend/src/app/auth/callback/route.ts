@@ -45,6 +45,7 @@ export async function GET(request: NextRequest) {
 
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      console.info(`[AUTH_CALLBACK:SUCCESS] Type: ${type || "default"} | Target: ${safeNext}`);
       return response;
     }
 

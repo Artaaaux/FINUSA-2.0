@@ -49,6 +49,10 @@ export async function GET() {
 
     const isQuotaExceeded = totalUsedBytes >= MAX_QUOTA_BYTES;
 
+    console.info(
+      `[RECEIPT_QUOTA:GET] User: ${user.id} | Used: ${Math.round(totalUsedBytes / 1024)}KB (${usedPercentage}%) | Receipts: ${data?.length || 0}`
+    );
+
     return NextResponse.json({
       totalUsedBytes,
       maxQuotaBytes: MAX_QUOTA_BYTES,

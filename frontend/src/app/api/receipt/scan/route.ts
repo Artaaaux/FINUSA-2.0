@@ -90,6 +90,9 @@ export async function POST(req: NextRequest) {
     }
 
     // 1. Optimize image for AI Vision & OCR (vertical receipt ratio, ~50-80KB)
+    const startTime = Date.now();
+    console.info(`[RECEIPT_SCAN:START] User: ${user.id} | RawSize: ${Math.round(imageBuffer.length / 1024)}KB | Type: ${mimeType}`);
+
     const optimizedOcr = await optimizeReceiptImage(imageBuffer, {
       maxWidth: 800,
       maxHeight: 1200,
@@ -105,12 +108,18 @@ export async function POST(req: NextRequest) {
       clientTimezone
     );
 
+    const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+
     // 3. Validate if image is actually a valid receipt
     if (extractedData.isReceipt === false || extractedData.confidence < 40) {
       const isBlurry =
         extractedData.rejectionReason?.toLowerCase().includes("buram") ||
         extractedData.rejectionReason?.toLowerCase().includes("blurry") ||
         extractedData.rejectionReason?.toLowerCase().includes("terbaca");
+
+      console.info(
+        `[RECEIPT_SCAN:REJECTED] User: ${user.id} | Reason: "${extractedData.rejectionReason || "Not a receipt"}" | Conf: ${extractedData.confidence}% | Duration: ${duration}s`
+      );
 
       return NextResponse.json(
         {
@@ -122,6 +131,10 @@ export async function POST(req: NextRequest) {
         { status: 422 }
       );
     }
+
+    console.info(
+      `[RECEIPT_SCAN:SUCCESS] User: ${user.id} | Merchant: "${extractedData.merchant || "Unknown"}" | Total: Rp ${extractedData.total || 0} | Conf: ${extractedData.confidence}% | Duration: ${duration}s`
+    );
 
     return NextResponse.json({
       success: true,
