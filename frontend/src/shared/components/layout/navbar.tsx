@@ -21,7 +21,7 @@ interface MenuItem {
 }
 
 const navItems: MenuItem[] = [
-  { label: "Beranda", href: "#beranda", icon: Home },
+  { label: "Home", href: "#beranda", icon: Home },
   { label: "Fitur", href: "#fitur", icon: Sparkles },
   { label: "Langkah Cerdas", href: "#langkah-cerdas", icon: Lightbulb },
   { label: "Tabungan Impian", href: "#tabungan-impian", icon: Target },
@@ -29,7 +29,7 @@ const navItems: MenuItem[] = [
 
 export function Navbar() {
   const [isOpen, setIsOpen] = React.useState(false);
-  const [activeItem, setActiveItem] = React.useState("Beranda");
+  const [activeItem, setActiveItem] = React.useState("Home");
   const [isScrolled, setIsScrolled] = React.useState(false);
 
   // Sliding pill capsule geometry
@@ -175,7 +175,7 @@ export function Navbar() {
               href="#beranda"
               onClick={(e) => handleNavClick(e, navItems[0])}
               className="flex items-center gap-3 sm:gap-3.5 group select-none shrink-0 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-              aria-label="Finusa Beranda"
+              aria-label="Finusa Home"
             >
               <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-[#1687ff] via-[#105fd4] to-[#042468] p-[1.5px] shadow-[0_4px_16px_rgba(22,135,255,0.35)] flex items-center justify-center overflow-hidden">
                 <div className="w-full h-full bg-[#081534] rounded-[10px] flex items-center justify-center relative p-1">
