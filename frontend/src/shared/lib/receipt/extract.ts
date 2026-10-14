@@ -654,7 +654,7 @@ export async function extractReceiptData(
   const client = new NvidiaModelsClient();
 
   if (!client.isConfigured()) {
-    throw new Error("NVIDIA API Key belum dikonfigurasi di environment variables (NVIDIA_API_KEY).");
+    throw new Error("API Key AI belum dikonfigurasi di environment variables (NVIDIA_API_KEY atau BACKUP_AI_API_KEY).");
   }
 
   const imageUrl = base64Image.startsWith("data:")
