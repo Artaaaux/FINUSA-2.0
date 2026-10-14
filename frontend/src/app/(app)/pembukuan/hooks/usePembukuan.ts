@@ -84,16 +84,26 @@ export function usePembukuan() {
         }
 
         if (dbAcc && dbAcc.length > 0) {
-          setAccounts(
-            dbAcc.map((a) => ({
-              id: a.id,
-              name: a.name,
-              type: a.type || "Kas",
-              accountNumber: a.account_number || ("•••• " + a.id.slice(-4)),
-              color: a.color || "#4B7BFF",
-              balance: Number(a.balance),
-            }))
+          const mappedAccounts = dbAcc.map((a) => ({
+            id: a.id,
+            name: a.name,
+            type: a.type || "Kas",
+            accountNumber: a.account_number || ("•••• " + a.id.slice(-4)),
+            color: a.color || "#4B7BFF",
+            balance: Number(a.balance),
+          }));
+
+          const hasTransferBank = mappedAccounts.some(
+            (a) => a.name.toLowerCase().includes("transfer") || a.name.toLowerCase().includes("bank")
           );
+          if (!hasTransferBank) {
+            const tfOption = PEMBUKUAN_ACCOUNTS.find((a) => a.id === "acc-tf-bank");
+            if (tfOption) {
+              mappedAccounts.splice(1, 0, tfOption);
+            }
+          }
+
+          setAccounts(mappedAccounts);
         }
       } catch (err) {
         console.warn("Supabase fetch failed in usePembukuan:", err);

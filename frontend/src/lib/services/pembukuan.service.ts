@@ -57,9 +57,10 @@ export const PembukuanService = {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
           const defaultAccounts = [
-            { user_id: user.id, name: "Cash / Tunai", type: "cash", balance: 0, color: "#E8A76F", is_default: true },
-            { user_id: user.id, name: "QRIS", type: "e_wallet", balance: 0, color: "#2A9D8F", is_default: false },
-            { user_id: user.id, name: "E-Wallet", type: "e_wallet", balance: 0, color: "#10B981", is_default: false },
+            { user_id: user.id, name: "Cash / Tunai", type: "cash", balance: 0, color: "#E8A76F", is_default: true, account_number: "Kas Fisik" },
+            { user_id: user.id, name: "Transfer Bank", type: "bank", balance: 0, color: "#4B7BFF", is_default: false, account_number: "Rekening Bank" },
+            { user_id: user.id, name: "QRIS", type: "e_wallet", balance: 0, color: "#2A9D8F", is_default: false, account_number: "Merchant QRIS" },
+            { user_id: user.id, name: "E-Wallet", type: "e_wallet", balance: 0, color: "#10B981", is_default: false, account_number: "Dompet Digital" },
           ];
           const { data: inserted } = await supabase
             .from("accounts")
@@ -74,7 +75,42 @@ export const PembukuanService = {
       }
     }
 
-    return data || [];
+    const currentAccounts = data || [];
+    const hasTransferBank = currentAccounts.some(
+      (a) => a.name.toLowerCase().includes("transfer") || a.name.toLowerCase().includes("bank")
+    );
+
+    if (!hasTransferBank) {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: newAcc } = await supabase
+            .from("accounts")
+            .insert({
+              user_id: user.id,
+              name: "Transfer Bank",
+              type: "bank",
+              balance: 0,
+              color: "#4B7BFF",
+              is_default: false,
+              account_number: "Rekening Bank",
+            })
+            .select()
+            .single();
+          if (newAcc) {
+            return [
+              currentAccounts[0] || newAcc,
+              newAcc,
+              ...currentAccounts.slice(1),
+            ];
+          }
+        }
+      } catch (seedErr) {
+        console.warn("Auto-seed Transfer Bank error:", seedErr);
+      }
+    }
+
+    return currentAccounts;
   },
 
   async createAccount(acc: Omit<AccountItem, "id">): Promise<AccountItem | null> {

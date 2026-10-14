@@ -7,6 +7,8 @@ import {
   ArrowDownRight,
   ArrowUpRight,
   Check,
+  Tag,
+  Wallet,
 } from "lucide-react";
 import { CategoryItem, TransactionType } from "../types";
 import { AccountOption, MAX_TRANSACTION_AMOUNT } from "../constants";
@@ -131,9 +133,9 @@ export default function QuickAddBar({
       </div>
 
       {/* Main Input Form */}
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+      <form onSubmit={handleSubmit} className="grid grid-cols-2 sm:grid-cols-12 gap-2.5 sm:gap-3 items-end">
         {/* Nominal Amount */}
-        <div className="sm:col-span-3 space-y-1">
+        <div className="col-span-2 sm:col-span-3 space-y-1">
           <label className="text-[11px] font-semibold text-slate-400">
             Nominal (Rp)
           </label>
@@ -156,8 +158,9 @@ export default function QuickAddBar({
         </div>
 
         {/* Category Select */}
-        <div className="sm:col-span-3 space-y-1">
-          <label className="text-[11px] font-semibold text-slate-400">
+        <div className="col-span-1 sm:col-span-3 space-y-1">
+          <label className="text-[11px] font-semibold text-slate-400 flex items-center gap-1">
+            <Tag className="w-3 h-3 text-slate-500" />
             Kategori
           </label>
           <select
@@ -173,24 +176,11 @@ export default function QuickAddBar({
           </select>
         </div>
 
-        {/* Description / Note */}
-        <div className="sm:col-span-3 space-y-1">
-          <label className="text-[11px] font-semibold text-slate-400">
-            Deskripsi / Catatan
-          </label>
-          <input
-            type="text"
-            placeholder="Keterangan transaksi..."
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="w-full px-3.5 py-2.5 rounded-xl bg-[#0F1419] border border-slate-700 text-white text-xs focus:outline-none focus:border-blue-500 transition-colors"
-          />
-        </div>
-
         {/* Account Select */}
-        <div className="sm:col-span-2 space-y-1">
-          <label className="text-[11px] font-semibold text-slate-400">
-            Metode Pembayaran
+        <div className="col-span-1 sm:col-span-2 space-y-1">
+          <label className="text-[11px] font-semibold text-slate-400 flex items-center gap-1">
+            <Wallet className="w-3 h-3 text-slate-500" />
+            Metode Bayar
           </label>
           <select
             value={selectedAccountId}
@@ -205,20 +195,41 @@ export default function QuickAddBar({
           </select>
         </div>
 
+        {/* Description / Note */}
+        <div className="col-span-2 sm:col-span-3 space-y-1">
+          <label className="text-[11px] font-semibold text-slate-400">
+            Deskripsi / Catatan
+          </label>
+          <input
+            type="text"
+            placeholder="Keterangan transaksi..."
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full px-3.5 py-2.5 rounded-xl bg-[#0F1419] border border-slate-700 text-white text-xs focus:outline-none focus:border-blue-500 transition-colors"
+          />
+        </div>
+
         {/* Submit Button */}
-        <div className="sm:col-span-1">
+        <div className="col-span-2 sm:col-span-1">
           <button
             type="submit"
             disabled={!amountStr || isSubmitting}
             className={cn(
-              "w-full h-[42px] rounded-xl font-bold text-xs flex items-center justify-center transition-all cursor-pointer shadow-sm disabled:opacity-40 disabled:cursor-not-allowed",
+              "w-full h-[42px] rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm disabled:opacity-40 disabled:cursor-not-allowed",
               type === "expense"
                 ? "bg-rose-600 hover:bg-rose-500 text-white"
                 : "bg-emerald-600 hover:bg-emerald-500 text-white"
             )}
             title="Simpan Transaksi"
           >
-            {isSubmitting ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+            {isSubmitting ? (
+              <Check className="w-4 h-4" />
+            ) : (
+              <>
+                <Plus className="w-4 h-4" />
+                <span className="sm:hidden font-semibold">Simpan Transaksi</span>
+              </>
+            )}
           </button>
         </div>
       </form>

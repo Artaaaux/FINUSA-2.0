@@ -23,6 +23,14 @@ export const PEMBUKUAN_ACCOUNTS: AccountOption[] = [
     color: "from-amber-500 to-orange-600",
   },
   {
+    id: "acc-tf-bank",
+    name: "Transfer Bank",
+    type: "bank",
+    accountNumber: "Rekening Bank",
+    balance: 0,
+    color: "from-blue-600 to-indigo-600",
+  },
+  {
     id: "acc-qris",
     name: "QRIS",
     type: "e_wallet",

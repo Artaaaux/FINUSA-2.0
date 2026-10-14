@@ -108,7 +108,7 @@ export function ResetPasswordForm() {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="w-full bg-[#1a1f3a] border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-[0_8px_24px_rgba(0,0,0,0.15)] relative overflow-hidden"
+        className="w-full bg-[#1a1f3a] border border-slate-800 rounded-[28px] p-6 sm:p-8 shadow-[0_8px_24px_rgba(0,0,0,0.15)] relative overflow-hidden"
       >
         <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-emerald-500 via-accent-cyan to-blue-600" />
 
@@ -123,7 +123,7 @@ export function ResetPasswordForm() {
 
           <button
             onClick={() => router.push("/home")}
-            className="w-full h-11 flex items-center justify-center gap-2 font-semibold text-white bg-blue-600 rounded-lg transition-all duration-300 hover:bg-blue-500 shadow-lg shadow-blue-500/25 mt-6 cursor-pointer"
+            className="w-full h-12 flex items-center justify-center gap-2 font-semibold text-white bg-blue-600 rounded-xl transition-all duration-300 hover:bg-blue-500 shadow-lg shadow-blue-500/25 mt-6 cursor-pointer text-[15px]"
           >
             <span>Masuk ke Dashboard</span>
             <ArrowRight className="w-4 h-4" />
@@ -138,7 +138,7 @@ export function ResetPasswordForm() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="w-full bg-[#1a1f3a] border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-[0_8px_24px_rgba(0,0,0,0.15)] relative overflow-hidden"
+      className="w-full bg-[#1a1f3a] border border-slate-800 rounded-[28px] p-6 sm:p-8 shadow-[0_8px_24px_rgba(0,0,0,0.15)] relative overflow-hidden"
     >
       <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-blue-600 via-accent-cyan to-accent-green" />
 
@@ -189,7 +189,7 @@ export function ResetPasswordForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={loading}
-              className="w-full h-11 pl-10 pr-10 bg-[#0F172A] border border-[#1E293B] rounded-lg text-sm text-white placeholder-slate-600 focus:outline-none focus:border-accent-cyan focus:ring-1 focus:ring-accent-cyan transition-all duration-200"
+              className="w-full h-12 pl-10 pr-10 bg-[#0F172A] border border-[#1E293B] rounded-xl text-[15px] text-white placeholder-slate-600 focus:outline-none focus:border-accent-cyan focus:ring-1 focus:ring-accent-cyan transition-all duration-200"
             />
             <button
               type="button"
@@ -254,7 +254,7 @@ export function ResetPasswordForm() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               disabled={loading}
-              className="w-full h-11 pl-10 pr-10 bg-[#0F172A] border border-[#1E293B] rounded-lg text-sm text-white placeholder-slate-600 focus:outline-none focus:border-accent-cyan focus:ring-1 focus:ring-accent-cyan transition-all duration-200"
+              className="w-full h-12 pl-10 pr-10 bg-[#0F172A] border border-[#1E293B] rounded-xl text-[15px] text-white placeholder-slate-600 focus:outline-none focus:border-accent-cyan focus:ring-1 focus:ring-accent-cyan transition-all duration-200"
             />
             <button
               type="button"
@@ -300,7 +300,7 @@ export function ResetPasswordForm() {
         <button
           type="submit"
           disabled={loading || !isMinLength || !hasLetterAndNumber || !isMatching}
-          className="w-full h-11 flex items-center justify-center font-semibold text-white bg-[#2563EB] rounded-lg transition-all duration-300 hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed select-none active:scale-[0.98] mt-4 cursor-pointer"
+          className="w-full h-12 flex items-center justify-center font-semibold text-white bg-[#2563EB] rounded-xl transition-all duration-300 hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed select-none active:scale-[0.98] mt-4 cursor-pointer text-[15px]"
         >
           {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Simpan Password Baru"}
         </button>

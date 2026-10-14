@@ -107,12 +107,9 @@ export function Footer() {
 
         </div>
 
-        {/* Copyright Bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
-          <p>© 2026 Finusa (Finance Nusantara). Hak Cipta Dilindungi Undang-Undang.</p>
-          <div className="flex items-center gap-6">
-            <span className="text-slate-400">Developed by artaaaux developer</span>
-          </div>
+        {/* Footer Credit */}
+        <div className="pt-8 flex items-center justify-center text-xs text-slate-500">
+          <span className="text-slate-400">Developed by artaaaux developer</span>
         </div>
 
       </div>

@@ -53,7 +53,7 @@ export function ForgotPasswordForm() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="w-full bg-[#1a1f3a] border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-[0_8px_24px_rgba(0,0,0,0.15)] relative overflow-hidden"
+        className="w-full bg-[#1a1f3a] border border-slate-800 rounded-[28px] p-6 sm:p-8 shadow-[0_8px_24px_rgba(0,0,0,0.15)] relative overflow-hidden"
       >
         <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-blue-600 via-accent-cyan to-accent-green" />
 
@@ -95,7 +95,7 @@ export function ForgotPasswordForm() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="w-full bg-[#1a1f3a] border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-[0_8px_24px_rgba(0,0,0,0.15)] relative overflow-hidden"
+      className="w-full bg-[#1a1f3a] border border-slate-800 rounded-[28px] p-6 sm:p-8 shadow-[0_8px_24px_rgba(0,0,0,0.15)] relative overflow-hidden"
     >
       <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-blue-600 via-accent-cyan to-accent-green" />
 
@@ -150,7 +150,7 @@ export function ForgotPasswordForm() {
               }}
               onBlur={handleBlur}
               disabled={loading}
-              className={`w-full h-11 pl-10 pr-4 bg-[#0F172A] border rounded-lg text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-accent-cyan transition-all duration-200 ${
+              className={`w-full h-12 pl-10 pr-4 bg-[#0F172A] border rounded-xl text-[15px] text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-accent-cyan transition-all duration-200 ${
                 fieldError
                   ? "border-[#EF4444] focus:border-[#EF4444]"
                   : "border-[#1E293B] focus:border-accent-cyan"
@@ -184,7 +184,7 @@ export function ForgotPasswordForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full h-11 flex items-center justify-center font-semibold text-white bg-[#2563EB] rounded-lg transition-all duration-300 hover:bg-gradient-to-r hover:from-[#2563EB] hover:to-accent-cyan hover:shadow-[0_0_15px_rgba(0,217,255,0.4)] disabled:opacity-50 disabled:cursor-not-allowed select-none active:scale-[0.98] mt-4"
+          className="w-full h-12 flex items-center justify-center font-semibold text-white bg-[#2563EB] rounded-xl transition-all duration-300 hover:bg-gradient-to-r hover:from-[#2563EB] hover:to-accent-cyan hover:shadow-[0_0_15px_rgba(0,217,255,0.4)] disabled:opacity-50 disabled:cursor-not-allowed select-none active:scale-[0.98] mt-4 text-[15px]"
         >
           {loading ? (
             <Loader2 className="w-5 h-5 animate-spin" />

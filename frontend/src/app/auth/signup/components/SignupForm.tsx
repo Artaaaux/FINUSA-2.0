@@ -390,7 +390,7 @@ export function SignupForm() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
-                className="w-full max-w-[460px] lg:max-w-[490px] apple-glass-card rounded-2xl sm:rounded-[28px] p-6 sm:p-9 relative overflow-hidden text-center"
+                className="w-full max-w-[460px] lg:max-w-[490px] apple-glass-card rounded-[28px] p-6 sm:p-9 relative overflow-hidden text-center"
               >
                 <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center text-cyan-400 shadow-[0_0_20px_rgba(25,211,255,0.2)]">
                   <Mail className="w-8 h-8 animate-bounce" />
@@ -425,7 +425,7 @@ export function SignupForm() {
                     type="button"
                     onClick={() => resend(email)}
                     disabled={resendLoading || resendSent}
-                    className="apple-glass-btn-secondary w-full h-12 rounded-xl flex items-center justify-center font-medium text-sm text-slate-200 transition-all duration-200 disabled:opacity-50"
+                    className="apple-glass-btn-secondary w-full h-14 rounded-2xl flex items-center justify-center font-medium text-[15px] text-slate-200 transition-all duration-200 disabled:opacity-50"
                   >
                     {resendLoading ? (
                       <Loader2 className="w-4 h-4 animate-spin mr-2" />
@@ -435,7 +435,7 @@ export function SignupForm() {
 
                   <Link
                     href="/auth/login"
-                    className="btn-gradient-primary w-full h-12 rounded-xl flex items-center justify-center font-semibold text-white transition-all duration-200 text-sm shadow-btn-glow"
+                    className="btn-gradient-primary w-full h-14 rounded-2xl flex items-center justify-center font-semibold text-white transition-all duration-200 text-[15px] shadow-btn-glow"
                   >
                     Sudah Verifikasi? Masuk Sekarang
                   </Link>
@@ -446,13 +446,13 @@ export function SignupForm() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
-                className="w-full max-w-[460px] lg:max-w-[490px] apple-glass-card rounded-2xl sm:rounded-[28px] p-6 sm:p-9 relative overflow-hidden"
+                className="w-full max-w-[460px] lg:max-w-[490px] apple-glass-card rounded-[28px] p-6 sm:p-9 relative overflow-hidden"
               >
                 {/* Card Interior Top Header with FINUSA Crest */}
                 <div className="flex flex-col items-center text-center">
                   <div
                     aria-label="FINUSA Logo"
-                    className="flex items-center space-x-2.5 mb-4 sm:mb-5"
+                    className="flex items-center space-x-2.5 mb-5"
                   >
                     <div className="relative w-10 h-10 flex items-center justify-center p-1 rounded-xl bg-white/[0.04] border border-white/10 shadow-[0_2px_10px_rgba(25,211,255,0.25)] flex-shrink-0">
                       <Image
@@ -475,7 +475,7 @@ export function SignupForm() {
                   </div>
 
                   {/* Title & Subtitle */}
-                  <h2 className="text-[28px] sm:text-[32px] font-bold text-white tracking-tight">
+                  <h2 className="text-[30px] sm:text-[32px] font-bold text-white tracking-tight">
                     Daftar
                   </h2>
                   <p className="text-sm text-[#C2CEE2] mt-1.5 font-normal">
@@ -555,7 +555,7 @@ export function SignupForm() {
                         onBlur={() => handleBlur("email")}
                         disabled={loading || success}
                         required
-                        className={`apple-glass-input w-full h-13 sm:h-14 pl-12 pr-4 rounded-2xl text-white placeholder-[#6E82A5] text-[15px] focus:outline-none transition-all duration-200 ${
+                        className={`apple-glass-input w-full h-14 pl-12 pr-4 rounded-2xl text-white placeholder-[#6E82A5] text-[15px] focus:outline-none transition-all duration-200 ${
                           errors.email && touched.email
                             ? "border-rose-500 focus:border-rose-500"
                             : ""
@@ -599,7 +599,7 @@ export function SignupForm() {
                         onBlur={() => handleBlur("password")}
                         disabled={loading || success}
                         required
-                        className={`apple-glass-input w-full h-13 sm:h-14 pl-12 pr-12 rounded-2xl text-white placeholder-[#6E82A5] text-[15px] focus:outline-none transition-all duration-200 ${
+                        className={`apple-glass-input w-full h-14 pl-12 pr-12 rounded-2xl text-white placeholder-[#6E82A5] text-[15px] focus:outline-none transition-all duration-200 ${
                           errors.password && touched.password
                             ? "border-rose-500 focus:border-rose-500"
                             : ""
@@ -688,7 +688,7 @@ export function SignupForm() {
                         onBlur={() => handleBlur("confirmPassword")}
                         disabled={loading || success}
                         required
-                        className={`apple-glass-input w-full h-13 sm:h-14 pl-12 pr-12 rounded-2xl text-white placeholder-[#6E82A5] text-[15px] focus:outline-none transition-all duration-200 ${
+                        className={`apple-glass-input w-full h-14 pl-12 pr-12 rounded-2xl text-white placeholder-[#6E82A5] text-[15px] focus:outline-none transition-all duration-200 ${
                           errors.confirmPassword && touched.confirmPassword
                             ? "border-rose-500 focus:border-rose-500"
                             : ""
@@ -739,7 +739,7 @@ export function SignupForm() {
                     <button
                       type="submit"
                       disabled={loading || success}
-                      className="btn-gradient-primary w-full h-[54px] sm:h-[56px] rounded-2xl flex items-center justify-center space-x-2 text-white font-bold text-[16px] shadow-btn-glow cursor-pointer transition duration-200 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed select-none"
+                      className="btn-gradient-primary w-full h-14 rounded-2xl flex items-center justify-center space-x-2 text-white font-bold text-[16px] shadow-btn-glow cursor-pointer transition duration-200 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed select-none"
                     >
                       {loading ? (
                         <>
@@ -768,7 +768,7 @@ export function SignupForm() {
                     type="button"
                     onClick={handleGoogleSignIn}
                     disabled={loading || success || googleLoading}
-                    className="apple-glass-btn-secondary w-full h-[52px] sm:h-[54px] rounded-2xl flex items-center justify-center space-x-3 text-slate-100 font-medium text-[15px] cursor-pointer group active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed select-none"
+                    className="apple-glass-btn-secondary w-full h-14 rounded-2xl flex items-center justify-center space-x-3 text-slate-100 font-medium text-[15px] cursor-pointer group active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed select-none"
                   >
                     {googleLoading ? (
                       <>
