@@ -44,6 +44,9 @@ export interface KpiMetric {
   changePercentage: number;
   isPositive: boolean;
   trendText: string;
+  hasComparison?: boolean;
+  trendDirection?: "up" | "down" | "neutral";
+  badgeText?: string;
 }
 
 export interface DashboardSummary {

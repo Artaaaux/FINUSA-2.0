@@ -11,6 +11,8 @@ export interface MonthlyFinancialSummary {
   previousSavingsRatePercent: number;
   incomeGrowthPercent: number;
   expenseGrowthPercent: number;
+  hasIncomeComparison: boolean;
+  hasExpenseComparison: boolean;
   savingRateChangePercent: number;
   balanceChangePercent: number;
   topIncomeCategory: string;
@@ -136,20 +138,16 @@ export const AnalyticsService = {
     const prevNet = previousIncome - previousExpense;
     const previousSavingsRatePercent = previousIncome > 0 ? Math.round((prevNet / previousIncome) * 100) : 0;
 
-    // Growth calculations
-    let incomeGrowthPercent = 0;
-    if (previousIncome > 0) {
-      incomeGrowthPercent = Math.round(((totalIncome - previousIncome) / previousIncome) * 100);
-    } else if (totalIncome > 0) {
-      incomeGrowthPercent = 100;
-    }
+    // Growth calculations (only compute % comparison when previous baseline > 0)
+    const hasIncomeComparison = previousIncome > 0;
+    const incomeGrowthPercent = hasIncomeComparison
+      ? Math.round(((totalIncome - previousIncome) / previousIncome) * 100)
+      : 0;
 
-    let expenseGrowthPercent = 0;
-    if (previousExpense > 0) {
-      expenseGrowthPercent = Math.round(((totalExpense - previousExpense) / previousExpense) * 100);
-    } else if (totalExpense > 0) {
-      expenseGrowthPercent = 100;
-    }
+    const hasExpenseComparison = previousExpense > 0;
+    const expenseGrowthPercent = hasExpenseComparison
+      ? Math.round(((totalExpense - previousExpense) / previousExpense) * 100)
+      : 0;
 
     const savingRateChangePercent = savingsRatePercent - previousSavingsRatePercent;
 
@@ -243,6 +241,8 @@ export const AnalyticsService = {
       previousSavingsRatePercent,
       incomeGrowthPercent,
       expenseGrowthPercent,
+      hasIncomeComparison,
+      hasExpenseComparison,
       savingRateChangePercent,
       balanceChangePercent,
       topIncomeCategory,

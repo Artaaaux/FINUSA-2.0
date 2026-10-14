@@ -31,6 +31,8 @@ export default function KpiCards({ summary }: KpiCardsProps) {
       iconBg: "bg-blue-500/10 border-blue-500/20",
       accentBorder: "hover:border-blue-500/40",
       trendPercent: kpis.balance.changePercentage,
+      trendDirection: kpis.balance.trendDirection ?? (kpis.balance.isPositive ? "up" : "down"),
+      badgeText: kpis.balance.badgeText,
       isPositive: kpis.balance.isPositive,
       trendText: kpis.balance.trendText,
       subInfo: netCashflow >= 0 ? `Sisa Bersih: +${formatCurrency(netCashflow)}` : `Defisit Bersih: -${formatCurrency(Math.abs(netCashflow))}`,
@@ -46,6 +48,8 @@ export default function KpiCards({ summary }: KpiCardsProps) {
       iconBg: "bg-emerald-500/10 border-emerald-500/20",
       accentBorder: "hover:border-emerald-500/40",
       trendPercent: kpis.income.changePercentage,
+      trendDirection: kpis.income.trendDirection ?? (kpis.income.isPositive ? "up" : "down"),
+      badgeText: kpis.income.badgeText,
       isPositive: kpis.income.isPositive,
       trendText: kpis.income.trendText,
       subInfo: "Total uang masuk periode ini",
@@ -60,6 +64,8 @@ export default function KpiCards({ summary }: KpiCardsProps) {
       iconBg: "bg-rose-500/10 border-rose-500/20",
       accentBorder: "hover:border-rose-500/40",
       trendPercent: Math.abs(kpis.expense.changePercentage),
+      trendDirection: kpis.expense.trendDirection ?? (kpis.expense.isPositive ? "down" : "up"),
+      badgeText: kpis.expense.badgeText,
       isPositive: kpis.expense.isPositive,
       trendText: kpis.expense.trendText,
       subInfo: "Total uang keluar periode ini",
@@ -74,6 +80,8 @@ export default function KpiCards({ summary }: KpiCardsProps) {
       iconBg: "bg-amber-500/10 border-amber-500/20",
       accentBorder: "hover:border-amber-500/40",
       trendPercent: kpis.savingRate.changePercentage,
+      trendDirection: kpis.savingRate.trendDirection ?? (kpis.savingRate.isPositive ? "up" : "down"),
+      badgeText: kpis.savingRate.badgeText,
       isPositive: kpis.savingRate.isPositive,
       trendText: kpis.savingRate.trendText,
       subInfo: "Batas ideal: min. 20% pendapatan",
@@ -142,12 +150,16 @@ export default function KpiCards({ summary }: KpiCardsProps) {
                       : "bg-rose-500/15 text-rose-400 border border-rose-500/25"
                   )}
                 >
-                  {isTrendPositive ? (
-                    <TrendingUp className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                  ) : (
+                  {item.trendDirection === "down" ? (
                     <TrendingDown className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                  ) : (
+                    <TrendingUp className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                   )}
-                  {item.trendPercent > 0 ? `+${item.trendPercent.toFixed(1)}%` : `${item.trendPercent.toFixed(1)}%`}
+                  {item.badgeText
+                    ? item.badgeText
+                    : item.trendPercent > 0
+                    ? `${item.trendDirection === "down" ? "-" : "+"}${item.trendPercent.toFixed(1)}%`
+                    : `${item.trendPercent.toFixed(1)}%`}
                 </span>
                 <span className="text-[10px] sm:text-[11px] text-slate-400 truncate">
                   {item.trendText}

@@ -189,9 +189,12 @@ export default function MonitorPage() {
                 previousValue: summaryData.totalAccountBalance - summaryData.netSavings,
                 changePercentage: Math.abs(summaryData.balanceChangePercent),
                 isPositive: summaryData.netSavings >= 0,
+                hasComparison: summaryData.hasIncomeComparison || summaryData.hasExpenseComparison,
+                trendDirection: summaryData.netSavings > 0 ? "up" : summaryData.netSavings < 0 ? "down" : "neutral",
+                badgeText: summaryData.netSavings >= 0 ? "Surplus" : "Defisit",
                 trendText: summaryData.netSavings >= 0 
-                  ? `+${summaryData.balanceChangePercent}% surplus kas ${periodLabel}` 
-                  : `${summaryData.balanceChangePercent}% defisit kas ${periodLabel}`,
+                  ? `surplus kas ${periodLabel}` 
+                  : `defisit kas ${periodLabel}`,
               },
               income: {
                 title: "Total Pemasukan",
@@ -199,7 +202,12 @@ export default function MonitorPage() {
                 previousValue: summaryData.previousIncome,
                 changePercentage: Math.abs(incomeChange),
                 isPositive: incomeChange >= 0,
-                trendText: summaryData.previousIncome > 0
+                hasComparison: summaryData.hasIncomeComparison,
+                trendDirection: incomeChange > 0 ? "up" : incomeChange < 0 ? "down" : "neutral",
+                badgeText: summaryData.hasIncomeComparison
+                  ? `${incomeChange >= 0 ? "+" : "-"}${Math.abs(incomeChange).toFixed(1)}%`
+                  : "Kas Masuk",
+                trendText: summaryData.hasIncomeComparison
                   ? (incomeChange >= 0 ? `naik ${incomeChange}% dari ${compareLabel}` : `turun ${Math.abs(incomeChange)}% dari ${compareLabel}`)
                   : `uang masuk ${periodLabel}`,
               },
@@ -208,8 +216,19 @@ export default function MonitorPage() {
                 value: summaryData.totalExpense,
                 previousValue: summaryData.previousExpense,
                 changePercentage: Math.abs(expenseChange),
-                isPositive: expenseChange <= 0,
-                trendText: summaryData.previousExpense > 0
+                isPositive: summaryData.hasExpenseComparison 
+                  ? expenseChange <= 0 
+                  : (summaryData.totalIncome > 0 ? summaryData.totalExpense / summaryData.totalIncome <= 0.7 : true),
+                hasComparison: summaryData.hasExpenseComparison,
+                trendDirection: summaryData.hasExpenseComparison
+                  ? (expenseChange > 0 ? "up" : expenseChange < 0 ? "down" : "neutral")
+                  : (summaryData.totalExpense > 0 ? "down" : "neutral"),
+                badgeText: summaryData.hasExpenseComparison
+                  ? `${expenseChange > 0 ? "+" : expenseChange < 0 ? "-" : ""}${Math.abs(expenseChange).toFixed(1)}%`
+                  : (summaryData.totalIncome > 0 
+                      ? `${((summaryData.totalExpense / summaryData.totalIncome) * 100).toFixed(1)}% omzet`
+                      : "Kas Keluar"),
+                trendText: summaryData.hasExpenseComparison
                   ? (expenseChange <= 0 ? `lebih hemat ${Math.abs(expenseChange)}% dari ${compareLabel}` : `naik ${expenseChange}% dari ${compareLabel}`)
                   : `uang keluar ${periodLabel}`,
               },
@@ -219,6 +238,11 @@ export default function MonitorPage() {
                 previousValue: summaryData.previousSavingsRatePercent,
                 changePercentage: Math.abs(savingChange),
                 isPositive: summaryData.savingsRatePercent >= 20,
+                hasComparison: summaryData.hasIncomeComparison,
+                trendDirection: summaryData.savingsRatePercent >= 20 ? "up" : "down",
+                badgeText: summaryData.hasIncomeComparison
+                  ? `${savingChange >= 0 ? "+" : "-"}${Math.abs(savingChange).toFixed(1)}%`
+                  : `${summaryData.savingsRatePercent}% tersimpan`,
                 trendText: summaryData.savingsRatePercent >= 20
                   ? "Kondisi sehat (ideal min 20%)"
                   : "Perlu ditingkatkan (ideal min 20%)",
