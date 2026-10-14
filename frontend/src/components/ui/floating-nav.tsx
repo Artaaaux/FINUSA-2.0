@@ -157,11 +157,6 @@ export const FloatingNav = ({
 
                       <div className="z-10">{item.icon}</div>
                     </div>
-
-                    {/* AI Pill Badge on the upper right corner */}
-                    <span className="absolute -top-1 -right-1 px-1.5 py-px bg-teal-400 text-teal-950 font-black text-[9px] rounded-full shadow-md tracking-tighter border border-[#121722]">
-                      AI
-                    </span>
                   </div>
                 </motion.div>
 

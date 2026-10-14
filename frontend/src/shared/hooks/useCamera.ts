@@ -7,6 +7,7 @@ export type CameraPermissionState = "idle" | "granted" | "denied" | "unsupported
 
 export interface UseCameraReturn {
   videoRef: React.RefObject<HTMLVideoElement | null>;
+  attachVideoRef: (node: HTMLVideoElement | null) => void;
   permission: CameraPermissionState;
   facingMode: CameraFacingMode;
   hasMultipleCameras: boolean;
@@ -33,6 +34,43 @@ export function useCamera(): UseCameraReturn {
   const [hasTorch, setHasTorch] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Safely hook video DOM element to the current stream
+  const hookVideoToStream = useCallback((video: HTMLVideoElement, stream: MediaStream) => {
+    try {
+      video.setAttribute("playsinline", "true");
+      video.setAttribute("webkit-playsinline", "true");
+      video.muted = true;
+      video.autoplay = true;
+
+      if (video.srcObject !== stream) {
+        video.srcObject = stream;
+      }
+
+      const handleReady = () => {
+        video.play().catch((playErr) => {
+          console.warn("video.play() deferred/failed:", playErr);
+        });
+      };
+
+      video.onloadedmetadata = handleReady;
+      video.oncanplay = handleReady;
+
+      // Immediate play attempt
+      video.play().catch(() => {});
+    } catch (e) {
+      console.warn("Failed to hook video stream:", e);
+    }
+  }, []);
+
+  // Callback ref for the <video> element so whenever it mounts or remounts,
+  // it immediately binds to the active camera stream.
+  const attachVideoRef = useCallback((node: HTMLVideoElement | null) => {
+    videoRef.current = node;
+    if (node && streamRef.current) {
+      hookVideoToStream(node, streamRef.current);
+    }
+  }, [hookVideoToStream]);
 
   // Check if multiple camera devices exist
   useEffect(() => {
@@ -105,25 +143,49 @@ export function useCamera(): UseCameraReturn {
         }
       }
 
-      const isPortrait =
-        typeof window !== "undefined" && window.innerHeight > window.innerWidth;
-
-      const constraints: MediaStreamConstraints = {
-        video: {
-          facingMode: { ideal: facingMode },
-          width: { ideal: isPortrait ? 1080 : 1920 },
-          height: { ideal: isPortrait ? 1920 : 1080 },
-          aspectRatio: { ideal: isPortrait ? 3 / 4 : 16 / 9 },
+      // Constraints: Request facingMode with progressive fallbacks
+      const constraintsList: MediaStreamConstraints[] = [
+        {
+          video: {
+            facingMode: { ideal: facingMode },
+            width: { ideal: 1920 },
+            height: { ideal: 1080 },
+          },
+          audio: false,
         },
-        audio: false,
-      };
+        {
+          video: {
+            facingMode: { ideal: facingMode },
+          },
+          audio: false,
+        },
+        {
+          video: true,
+          audio: false,
+        },
+      ];
 
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      let stream: MediaStream | null = null;
+      let lastErr: unknown = null;
+
+      for (const constraints of constraintsList) {
+        try {
+          stream = await navigator.mediaDevices.getUserMedia(constraints);
+          if (stream) break;
+        } catch (cErr) {
+          lastErr = cErr;
+          console.warn("getUserMedia constraint attempt failed, trying next:", cErr);
+        }
+      }
+
+      if (!stream) {
+        throw lastErr || new Error("Tidak dapat menginisialisasi kamera.");
+      }
+
       streamRef.current = stream;
 
       if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        await videoRef.current.play().catch(() => {});
+        hookVideoToStream(videoRef.current, stream);
       }
 
       setPermission("granted");
@@ -155,7 +217,7 @@ export function useCamera(): UseCameraReturn {
     } finally {
       setIsLoading(false);
     }
-  }, [facingMode, stopCamera]);
+  }, [facingMode, hookVideoToStream, stopCamera]);
 
   const toggleFacingMode = useCallback(async () => {
     const nextMode: CameraFacingMode = facingMode === "environment" ? "user" : "environment";
@@ -201,8 +263,7 @@ export function useCamera(): UseCameraReturn {
     let sw = vw;
     let sh = vh;
 
-    // Crop to the on-screen guide box so the receipt fills the image sent to the AI.
-    // The <video> uses object-cover, so map screen coordinates -> intrinsic video coordinates.
+    // Crop to the on-screen guide box if provided
     if (guideEl && video.videoWidth && video.videoHeight) {
       const vr = video.getBoundingClientRect();
       const gr = guideEl.getBoundingClientRect();
@@ -244,7 +305,13 @@ export function useCamera(): UseCameraReturn {
     const ctx = canvas.getContext("2d");
     if (!ctx) return null;
 
-    // Draw (cropped) video frame to canvas
+    // If front camera full frame without crop, mirror to match display
+    if (facingMode === "user" && !guideEl) {
+      ctx.translate(sw, 0);
+      ctx.scale(-1, 1);
+    }
+
+    // Draw (cropped or full) video frame to canvas
     ctx.drawImage(video, sx, sy, sw, sh, 0, 0, sw, sh);
 
     // Get JPEG data URL with quality 0.9 (small receipt text survives better)
@@ -260,6 +327,7 @@ export function useCamera(): UseCameraReturn {
 
   return {
     videoRef,
+    attachVideoRef,
     permission,
     facingMode,
     hasMultipleCameras,
