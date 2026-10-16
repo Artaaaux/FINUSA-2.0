@@ -52,9 +52,9 @@ export async function updateSession(request: NextRequest) {
       data: { user },
     } = await Promise.race([userPromise, timeoutPromise]);
 
-    return { supabaseResponse, user };
+    return { supabaseResponse, user, supabase };
   } catch (error) {
     console.error("Middleware auth check error:", error);
-    return { supabaseResponse, user: null };
+    return { supabaseResponse, user: null, supabase: null };
   }
 }

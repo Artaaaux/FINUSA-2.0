@@ -9,12 +9,14 @@ import {
   CreditCard,
   FileSpreadsheet,
   Command,
-  ScanLine
+  ScanLine,
+  ShieldCheck
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from "@/shared/lib/utils";
 import { supabase } from "@/lib/auth/supabase";
+import { AdminService } from "@/lib/services/admin.service";
 
 export type NavItemData = {
   id: string;
@@ -129,6 +131,19 @@ export function SidebarNav({
   const pathname = usePathname();
   const router = useRouter();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  React.useEffect(() => {
+    let isMounted = true;
+    AdminService.checkAdminAccess()
+      .then(({ isAdmin: status }) => {
+        if (isMounted) setIsAdmin(status);
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -197,6 +212,20 @@ export function SidebarNav({
 
       {/* Bottom Nav Items */}
       <div className="mt-auto pt-3 pb-4 border-t border-slate-800/80 flex flex-col gap-1 px-3">
+        {isAdmin && (
+          <NavItem 
+            item={{
+              id: 'admin',
+              title: 'Panel Admin',
+              icon: ShieldCheck,
+              href: '/admin',
+              badge: 'Admin'
+            }}
+            activeId={pathname.startsWith('/admin') ? 'admin' : ''}
+            onSelect={(id) => handleSelect(id)} 
+            isCollapsed={isCollapsed}
+          />
+        )}
         {finusaBottomItems.map(item => (
           <NavItem 
             key={item.id} 
