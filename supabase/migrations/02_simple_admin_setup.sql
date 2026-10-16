@@ -3,9 +3,10 @@
 -- Migration: 02_simple_admin_setup.sql
 -- ==============================================================================
 
--- 1. Tambahkan kolom system_role pada public.profiles jika belum ada
+-- 1. Tambahkan kolom system_role dan last_seen_at pada public.profiles jika belum ada
 ALTER TABLE public.profiles 
-ADD COLUMN IF NOT EXISTS system_role TEXT NOT NULL DEFAULT 'user';
+ADD COLUMN IF NOT EXISTS system_role TEXT NOT NULL DEFAULT 'user',
+ADD COLUMN IF NOT EXISTS last_seen_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now());
 
 -- 2. Tambahkan constraint check agar nilai role valid
 DO $$ 

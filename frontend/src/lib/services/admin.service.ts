@@ -11,6 +11,7 @@ export interface AdminUserItem {
   avatarUrl: string;
   timezone: string;
   createdAt: string;
+  lastSeenAt: string;
 }
 
 export interface ProfileRecord {
@@ -23,6 +24,8 @@ export interface ProfileRecord {
   avatar_url?: string | null;
   timezone?: string | null;
   created_at?: string | null;
+  updated_at?: string | null;
+  last_seen_at?: string | null;
 }
 
 export interface AdminStatsSummary {
@@ -109,7 +112,7 @@ export const AdminService = {
     try {
       let query = supabase
         .from("profiles")
-        .select("id, email, first_name, last_name, role, system_role, avatar_url, timezone, created_at")
+        .select("*")
         .order("created_at", { ascending: false });
 
       if (search.trim()) {
@@ -130,6 +133,7 @@ export const AdminService = {
         avatarUrl: row.avatar_url || "",
         timezone: row.timezone || "Asia/Jakarta (WIB)",
         createdAt: row.created_at || "",
+        lastSeenAt: row.last_seen_at || row.updated_at || row.created_at || "",
       }));
     } catch (err) {
       console.error("AdminService.getUsers error:", err);

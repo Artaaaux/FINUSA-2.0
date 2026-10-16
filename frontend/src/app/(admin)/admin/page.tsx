@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { 
   Users, 
   Receipt, 
@@ -14,10 +14,60 @@ import {
   Activity, 
   Sparkles,
   Database,
-  Key
+  Key,
+  ArrowUpDown
 } from "lucide-react";
 import { AdminService, AdminUserItem, AdminStatsSummary } from "@/lib/services/admin.service";
 import { getAdminEmails } from "@/lib/auth/admin";
+
+export type SortOption = "created_desc" | "created_asc" | "name_asc" | "name_desc" | "last_seen_desc";
+
+function formatLastSeen(timestamp?: string): { text: string; isOnline: boolean; fullDate: string } {
+  if (!timestamp) return { text: "Belum tercatat", isOnline: false, fullDate: "-" };
+  const date = new Date(timestamp);
+  if (isNaN(date.getTime())) return { text: "-", isOnline: false, fullDate: "-" };
+
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffSec = Math.floor(diffMs / 1000);
+  const diffMin = Math.floor(diffSec / 60);
+  const diffHour = Math.floor(diffMin / 60);
+  const diffDay = Math.floor(diffHour / 24);
+
+  const fullDate = date.toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  if (diffMin < 5) {
+    return { text: "Online Sekarang", isOnline: true, fullDate };
+  }
+  if (diffMin < 60) {
+    return { text: `${diffMin} mnt lalu`, isOnline: false, fullDate };
+  }
+  if (diffHour < 24) {
+    return { text: `${diffHour} jam lalu`, isOnline: false, fullDate };
+  }
+  if (diffDay === 1) {
+    return { text: "Kemarin", isOnline: false, fullDate };
+  }
+  if (diffDay < 7) {
+    return { text: `${diffDay} hari lalu`, isOnline: false, fullDate };
+  }
+
+  return {
+    text: date.toLocaleDateString("id-ID", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    }),
+    isOnline: false,
+    fullDate,
+  };
+}
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<"users" | "setup">("users");
@@ -29,6 +79,8 @@ export default function AdminPage() {
   });
   const [users, setUsers] = useState<AdminUserItem[]>([]);
   const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState<SortOption>("created_desc");
+  const [roleFilter, setRoleFilter] = useState<"all" | "admin" | "user">("all");
   const [loading, setLoading] = useState(true);
   const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
   const [copiedQuery, setCopiedQuery] = useState(false);
@@ -58,6 +110,39 @@ export default function AdminPage() {
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  const filteredAndSortedUsers = useMemo(() => {
+    let result = [...users];
+
+    if (roleFilter === "admin") {
+      result = result.filter((u) => u.systemRole === "admin" || u.systemRole === "super_admin");
+    } else if (roleFilter === "user") {
+      result = result.filter((u) => u.systemRole === "user");
+    }
+
+    result.sort((a, b) => {
+      if (sortBy === "name_asc") {
+        const nameA = (a.firstName + " " + a.lastName).trim() || a.email;
+        const nameB = (b.firstName + " " + b.lastName).trim() || b.email;
+        return nameA.localeCompare(nameB, "id", { sensitivity: "base" });
+      }
+      if (sortBy === "name_desc") {
+        const nameA = (a.firstName + " " + a.lastName).trim() || a.email;
+        const nameB = (b.firstName + " " + b.lastName).trim() || b.email;
+        return nameB.localeCompare(nameA, "id", { sensitivity: "base" });
+      }
+      if (sortBy === "created_asc") {
+        return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
+      }
+      if (sortBy === "last_seen_desc") {
+        return new Date(b.lastSeenAt || 0).getTime() - new Date(a.lastSeenAt || 0).getTime();
+      }
+      // default: created_desc
+      return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+    });
+
+    return result;
+  }, [users, roleFilter, sortBy]);
 
   const handleToggleAdminRole = async (userItem: AdminUserItem) => {
     const newRole = userItem.systemRole === "admin" || userItem.systemRole === "super_admin" 
@@ -245,8 +330,9 @@ export default function AdminPage() {
       {/* Tab 1: User Management */}
       {activeTab === "users" && (
         <div className="space-y-4">
-          {/* Search bar */}
-          <div className="flex items-center justify-between gap-4">
+          {/* Search & Filter Bar */}
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-[#141923] p-3 rounded-2xl border border-slate-800/80">
+            {/* Search input */}
             <div className="relative max-w-sm w-full">
               <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
@@ -254,12 +340,68 @@ export default function AdminPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Cari email atau nama pengguna..."
-                className="w-full bg-[#141923] border border-slate-800 rounded-xl pl-10 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
+                className="w-full bg-slate-900/80 border border-slate-800 rounded-xl pl-10 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
               />
             </div>
-            <span className="text-xs text-slate-500">
-              Menampilkan {users.length} pengguna
-            </span>
+
+            {/* Filter controls */}
+            <div className="flex flex-wrap items-center gap-2.5">
+              {/* Role Filter Pills */}
+              <div className="flex items-center bg-slate-900/90 border border-slate-800 rounded-xl p-0.5 text-xs">
+                <button
+                  onClick={() => setRoleFilter("all")}
+                  className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
+                    roleFilter === "all"
+                      ? "bg-blue-600 text-white shadow-sm"
+                      : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  Semua ({users.length})
+                </button>
+                <button
+                  onClick={() => setRoleFilter("admin")}
+                  className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
+                    roleFilter === "admin"
+                      ? "bg-blue-600 text-white shadow-sm"
+                      : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  Admin
+                </button>
+                <button
+                  onClick={() => setRoleFilter("user")}
+                  className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
+                    roleFilter === "user"
+                      ? "bg-blue-600 text-white shadow-sm"
+                      : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  User
+                </button>
+              </div>
+
+              {/* Sort Dropdown */}
+              <div className="flex items-center gap-1.5 bg-slate-900/90 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-300">
+                <ArrowUpDown className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                <span className="text-slate-500 hidden sm:inline">Urutkan:</span>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as SortOption)}
+                  aria-label="Urutkan daftar pengguna"
+                  className="bg-transparent text-white font-medium focus:outline-none cursor-pointer pr-1"
+                >
+                  <option value="created_desc" className="bg-[#141923] text-white">Tanggal Daftar: Terbaru</option>
+                  <option value="created_asc" className="bg-[#141923] text-white">Tanggal Daftar: Terlama</option>
+                  <option value="name_asc" className="bg-[#141923] text-white">Nama (A &rarr; Z)</option>
+                  <option value="name_desc" className="bg-[#141923] text-white">Nama (Z &rarr; A)</option>
+                  <option value="last_seen_desc" className="bg-[#141923] text-white">Terakhir Online</option>
+                </select>
+              </div>
+
+              <span className="text-xs text-slate-500 hidden xl:inline ml-1 font-mono">
+                {filteredAndSortedUsers.length} pengguna
+              </span>
+            </div>
           </div>
 
           {/* Users Table */}
@@ -272,30 +414,37 @@ export default function AdminPage() {
                     <th className="py-3.5 px-4 font-semibold">Email</th>
                     <th className="py-3.5 px-4 font-semibold">Hak Akses Sistem</th>
                     <th className="py-3.5 px-4 font-semibold">Role Finusa</th>
+                    <th className="py-3.5 px-4 font-semibold">Terakhir Online</th>
                     <th className="py-3.5 px-4 font-semibold">Bergabung</th>
                     <th className="py-3.5 px-4 font-semibold text-right">Aksi Role</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800/80">
-                  {users.length === 0 ? (
+                  {filteredAndSortedUsers.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="py-12 text-center text-slate-500 text-xs">
-                        {loading ? "Memuat data pengguna..." : "Tidak ada pengguna yang cocok dengan pencarian."}
+                      <td colSpan={7} className="py-12 text-center text-slate-500 text-xs">
+                        {loading ? "Memuat data pengguna..." : "Tidak ada pengguna yang cocok dengan kriteria pencarian/filter."}
                       </td>
                     </tr>
                   ) : (
-                    users.map((item) => {
+                    filteredAndSortedUsers.map((item) => {
                       const isAdmin = item.systemRole === "admin" || item.systemRole === "super_admin";
                       const isCurrentUser = item.email.toLowerCase() === currentUserEmail.toLowerCase();
                       const isUpdating = updatingUserId === item.id;
+                      const lastSeen = formatLastSeen(item.lastSeenAt);
 
                       return (
                         <tr key={item.id} className="hover:bg-slate-800/30 transition-colors">
                           {/* Nama & Avatar */}
                           <td className="py-3.5 px-4">
                             <div className="flex items-center gap-2.5">
-                              <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-white text-xs shrink-0">
-                                {item.firstName ? item.firstName.charAt(0).toUpperCase() : item.email.charAt(0).toUpperCase()}
+                              <div className="relative">
+                                <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-white text-xs shrink-0">
+                                  {item.firstName ? item.firstName.charAt(0).toUpperCase() : item.email.charAt(0).toUpperCase()}
+                                </div>
+                                {lastSeen.isOnline && (
+                                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-[#141923]" title="Online Sekarang" />
+                                )}
                               </div>
                               <div className="min-w-0">
                                 <span className="font-medium text-white block truncate">
@@ -334,6 +483,25 @@ export default function AdminPage() {
                           {/* Role Finusa */}
                           <td className="py-3.5 px-4 text-slate-400">
                             {item.role}
+                          </td>
+
+                          {/* Terakhir Online */}
+                          <td className="py-3.5 px-4">
+                            {lastSeen.isOnline ? (
+                              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                Online
+                              </span>
+                            ) : (
+                              <div title={lastSeen.fullDate}>
+                                <span className="text-slate-300 font-medium block">
+                                  {lastSeen.text}
+                                </span>
+                                <span className="text-[10px] text-slate-500 font-mono">
+                                  {lastSeen.fullDate}
+                                </span>
+                              </div>
+                            )}
                           </td>
 
                           {/* Joined */}

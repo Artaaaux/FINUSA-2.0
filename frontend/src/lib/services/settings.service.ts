@@ -8,6 +8,17 @@ export const SettingsService = {
 
     const { data } = await supabase.from("profiles").select("*").eq("id", user.id).maybeSingle();
     
+    // Update last_seen_at timestamp non-blockingly
+    try {
+      supabase
+        .from("profiles")
+        .update({ last_seen_at: new Date().toISOString() })
+        .eq("id", user.id)
+        .then(() => {});
+    } catch {
+      // non-blocking
+    }
+
     // Default fallback from user metadata if profile row has blank fields
     const meta = user.user_metadata || {};
     const firstName = data?.first_name || meta.first_name || meta.name || "";
