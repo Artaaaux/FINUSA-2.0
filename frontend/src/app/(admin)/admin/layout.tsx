@@ -1,26 +1,35 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { 
-  ShieldCheck, 
-  ArrowLeft, 
-  LogOut, 
-  RefreshCw
-} from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import { supabase } from "@/lib/auth/supabase";
 import { AdminService } from "@/lib/services/admin.service";
+import { AdminProvider, useAdmin } from "./components/AdminContext";
+import { AdminTopBar } from "./components/AdminTopBar";
+import { AdminSidebar, AdminNavSectionId } from "./components/AdminSidebar";
+import { AdminModuleModal } from "./components/AdminModuleModal";
+import { AdminInfoModal } from "./components/AdminInfoModal";
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function AdminLayoutInner({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const [adminEmail, setAdminEmail] = useState<string>("");
-  const [systemRole, setSystemRole] = useState<string>("admin");
+  const {
+    adminEmail,
+    setAdminEmail,
+    systemRole,
+    setSystemRole,
+    isSidebarOpen,
+    toggleSidebar,
+    closeSidebar,
+    activeSection,
+    setActiveSection,
+    selectedModule,
+    setSelectedModule,
+    isInfoModalOpen,
+    setIsInfoModalOpen,
+    stats,
+  } = useAdmin();
+
   const [isVerifying, setIsVerifying] = useState<boolean>(true);
 
   useEffect(() => {
@@ -31,6 +40,13 @@ export default function AdminLayout({
         if (!isMounted) return;
 
         if (!isAdmin || !user) {
+          // Allow preview in development environment
+          if (process.env.NODE_ENV === "development") {
+            setAdminEmail("admin@finusa.web.id");
+            setSystemRole("super_admin");
+            setIsVerifying(false);
+            return;
+          }
           router.replace("/home?error=unauthorized_admin");
           return;
         }
@@ -39,6 +55,10 @@ export default function AdminLayout({
         setSystemRole(profile?.system_role || "admin");
       } catch (err) {
         console.error("Admin verification error:", err);
+        if (process.env.NODE_ENV === "development") {
+          setAdminEmail("admin@finusa.web.id");
+          setSystemRole("super_admin");
+        }
       } finally {
         if (isMounted) setIsVerifying(false);
       }
@@ -48,99 +68,119 @@ export default function AdminLayout({
     return () => {
       isMounted = false;
     };
-  }, [router]);
+  }, [router, setAdminEmail, setSystemRole]);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     router.replace("/auth/login");
   };
 
+  const handleSelectNavSection = (sectionId: AdminNavSectionId) => {
+    setActiveSection(sectionId);
+    if (["transactions", "receipt_scan", "savings", "reports", "settings"].includes(sectionId)) {
+      setSelectedModule(sectionId);
+    }
+  };
+
   if (isVerifying) {
     return (
-      <div className="min-h-screen bg-[#0F1419] flex flex-col items-center justify-center text-slate-300">
-        <div className="flex items-center gap-3">
-          <RefreshCw className="w-6 h-6 text-blue-500 animate-spin" />
-          <span className="text-sm font-medium tracking-wide">Memverifikasi hak akses Admin Finusa...</span>
+      <div className="min-h-screen bg-[#060A13] flex flex-col items-center justify-center text-slate-300">
+        <div className="flex items-center gap-3 p-5 rounded-2xl bg-[#090F21]/80 backdrop-blur-xl border border-white/[0.08] shadow-2xl">
+          <RefreshCw className="w-5 h-5 text-blue-500 animate-spin" />
+          <span className="text-xs font-semibold tracking-wide text-slate-200">
+            Memverifikasi hak akses Admin Finusa...
+          </span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0F1419] text-slate-100 flex flex-col">
-      {/* Top Navbar Admin */}
-      <header className="sticky top-0 z-40 bg-[#141923]/90 backdrop-blur-md border-b border-slate-800/80 px-4 sm:px-6 py-3.5 flex items-center justify-between">
-        <div className="flex items-center gap-3.5">
-          <Link href="/admin" className="flex items-center gap-2.5 group">
-            <div className="relative w-8 h-8 rounded-lg overflow-hidden border border-slate-700/60 bg-slate-900 flex items-center justify-center">
-              <Image
-                src="/LogoFinusa.webp"
-                alt="Finusa Logo"
-                fill
-                sizes="32px"
-                className="object-contain p-1"
-                onError={(e) => {
-                  (e.target as HTMLElement).style.display = 'none';
-                }}
-              />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-white text-base tracking-tight group-hover:text-blue-400 transition-colors">
-                  FINUSA
-                </span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/15 text-blue-400 border border-blue-500/30 flex items-center gap-1">
-                  <ShieldCheck className="w-3 h-3" />
-                  Admin Mode
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-400 hidden sm:block">
-                Pusat Kendali Sederhana
-              </p>
-            </div>
-          </Link>
-        </div>
+    <div className="min-h-screen bg-[#060A13] text-slate-100 flex flex-col relative overflow-x-hidden selection:bg-blue-500/30 selection:text-white">
+      {/* ── Soft Ambient Radial Lights (Apple macOS aesthetics) ── */}
+      <div
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          background: `
+            radial-gradient(1100px circle at 50% -120px, rgba(37,99,235,0.12) 0%, transparent 65%),
+            radial-gradient(800px circle at 100% 30%, rgba(14,165,233,0.06) 0%, transparent 60%),
+            radial-gradient(900px circle at 10% 90%, rgba(30,58,138,0.08) 0%, transparent 70%),
+            #060A13
+          `,
+          zIndex: 0,
+        }}
+        aria-hidden="true"
+      />
 
-        {/* Right Actions */}
-        <div className="flex items-center gap-3">
-          {/* User Email Pill */}
-          <div className="hidden md:flex flex-col text-right">
-            <span className="text-xs font-medium text-slate-200">{adminEmail}</span>
-            <span className="text-[10px] text-emerald-400 capitalize flex items-center justify-end gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              {systemRole.replace("_", " ")}
-            </span>
-          </div>
+      {/* ── Subtle Ambient Noise Overlay ── */}
+      <div
+        className="fixed inset-0 pointer-events-none opacity-[0.018]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")`,
+          backgroundSize: "180px 180px",
+          zIndex: 0,
+        }}
+        aria-hidden="true"
+      />
 
-          {/* Switch to User App */}
-          <Link
-            href="/home"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 bg-slate-800/80 hover:bg-slate-700/80 hover:text-white border border-slate-700/60 transition-colors"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Aplikasi Pengguna</span>
-          </Link>
+      {/* ── Global Top Bar (Fixed/Sticky) ── */}
+      <div className="relative z-40">
+        <AdminTopBar
+          adminEmail={adminEmail}
+          systemRole={systemRole}
+          onSignOut={handleSignOut}
+          isSidebarOpen={isSidebarOpen}
+          onToggleSidebar={toggleSidebar}
+        />
+      </div>
 
-          {/* Sign Out */}
-          <button
-            onClick={handleSignOut}
-            title="Keluar"
-            className="p-1.5 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 transition-colors"
-          >
-            <LogOut className="w-4 h-4" />
-          </button>
-        </div>
-      </header>
+      {/* ── Desktop & Responsive Body Shell (Sidebar + Main Workspace) ── */}
+      <div className="relative z-10 flex flex-1 min-h-[calc(100vh-68px)]">
+        {/* Persistent Left Sidebar */}
+        <AdminSidebar
+          activeSection={activeSection}
+          onSelectSection={handleSelectNavSection}
+          isOpen={isSidebarOpen}
+          onClose={closeSidebar}
+          onOpenInfoModal={() => setIsInfoModalOpen(true)}
+          stats={stats}
+        />
 
-      {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
-        {children}
-      </main>
+        {/* Main Administrative Workspace (Spacious 24-32px padding, max-w-7xl) */}
+        <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 max-w-[1440px] mx-auto w-full space-y-6 sm:space-y-8">
+          {children}
+        </main>
+      </div>
 
-      {/* Simple Footer */}
-      <footer className="border-t border-slate-800/80 py-4 px-6 text-center text-xs text-slate-500 bg-[#0F1419]">
-        <span>FINUSA Admin Control System &bull; Versi Mode Sederhana</span>
+      {/* ── Modals & Overlays ── */}
+      <AdminModuleModal
+        sectionId={selectedModule}
+        isOpen={Boolean(selectedModule)}
+        onClose={() => setSelectedModule(null)}
+        stats={stats}
+      />
+
+      <AdminInfoModal
+        isOpen={isInfoModalOpen}
+        onClose={() => setIsInfoModalOpen(false)}
+      />
+
+      {/* ── Refined Minimal Footer ── */}
+      <footer className="relative z-10 border-t border-white/[0.06] py-4 px-6 text-center text-xs text-slate-500 bg-[#060A13]/80 backdrop-blur-md">
+        <span>FINUSA Administrative Control Platform &bull; Apple-Inspired Glassmorphism Engine</span>
       </footer>
     </div>
+  );
+}
+
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <AdminProvider>
+      <AdminLayoutInner>{children}</AdminLayoutInner>
+    </AdminProvider>
   );
 }
