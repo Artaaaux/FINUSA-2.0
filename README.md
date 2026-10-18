@@ -2,7 +2,7 @@
   <img src="frontend/public/Assets/logo-full-trans.png" alt="FINUSA Logo" width="380" />
 </p>
 
-<h1 align="center">FINUSA (Finance Nusantara) 2.0</h1>
+<h1 align="center">FINUSA (Finance Nusantara) </h1>
 
 <p align="center">
   <strong>Platform Manajemen Keuangan Pribadi & Smart Receipt OCR Berbasis AI Terapan</strong><br />
