@@ -597,6 +597,5 @@ Lihat berkas [LICENSE](LICENSE) untuk informasi lebih lanjut.
 ---
 
 <p align="center">
-  Dibuat dengan ❤️ untuk kemajuan literasi finansial masyarakat Indonesia.<br />
   <strong>FINUSA (Finance Nusantara) — Kelola Kas Lebih Cerdas, Bebas Ribet.</strong>
 </p>
