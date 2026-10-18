@@ -418,7 +418,7 @@ Ikuti langkah-langkah di bawah ini untuk menjalankan FINUSA di komputer lokal An
 ### Langkah 1: Clone Repositori
 
 ```bash
-git clone https://github.com/username-anda/finusa.git
+git clone https://github.com/Artaaaux/FINUSA-2.0
 cd finusa
 ```
 
