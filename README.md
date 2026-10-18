@@ -5,7 +5,7 @@
 <h1 align="center">FINUSA (Finance Nusantara) </h1>
 
 <p align="center">
-  <strong>Platform Manajemen Keuangan Pribadi & Smart Receipt OCR Berbasis AI Terapan</strong><br />
+  <strong>Platform Manajemen Keuangan Pribadi & Smart Receipt OCR Berbasis AI </strong><br />
   Solusi pencatatan kas harian modern, pemisahan pos tabungan kompartemen, analisis arus kas interaktif, dan integrasi ekosistem spreadsheet yang dirancang khusus untuk generasi muda, pelajar, first-jobber, dan profesional mandiri di Indonesia.
 </p>
 
